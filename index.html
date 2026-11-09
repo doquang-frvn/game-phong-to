@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Lora:ital,wght@0,600;0,700;1,500&display=swap">
 <style>
-  /* Màn soi lớn chiếm gần hết chiều cao; tầng sâu hiện ra trong một kính lúp tròn nở dần; bảng điều khiển là một "thước độ sâu" bên dưới */
+  /* Hàng chọn vật thể như ngăn kéo mẫu vật; màn soi lớn; tầng sâu hiện trong kính lúp tròn nở dần; thước độ sâu bên dưới */
   :root {
     --stage: #0b0e22;
     --ink: #eceef7;
@@ -26,13 +26,31 @@
     padding-right: max(16px, env(safe-area-inset-right, 0px));
     padding-block: 16px 32px;
   }
+  [hidden] { display: none !important; }
   .wrap { max-width: 940px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
   .eyebrow { margin: 0; font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-dim); }
   h1 { margin: 2px 0 0; font-family: var(--display); font-weight: 700; font-size: clamp(1.35rem, 4.5vw, 1.8rem); text-wrap: balance; }
 
+  .picker { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .pick {
+    font: inherit; color: var(--ink); text-align: left; cursor: pointer;
+    background: var(--panel); border: 1px solid var(--rule); border-radius: 12px;
+    padding: 10px 12px; display: flex; align-items: center; gap: 10px; min-width: 0;
+  }
+  .pick .sym {
+    flex: 0 0 auto; width: 40px; height: 40px; border-radius: 8px; display: grid; place-items: center;
+    font-family: var(--display); font-weight: 700; font-size: 1.05rem; color: #0b0e22;
+  }
+  .pick .nm { font-size: .88rem; font-weight: 500; min-width: 0; line-height: 1.25; }
+  .pick .nm small { display: block; color: var(--ink-dim); font-size: .74rem; font-weight: 400; }
+  .pick:hover { border-color: var(--electron); }
+  .pick[aria-pressed="true"] { border-color: var(--electron); box-shadow: inset 0 0 0 1px var(--electron); }
+  .pick:focus-visible { outline: 2px solid var(--electron); outline-offset: 2px; }
+  @media (max-width: 620px) { .picker { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
   .stage {
     position: relative; width: 100%;
-    height: min(68vh, calc(100vw - 32px)); min-height: 300px;
+    height: min(66vh, calc(100vw - 32px)); min-height: 300px;
     border-radius: 16px; overflow: hidden; border: 1px solid var(--rule);
     background: var(--stage); touch-action: none; user-select: none; -webkit-user-select: none;
   }
@@ -45,21 +63,14 @@
   }
   .lvl { font-family: var(--display); font-weight: 700; font-size: clamp(1.3rem, 4.2vw, 1.9rem); line-height: 1.15; text-shadow: 0 1px 8px rgba(0,0,0,.6); }
   .mag { margin-top: 3px; font-size: .86rem; color: var(--ink); opacity: .85; font-variant-numeric: tabular-nums; text-shadow: 0 1px 6px rgba(0,0,0,.7); }
-
   .hint { display: inline-block; margin-top: 7px; font-size: .78rem; font-weight: 500; padding: 3px 10px; border-radius: 999px; background: rgba(242,166,90,.2); color: #ffd6ad; }
-  .count {
-    position: absolute; left: 14px; bottom: 14px; pointer-events: none;
-    font-size: .82rem; color: var(--ink-dim); font-variant-numeric: tabular-nums;
-  }
+  .count { position: absolute; left: 14px; bottom: 14px; pointer-events: none; font-size: .82rem; color: var(--ink-dim); font-variant-numeric: tabular-nums; }
   .count b { color: var(--ink); font-size: 1rem; }
-
   .hold {
     position: absolute; right: 12px; bottom: 12px;
     font: inherit; font-weight: 700; font-size: 1rem;
     padding: 15px 22px; border-radius: 999px; border: 0; cursor: pointer;
-    background: var(--electron); color: #081022;
-    box-shadow: 0 4px 22px rgba(143,212,255,.35);
-    touch-action: none;
+    background: var(--electron); color: #081022; box-shadow: 0 4px 22px rgba(143,212,255,.35); touch-action: none;
   }
   .hold.on { background: var(--amber); box-shadow: 0 4px 22px rgba(242,166,90,.45); }
   .hold:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
@@ -68,21 +79,14 @@
 
   .panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
   .track { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chip {
-    font: inherit; font-size: .8rem; color: var(--ink-dim); background: transparent;
-    border: 1px solid var(--rule); border-radius: 999px; padding: 6px 11px; cursor: pointer;
-  }
+  .chip { font: inherit; font-size: .8rem; color: var(--ink-dim); background: transparent; border: 1px solid var(--rule); border-radius: 999px; padding: 6px 11px; cursor: pointer; }
   .chip:hover { color: var(--ink); border-color: var(--electron); }
   .chip[aria-current="true"] { background: var(--electron); border-color: var(--electron); color: #081022; font-weight: 600; }
   .chip:focus-visible, .btn:focus-visible { outline: 2px solid var(--electron); outline-offset: 2px; }
   input[type=range] { width: 100%; height: 30px; accent-color: var(--electron); }
   input[type=range]:focus-visible { outline: 2px solid var(--electron); outline-offset: 4px; }
   .row { display: flex; flex-wrap: wrap; gap: 8px; }
-  .btn {
-    font: inherit; font-size: .88rem; font-weight: 500; color: var(--ink);
-    background: transparent; border: 1px solid var(--rule); border-radius: 999px;
-    padding: 10px 15px; cursor: pointer; flex: 1 1 auto; min-width: 0;
-  }
+  .btn { font: inherit; font-size: .88rem; font-weight: 500; color: var(--ink); background: transparent; border: 1px solid var(--rule); border-radius: 999px; padding: 10px 15px; cursor: pointer; flex: 1 1 auto; min-width: 0; }
   .btn:hover { border-color: var(--electron); }
   .btn[aria-pressed="true"] { background: var(--electron); color: #081022; border-color: var(--electron); font-weight: 600; }
 
@@ -101,24 +105,21 @@
   .slot input[type=file] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
   .slot input[type=file]:focus-visible + label { outline: 2px solid var(--electron); outline-offset: 2px; }
   .slot details summary { cursor: pointer; font-size: .84rem; color: var(--electron); }
-  .slot textarea {
-    width: 100%; box-sizing: border-box; min-height: 110px; margin-top: 8px; resize: vertical;
-    font: inherit; font-size: .84rem; line-height: 1.55; color: var(--ink);
-    background: var(--stage); border: 1px solid var(--rule); border-radius: 10px; padding: 10px;
-  }
-  .slot .warn { font-size: .8rem; color: var(--amber); margin: 0; }
+  .slot textarea { width: 100%; box-sizing: border-box; min-height: 110px; margin-top: 8px; resize: vertical; font: inherit; font-size: .84rem; line-height: 1.55; color: var(--ink); background: var(--stage); border: 1px solid var(--rule); border-radius: 10px; padding: 10px; }
   .fixed-note { font-size: .84rem; color: var(--ink-dim); margin: 0; }
   @media (max-width: 460px) { .slot { grid-template-columns: 64px 1fr; } .slot .thumb { width: 64px; height: 64px; } }
 </style>
-<style>html,body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<style>html,body{margin:0}img{max-width:100%}</style>
 </head>
 <body>
 
 <div class="wrap">
   <header>
-    <p class="eyebrow">Game Phóng To · Module 1</p>
-    <h1>Cái đinh sắt</h1>
+    <p class="eyebrow">Game Phóng To</p>
+    <h1 id="objTitle">Cái đinh thép</h1>
   </header>
+
+  <div class="picker" id="picker" role="group" aria-label="Chọn vật thể"></div>
 
   <div class="stage" id="stage">
     <canvas id="cv"></canvas>
@@ -139,15 +140,15 @@
     <input type="range" id="zr" min="-0.15" max="6.6" step="0.01" value="-0.15">
     <div class="row">
       <button class="btn" id="btnAuto" type="button" aria-pressed="false">Lặn tự động</button>
-      <button class="btn" id="btnTop" type="button">Về cái đinh</button>
+      <button class="btn" id="btnTop" type="button">Về vật thể</button>
       <button class="btn" id="btnSpeak" type="button" aria-pressed="false">Đọc to</button>
       <button class="btn" id="btnLib" type="button" aria-pressed="false">Thư viện ảnh</button>
     </div>
   </div>
 
   <section class="lib" id="lib" hidden>
-    <h2>Thư viện ảnh của cái đinh</h2>
-    <p class="intro">Ba tầng đầu thay được bằng ảnh ChatGPT. Bốn tầng sâu luôn vẽ bằng code để đúng khoa học và xoay 3D được. Ảnh vuông là tốt nhất; để phần quan trọng ở giữa vì mép ảnh sẽ bị cắt khi phóng to. Ảnh chọn ở đây chỉ lưu trong trình duyệt này. Muốn mọi máy đều thấy thì đưa ảnh lên GitHub, vào thư mục <b>anh/dinh-sat/</b>, đặt tên <b>vat-the</b>, <b>be-mat</b>, <b>hat</b>.</p>
+    <h2 id="libTitle">Thư viện ảnh</h2>
+    <p class="intro" id="libIntro"></p>
     <div id="slots"></div>
   </section>
 </div>
@@ -156,45 +157,90 @@
 (function () {
   'use strict';
 
-  // Ảnh để sẵn trên GitHub: thư mục anh/dinh-sat/, tên file theo tầng (đuôi .png hoặc .jpg đều được).
-  // Thiếu ảnh nào thì tầng đó tự dùng hình vẽ bằng code.
-  var THU_MUC_ANH = 'anh/dinh-sat/';
-  var TANG_CO_ANH = ['vat-the', 'be-mat', 'hat'];
-
-  var Z = 8;
-  var ZMIN = -0.15, ZMAX = 6.6;
+  var Z = 8, ZMIN = -0.15, ZMAX = 6.6;
 
   function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
   function smooth(e0, e1, x) { var t = Math.max(0, Math.min(1, (x - e0) / (e1 - e0))); return t * t * (3 - 2 * t); }
   function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
+  function canvas(n) { var c = document.createElement('canvas'); c.width = c.height = n; return c; }
+  function rgb(c) { return 'rgb(' + Math.round(c[0]) + ',' + Math.round(c[1]) + ',' + Math.round(c[2]) + ')'; }
 
-  // Vị trí electron: phân bố xác suất kiểu đám mây (r² e^-2r), chiếu xuống mặt phẳng
-  function sampleCloud(r) {
-    var rad = -(Math.log(1 - r()) + Math.log(1 - r()) + Math.log(1 - r())) / 2;
-    var u = 2 * r() - 1, th = 2 * Math.PI * r(), s = Math.sqrt(1 - u * u);
-    return [rad * s * Math.cos(th), rad * s * Math.sin(th)];
-  }
-
+  // Vị trí phát hiện electron: phân bố xác suất dạng đám mây (r² e^-2r) trong không gian 3D
   function sampleCloud3(r) {
     var rad = -(Math.log(1 - r()) + Math.log(1 - r()) + Math.log(1 - r())) / 2;
     var u = 2 * r() - 1, th = 2 * Math.PI * r(), s = Math.sqrt(1 - u * u);
     return [rad * s * Math.cos(th), rad * s * Math.sin(th), rad * u];
   }
 
-  // ---------- kết cấu dựng sẵn một lần ----------
-  function canvas(n) { var c = document.createElement('canvas'); c.width = c.height = n; return c; }
+  // =====================================================================
+  // NGĂN 3 — NGUYÊN TỐ: chỉ cần vài con số, code tự vẽ đám mây và hạt nhân
+  // =====================================================================
+  var ELEMENTS = {
+    Fe: { sym: 'Fe', name: 'Sắt', lower: 'sắt', Z: 26, N: 30, color: '#b9bfcc',
+      isoNote: 'Đây là loại nguyên tử sắt hay gặp nhất; có loại mang nhiều hoặc ít neutron hơn một chút.' },
+    Cu: { sym: 'Cu', name: 'Đồng', lower: 'đồng', Z: 29, N: 34, color: '#e0915f',
+      isoNote: 'Đây là loại nguyên tử đồng hay gặp nhất; có loại khác mang 36 neutron.' },
+    Au: { sym: 'Au', name: 'Vàng', lower: 'vàng', Z: 79, N: 118, color: '#f0c95a',
+      isoNote: 'Vàng trong tự nhiên chỉ có đúng một loại nguyên tử này.' },
+    Pb: { sym: 'Pb', name: 'Chì', lower: 'chì', Z: 82, N: 126, color: '#98a0b2',
+      isoNote: 'Đây là loại nguyên tử chì hay gặp nhất; còn vài loại khác ít neutron hơn.' }
+  };
 
-  function makeSurfaceTile(n) {
+  // =====================================================================
+  // NGĂN 2 — VẬT LIỆU: kiểu xếp nguyên tử + màu bề mặt
+  // =====================================================================
+  // basis: vị trí nguyên tử trong một ô (x, y, z), z âm là nằm sâu hơn khi nhìn từ trên xuống
+  var LATTICES = {
+    bcc: { A: 0.0875, basis: [[0, 0, 0], [0.5, 0.5, -0.5]] },                                   // lập phương tâm khối: thêm 1 nguyên tử giữa khối
+    fcc: { A: 0.07, basis: [[0, 0, 0], [0.5, 0.5, 0], [0.5, 0, -0.5], [0, 0.5, -0.5]] }          // lập phương tâm mặt: thêm 1 nguyên tử giữa mỗi mặt
+  };
+  var MATERIALS = {
+    thep: { name: 'Thép', lower: 'thép', lattice: 'bcc', a: 2.87, el: 'Fe', base: [142, 147, 158], hv: 14, colorWord: 'xám bạc',
+      extra: 'Thép còn có một chút carbon len giữa các nguyên tử sắt, ở đây chưa vẽ.' },
+    dong: { name: 'Đồng', lower: 'đồng', lattice: 'fcc', a: 3.61, el: 'Cu', base: [196, 116, 74], hv: 30, colorWord: 'màu đồng cam hồng' },
+    vang: { name: 'Vàng', lower: 'vàng', lattice: 'fcc', a: 4.08, el: 'Au', base: [222, 180, 82], hv: 24, colorWord: 'vàng óng' },
+    chi:  { name: 'Chì', lower: 'chì', lattice: 'fcc', a: 4.95, el: 'Pb', base: [116, 122, 134], hv: 12, colorWord: 'xám chì xỉn, hơi ánh xanh' }
+  };
+
+  // =====================================================================
+  // NGĂN 1 — VẬT THỂ: tên, hình, lời kể, lệnh vẽ ảnh ChatGPT
+  // =====================================================================
+  var OBJECTS = [
+    { id: 'dinh-sat', name: 'Cái đinh', title: 'Cái đinh thép', short: 'cái đinh', surfWhat: 'thân đinh thép', mat: 'thep', frame: 0.06, draw: drawNail,
+      cap: 'Một cái đinh. Đinh làm bằng thép, thành phần chính là sắt. Phóng to vào thân đinh xem bên trong có gì nhé.',
+      pObj: 'Ảnh chụp cận cảnh một cái đinh thép nằm ngang trên mặt bàn gỗ, nhìn thẳng từ trên xuống. Thân đinh chạy ngang qua chính giữa khung hình, mũ đinh bên trái, mũi nhọn bên phải. Kim loại xám bạc có vài vết xước nhỏ, ánh sáng mềm chiếu từ trên xuống. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ, không có tay người.' },
+    { id: 'day-dong', name: 'Dây đồng', title: 'Sợi dây đồng', short: 'sợi dây đồng', surfWhat: 'sợi dây đồng', mat: 'dong', frame: 0.05, draw: drawWire,
+      cap: 'Một đoạn dây đồng, loại nằm bên trong dây điện. Điện chạy qua đồng rất dễ. Phóng to vào xem bên trong có gì.',
+      pObj: 'Ảnh chụp cận cảnh một đoạn dây đồng trần to, màu đồng cam óng, nằm ngang trên mặt bàn gỗ, nhìn thẳng từ trên xuống. Sợi dây chạy ngang qua chính giữa khung hình, đầu dây bên phải bị cắt phẳng, ánh sáng mềm làm kim loại sáng bóng. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ, không có tay người.' },
+    { id: 'nhan-vang', name: 'Nhẫn vàng', title: 'Chiếc nhẫn vàng', short: 'chiếc nhẫn', surfWhat: 'chiếc nhẫn vàng', mat: 'vang', frame: 0.03, draw: drawRing,
+      cap: 'Một chiếc nhẫn vàng. Vàng không bao giờ gỉ, để cả nghìn năm vẫn sáng. Phóng to vào thân nhẫn xem nào.',
+      pObj: 'Ảnh chụp cận cảnh một chiếc nhẫn vàng trơn đặt nghiêng trên nền vải nhung xanh thẫm, nhìn từ trên xuống. Phần thân nhẫn phía dưới nằm ngay chính giữa khung hình, vàng óng ánh, ánh sáng mềm. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ, không có tay người.' },
+    { id: 'cuc-chi', name: 'Cục chì', title: 'Cục chì câu cá', short: 'cục chì', surfWhat: 'cục chì câu cá', mat: 'chi', frame: 0.04, draw: drawSinker,
+      cap: 'Một cục chì câu cá. Nhỏ xíu mà nặng trịch, thả xuống nước là chìm ngay. Phóng to vào xem vì sao nó nặng thế.',
+      pObj: 'Ảnh chụp cận cảnh một cục chì câu cá hình quả ô liu, màu xám chì xỉn, nằm trên mặt bàn gỗ, nhìn từ trên xuống. Cục chì nằm chính giữa khung hình và chiếm phần lớn khung, thấy rõ lỗ xỏ dây ở hai đầu. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ, không có tay người.' }
+  ];
+
+  function surfPrompt(o, m) {
+    return 'Ảnh kính hiển vi điện tử của bề mặt ' + o.surfWhat + ', phóng to khoảng 30 lần. Kim loại ' + m.colorWord + ' đầy vết xước, rãnh nhỏ và vài hốc li ti. Hoa văn trải đều kín toàn bộ khung hình, không có vật nào nổi bật ở giữa, không có khoảng nền trống. Ảnh vuông 1:1, sắc nét, không có chữ, không có thước đo.';
+  }
+  function grainPrompt(o, m) {
+    return 'Ảnh kính hiển vi kim tương của ' + m.lower + ' đã đánh bóng và tẩy axit. Bề mặt gồm hàng chục hạt tinh thể hình đa giác ghép khít nhau như những thửa ruộng nhìn từ trên cao, ngăn cách bằng đường ranh giới mảnh màu sẫm. Các hạt có sắc ' + m.colorWord + ' đậm nhạt khác nhau. Kín toàn bộ khung hình. Ảnh vuông 1:1, không có chữ, không có thước đo.';
+  }
+
+  // =====================================================================
+  // Kết cấu dựng bằng code (tạo một lần cho mỗi vật liệu, lưu lại)
+  // =====================================================================
+  function makeSurfaceTile(n, base) {
     var c = canvas(n), g = c.getContext('2d'), r = mulberry32(7), i, ox, oy;
-    g.fillStyle = '#8e939e'; g.fillRect(0, 0, n, n);
+    g.fillStyle = rgb(base); g.fillRect(0, 0, n, n);
     for (i = 0; i < 650; i++) {
       var x = r() * n, y = r() * n, rad = 2 + r() * 26, light = r() < 0.5;
-      g.fillStyle = light ? 'rgba(235,238,245,' + (0.02 + r() * 0.05) + ')' : 'rgba(30,34,44,' + (0.02 + r() * 0.06) + ')';
+      g.fillStyle = light ? 'rgba(255,255,255,' + (0.02 + r() * 0.05) + ')' : 'rgba(0,0,0,' + (0.02 + r() * 0.06) + ')';
       for (ox = -n; ox <= n; ox += n) for (oy = -n; oy <= n; oy += n) { g.beginPath(); g.arc(x + ox, y + oy, rad, 0, 6.2832); g.fill(); }
     }
     for (i = 0; i < 320; i++) {
       var sx = r() * n, sy = r() * n, len = 30 + r() * 420, ang = (r() - 0.5) * 0.25, lt = r() < 0.55;
-      g.strokeStyle = lt ? 'rgba(245,247,252,' + (0.08 + r() * 0.25) + ')' : 'rgba(25,28,36,' + (0.08 + r() * 0.3) + ')';
+      g.strokeStyle = lt ? 'rgba(255,255,255,' + (0.08 + r() * 0.25) + ')' : 'rgba(0,0,0,' + (0.08 + r() * 0.28) + ')';
       g.lineWidth = 0.4 + r() * 1.8;
       for (ox = -n; ox <= n; ox += n) for (oy = -n; oy <= n; oy += n) {
         g.beginPath(); g.moveTo(sx + ox, sy + oy); g.lineTo(sx + ox + Math.cos(ang) * len, sy + oy + Math.sin(ang) * len); g.stroke();
@@ -202,21 +248,21 @@
     }
     for (i = 0; i < 28; i++) {
       var px = 20 + r() * (n - 40), py = 20 + r() * (n - 40), rx = 3 + r() * 10, ry = rx * (0.5 + r() * 0.5);
-      g.fillStyle = 'rgba(20,22,30,.55)'; g.beginPath(); g.ellipse(px, py, rx, ry, 0, 0, 6.2832); g.fill();
+      g.fillStyle = 'rgba(0,0,0,.45)'; g.beginPath(); g.ellipse(px, py, rx, ry, 0, 0, 6.2832); g.fill();
       g.strokeStyle = 'rgba(255,255,255,.28)'; g.lineWidth = 1; g.beginPath(); g.ellipse(px, py + 1, rx, ry, 0, 0.2, 2.9); g.stroke();
     }
     return c;
   }
 
-  function makeGrainTile(n) {
+  function makeGrainTile(n, base, hv) {
     var c = canvas(n), g = c.getContext('2d'), r = mulberry32(21);
     var cells = 8, cs = n / cells, seeds = [], cols = [], x, y, i, j;
     for (j = 0; j < cells; j++) {
       seeds[j] = []; cols[j] = [];
       for (i = 0; i < cells; i++) {
         seeds[j][i] = [cs * (0.15 + r() * 0.7), cs * (0.15 + r() * 0.7)];
-        var l = 100 + r() * 85, tint = (r() - 0.5) * 16;
-        cols[j][i] = [l + tint * 0.7, l, l - tint * 0.6, r() * 6.28];
+        var k = 0.72 + r() * 0.5, t = (r() - 0.5) * hv;
+        cols[j][i] = [base[0] * k + t, base[1] * k, base[2] * k - t * 0.8, r() * 6.28];
       }
     }
     var img = g.createImageData(n, n), d = img.data;
@@ -230,17 +276,17 @@
       }
       var edge = smooth(0, 2.6, d2 - d1);
       var shade = 1 + 0.08 * Math.cos(bc[3]) * (x - bx) / cs + 0.08 * Math.sin(bc[3]) * (y - by) / cs;
-      var k = (0.3 + 0.7 * edge) * shade, o = (y * n + x) * 4, nz = (r() - 0.5) * 7;
-      d[o] = clamp(bc[0] * k + nz, 0, 255); d[o + 1] = clamp(bc[1] * k + nz, 0, 255); d[o + 2] = clamp(bc[2] * k + nz, 0, 255); d[o + 3] = 255;
+      var kk = (0.3 + 0.7 * edge) * shade, o = (y * n + x) * 4, nz = (r() - 0.5) * 7;
+      d[o] = clamp(bc[0] * kk + nz, 0, 255); d[o + 1] = clamp(bc[1] * kk + nz, 0, 255); d[o + 2] = clamp(bc[2] * kk + nz, 0, 255); d[o + 3] = 255;
     }
     g.putImageData(img, 0, 0);
-    g.fillStyle = 'rgba(20,20,26,.5)';
+    g.fillStyle = 'rgba(15,15,20,.5)';
     for (i = 0; i < 90; i++) { g.beginPath(); g.arc(r() * n, r() * n, 0.6 + r() * 1.4, 0, 6.2832); g.fill(); }
     return c;
   }
 
+  // Đám mây electron nhìn từ xa: lõi trắng xanh, giữa xanh lơ, rìa xanh dương đậm; không vẽ hạt nhân
   var SPRITE_N = 256, SPRITE_A = SPRITE_N / 2 / 4.57, SPRITE_K = SPRITE_N / SPRITE_A;
-  // Màu đám mây: lõi trắng xanh, giữa xanh lơ, rìa xanh dương đậm
   var CLOUD_RGB = ['rgb(205,250,255)', 'rgb(60,212,255)', 'rgb(28,112,255)'];
   function cloudBucket(r3) { return r3 < 1.2 ? 0 : r3 < 2.4 ? 1 : 2; }
   function cloudGlow(g, x, y, a, k) {
@@ -248,7 +294,6 @@
     gl.addColorStop(0, 'rgba(80,205,255,' + (0.38 * k) + ')'); gl.addColorStop(0.45, 'rgba(40,150,255,' + (0.14 * k) + ')'); gl.addColorStop(1, 'rgba(30,110,255,0)');
     g.fillStyle = gl; g.beginPath(); g.arc(x, y, 2.6 * a, 0, 6.2832); g.fill();
   }
-  // Nguyên tử nhìn từ xa: chỉ có đám mây, không vẽ hạt nhân (ở tỉ lệ này không thể thấy được)
   function makeCloudSprite() {
     var c = canvas(SPRITE_N), g = c.getContext('2d'), r = mulberry32(5), h = SPRITE_N / 2;
     var cols = ['rgba(205,250,255,0.24)', 'rgba(60,212,255,0.2)', 'rgba(28,112,255,0.2)'];
@@ -262,37 +307,44 @@
     g.globalCompositeOperation = 'source-over';
     return c;
   }
-
-  // Một ô mạng tinh thể sắt nhìn từ trên xuống: nguyên tử góc (gần) và nguyên tử giữa ô (sâu hơn, mờ hơn)
-  var A_PER_D = 0.0875;
+  var SPRITE = makeCloudSprite();
   function drawSprite(ctx, x, y, aWorld, alpha, scale) {
     var d = aWorld * SPRITE_K * scale;
     ctx.globalAlpha = alpha;
     ctx.drawImage(SPRITE, x - d / 2, y - d / 2, d, d);
     ctx.globalAlpha = 1;
   }
-  function makeLatticeTile(n) {
-    var c = canvas(n), g = c.getContext('2d'), D = n / 5, a = A_PER_D * D, i, j;
+
+  function makeLatticeTile(n, lat) {
+    var c = canvas(n), g = c.getContext('2d'), D = n / 5, a = lat.A * D, i, j, b, pass;
     g.fillStyle = '#0b0e22'; g.fillRect(0, 0, n, n);
     g.strokeStyle = 'rgba(143,212,255,0.07)'; g.lineWidth = 1.5;
     for (i = 0; i <= 5; i++) { g.beginPath(); g.moveTo(i * D, 0); g.lineTo(i * D, n); g.stroke(); g.beginPath(); g.moveTo(0, i * D); g.lineTo(n, i * D); g.stroke(); }
-    for (i = -1; i <= 5; i++) for (j = -1; j <= 5; j++) drawSprite(g, (i + 0.5) * D, (j + 0.5) * D, a, 0.5, 0.85);
-    for (i = -1; i <= 6; i++) for (j = -1; j <= 6; j++) drawSprite(g, i * D, j * D, a, 1, 1);
+    for (pass = 0; pass < 2; pass++) for (b = 0; b < lat.basis.length; b++) {
+      var bs = lat.basis[b], back = bs[2] < 0;
+      if ((pass === 0) !== back) continue;
+      for (i = -1; i <= 6; i++) for (j = -1; j <= 6; j++) drawSprite(g, (i + bs[0]) * D, (j + bs[1]) * D, a, back ? 0.5 : 1, back ? 0.85 : 1);
+    }
     return c;
   }
 
+  // Hạt nhân: xếp proton và neutron sát nhau thành khối cầu
   function makeNucleus(nP, nN) {
-    var A = nP + nN, r = mulberry32(99), pts = [], i, j, it, rn = 0.27;
+    var A = nP + nN, r = mulberry32(99 + A), pts = [], i, j, it, rn = 0.27;
+    var R0 = rn * Math.cbrt(A) * 1.25;
     for (i = 0; i < A; i++) {
       var p; do { p = [r() * 2 - 1, r() * 2 - 1, r() * 2 - 1]; } while (p[0] * p[0] + p[1] * p[1] + p[2] * p[2] > 1);
-      pts.push(p);
+      pts.push([p[0] * R0, p[1] * R0, p[2] * R0]);
     }
-    for (it = 0; it < 260; it++) {
+    var iters = A > 120 ? 160 : 260;
+    for (it = 0; it < iters; it++) {
       for (i = 0; i < A; i++) { pts[i][0] *= 0.985; pts[i][1] *= 0.985; pts[i][2] *= 0.985; }
       for (i = 0; i < A; i++) for (j = i + 1; j < A; j++) {
         var dx = pts[j][0] - pts[i][0], dy = pts[j][1] - pts[i][1], dz = pts[j][2] - pts[i][2];
-        var d = Math.sqrt(dx * dx + dy * dy + dz * dz) || 0.001, ov = 2 * rn - d;
-        if (ov > 0) { var f = ov / d * 0.5; pts[i][0] -= dx * f; pts[i][1] -= dy * f; pts[i][2] -= dz * f; pts[j][0] += dx * f; pts[j][1] += dy * f; pts[j][2] += dz * f; }
+        var d2 = dx * dx + dy * dy + dz * dz;
+        if (d2 >= 4 * rn * rn) continue;
+        var d = Math.sqrt(d2) || 0.001, f = (2 * rn - d) / d * 0.5;
+        pts[i][0] -= dx * f; pts[i][1] -= dy * f; pts[i][2] -= dz * f; pts[j][0] += dx * f; pts[j][1] += dy * f; pts[j][2] += dz * f;
       }
     }
     var maxR = 0;
@@ -300,24 +352,29 @@
     var types = [];
     for (i = 0; i < A; i++) types.push(i < nP ? 1 : 0);
     for (i = A - 1; i > 0; i--) { j = Math.floor(r() * (i + 1)); var t = types[i]; types[i] = types[j]; types[j] = t; }
-    return pts.map(function (p, k) { return { x: p[0] / maxR, y: p[1] / maxR, z: p[2] / maxR, p: types[k], ph: r() * 6.28 }; }).concat([]).map(function (o) { o.rn = rn / maxR; return o; });
+    return pts.map(function (p, k) { return { x: p[0] / maxR, y: p[1] / maxR, z: p[2] / maxR, p: types[k], ph: r() * 6.28, rn: rn / maxR }; });
   }
 
-  var SURF = makeSurfaceTile(512);
-  var GRAIN = makeGrainTile(384);
-  var SPRITE = makeCloudSprite();
-  var LATTILE = makeLatticeTile(1024);
-  var NUC = makeNucleus(26, 30);
+  var cache = { surf: {}, grain: {}, lat: {}, nuc: {} };
+  function getSurf(mk) { return cache.surf[mk] || (cache.surf[mk] = makeSurfaceTile(512, MATERIALS[mk].base)); }
+  function getGrain(mk) { return cache.grain[mk] || (cache.grain[mk] = makeGrainTile(384, MATERIALS[mk].base, MATERIALS[mk].hv)); }
+  function getLatTile(lk) { return cache.lat[lk] || (cache.lat[lk] = makeLatticeTile(1024, LATTICES[lk])); }
+  function getNuc(ek) { var e = ELEMENTS[ek]; return cache.nuc[ek] || (cache.nuc[ek] = makeNucleus(e.Z, e.N)); }
+  // Bán kính hạt nhân trên màn hình (so với khung): to theo căn bậc ba số hạt, như ngoài đời
+  function nucR(ek) { var e = ELEMENTS[ek]; return 0.26 * Math.cbrt((e.Z + e.N) / 56); }
 
-  // ---------- các tầng ----------
+  // vật thể đang chọn
+  var cur, curMat, curEl, curLatKey, curLat, LEVELS, N = 7, ATOM = 4;
+
+  // =====================================================================
+  // Vẽ các tầng
+  // =====================================================================
   function bg(ctx, v, col) { ctx.fillStyle = col; ctx.fillRect(0, 0, v.W, v.H); }
-
   function drawTiled(ctx, v, tile, worldM, s) {
     var ts = worldM * v.M * s;
     var x0 = v.cx - Math.ceil(v.cx / ts) * ts, y0 = v.cy - Math.ceil(v.cy / ts) * ts;
     for (var x = x0; x < v.W; x += ts) for (var y = y0; y < v.H; y += ts) ctx.drawImage(tile, x, y, ts + 0.6, ts + 0.6);
   }
-
   function drawImageLayer(ctx, v, img, s) {
     bg(ctx, v, '#000');
     var side = 2 * v.HD * s, w = img.naturalWidth, h = img.naturalHeight, dw, dh;
@@ -325,7 +382,7 @@
     ctx.drawImage(img, v.cx - dw / 2, v.cy - dh / 2, dw, dh);
   }
 
-  function drawObject(ctx, v, s) {
+  function drawWood(ctx, v, s) {
     var M = v.M, cx = v.cx, cy = v.cy, k;
     var gr = ctx.createLinearGradient(0, 0, 0, v.H);
     gr.addColorStop(0, '#5a3d27'); gr.addColorStop(0.5, '#7a5638'); gr.addColorStop(1, '#5c3f29');
@@ -341,37 +398,99 @@
       }
       ctx.stroke();
     }
-    function X(u) { return cx + u * M * s; } function Y(u) { return cy + u * M * s; }
+  }
+  function shadow(ctx, v, s, x, y, rx, ry) {
     ctx.fillStyle = 'rgba(0,0,0,0.22)';
-    for (k = 0; k < 3; k++) { ctx.beginPath(); ctx.ellipse(X(0.02), Y(0.13 + k * 0.01), (0.7 + k * 0.03) * M * s, (0.05 + k * 0.015) * M * s, 0, 0, 6.2832); ctx.fill(); }
+    for (var k = 0; k < 3; k++) { ctx.beginPath(); ctx.ellipse(v.cx + x * v.M * s, v.cy + (y + k * 0.01) * v.M * s, (rx + k * 0.03) * v.M * s, (ry + k * 0.015) * v.M * s, 0, 0, 6.2832); ctx.fill(); }
+  }
+  function scratches(ctx, v, s, seed, x0, x1, hy, col) {
+    var r = mulberry32(seed), M = v.M;
+    ctx.strokeStyle = col; ctx.lineWidth = Math.max(0.5, 0.0025 * M * s);
+    for (var k = 0; k < 14; k++) {
+      var sx = x0 + r() * (x1 - x0), sy = (r() - 0.5) * hy;
+      ctx.beginPath(); ctx.moveTo(v.cx + sx * M * s, v.cy + sy * M * s); ctx.lineTo(v.cx + (sx + 0.03 + r() * 0.08) * M * s, v.cy + (sy + (r() - 0.5) * 0.01) * M * s); ctx.stroke();
+    }
+  }
+
+  function drawNail(ctx, v, s) {
+    drawWood(ctx, v, s);
+    var M = v.M, cx = v.cx, cy = v.cy;
+    function X(u) { return cx + u * M * s; } function Y(u) { return cy + u * M * s; }
+    shadow(ctx, v, s, 0.02, 0.13, 0.7, 0.05);
     var mg = ctx.createLinearGradient(0, Y(-0.085), 0, Y(0.085));
     mg.addColorStop(0, '#454a57'); mg.addColorStop(0.28, '#d5d9e2'); mg.addColorStop(0.42, '#f5f7fb'); mg.addColorStop(0.7, '#878d9b'); mg.addColorStop(1, '#353944');
     ctx.fillStyle = mg;
     ctx.beginPath(); ctx.moveTo(X(-0.62), Y(-0.085)); ctx.lineTo(X(0.38), Y(-0.085)); ctx.lineTo(X(0.64), Y(0)); ctx.lineTo(X(0.38), Y(0.085)); ctx.lineTo(X(-0.62), Y(0.085)); ctx.closePath(); ctx.fill();
     var hg = ctx.createLinearGradient(0, Y(-0.21), 0, Y(0.21));
     hg.addColorStop(0, '#4a4f5c'); hg.addColorStop(0.35, '#dfe3ea'); hg.addColorStop(0.55, '#aab0bd'); hg.addColorStop(1, '#3a3e49');
-    ctx.fillStyle = hg;
-    ctx.beginPath(); ctx.roundRect ? ctx.roundRect(X(-0.67), Y(-0.21), 0.055 * M * s, 0.42 * M * s, 0.012 * M * s) : ctx.rect(X(-0.67), Y(-0.21), 0.055 * M * s, 0.42 * M * s); ctx.fill();
-    ctx.strokeStyle = 'rgba(60,64,76,0.5)'; ctx.lineWidth = Math.max(0.5, 0.0025 * M * s);
-    var r = mulberry32(3);
-    for (k = 0; k < 14; k++) { var sx = -0.55 + r() * 0.9, sy = (r() - 0.5) * 0.12; ctx.beginPath(); ctx.moveTo(X(sx), Y(sy)); ctx.lineTo(X(sx + 0.03 + r() * 0.08), Y(sy + (r() - 0.5) * 0.01)); ctx.stroke(); }
+    ctx.fillStyle = hg; ctx.fillRect(X(-0.67), Y(-0.21), 0.055 * M * s, 0.42 * M * s);
+    scratches(ctx, v, s, 3, -0.55, 0.35, 0.12, 'rgba(60,64,76,0.5)');
   }
 
-  function drawSurface(ctx, v, s) { bg(ctx, v, '#8e939e'); drawTiled(ctx, v, SURF, 0.55, s); }
-  function drawGrains(ctx, v, s) { bg(ctx, v, '#6d7079'); drawTiled(ctx, v, GRAIN, 0.9, s); }
+  function drawWire(ctx, v, s) {
+    drawWood(ctx, v, s);
+    var M = v.M, cx = v.cx, cy = v.cy;
+    function X(u) { return cx + u * M * s; } function Y(u) { return cy + u * M * s; }
+    shadow(ctx, v, s, -0.2, 0.13, 0.9, 0.05);
+    var g = ctx.createLinearGradient(0, Y(-0.09), 0, Y(0.09));
+    g.addColorStop(0, '#4f220e'); g.addColorStop(0.25, '#d98b58'); g.addColorStop(0.42, '#ffd6b5'); g.addColorStop(0.68, '#b0612f'); g.addColorStop(1, '#40190a');
+    ctx.fillStyle = g; ctx.fillRect(X(-1.4), Y(-0.09), 1.95 * M * s, 0.18 * M * s);
+    ctx.fillStyle = '#c9794a'; ctx.beginPath(); ctx.ellipse(X(0.55), Y(0), 0.028 * M * s, 0.09 * M * s, 0, 0, 6.2832); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,214,180,0.6)'; ctx.lineWidth = Math.max(1, 0.004 * M * s); ctx.stroke();
+    scratches(ctx, v, s, 11, -0.9, 0.45, 0.13, 'rgba(90,40,18,0.45)');
+  }
+
+  function drawRing(ctx, v, s) {
+    var M = v.M, cx = v.cx, cy = v.cy;
+    var vel = ctx.createRadialGradient(cx, cy, 0, cx, cy, v.HD);
+    vel.addColorStop(0, '#22306a'); vel.addColorStop(1, '#0b1030');
+    ctx.fillStyle = vel; ctx.fillRect(0, 0, v.W, v.H);
+    var rcx = cx, rcy = cy - 0.24 * M * s, rx = 0.36 * M * s, ry = 0.24 * M * s, lw = 0.11 * M * s;
+    ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(rcx + 0.03 * M * s, rcy + 0.06 * M * s, rx + lw * 0.4, ry + lw * 0.4, 0, 0, 6.2832); ctx.fill();
+    ctx.lineCap = 'butt';
+    ctx.strokeStyle = '#a87d26'; ctx.lineWidth = lw;
+    ctx.beginPath(); ctx.ellipse(rcx, rcy, rx, ry, 0, Math.PI, 2 * Math.PI); ctx.stroke();
+    ctx.strokeStyle = '#d4a238'; ctx.lineWidth = lw;
+    ctx.beginPath(); ctx.ellipse(rcx, rcy, rx, ry, 0, 0, Math.PI); ctx.stroke();
+    ctx.strokeStyle = 'rgba(94,62,10,0.6)'; ctx.lineWidth = lw * 0.22;
+    ctx.beginPath(); ctx.ellipse(rcx, rcy + lw * 0.38, rx, ry, 0, 0.05, Math.PI - 0.05); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,243,196,0.85)'; ctx.lineWidth = lw * 0.26;
+    ctx.beginPath(); ctx.ellipse(rcx, rcy - lw * 0.16, rx, ry, 0, 0.1, Math.PI - 0.1); ctx.stroke();
+  }
+
+  function drawSinker(ctx, v, s) {
+    drawWood(ctx, v, s);
+    var M = v.M, cx = v.cx, cy = v.cy, rx = 0.42 * M * s, ry = 0.22 * M * s;
+    shadow(ctx, v, s, 0.03, 0.2, 0.42, 0.06);
+    var g = ctx.createRadialGradient(cx - rx * 0.3, cy - ry * 0.45, ry * 0.1, cx, cy, rx * 1.05);
+    g.addColorStop(0, '#cdd2dc'); g.addColorStop(0.45, '#828895'); g.addColorStop(1, '#3a3f49');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, 6.2832); ctx.fill();
+    var r = mulberry32(17);
+    ctx.fillStyle = 'rgba(40,44,52,0.25)';
+    for (var k = 0; k < 40; k++) {
+      var a = r() * 6.28, d = Math.sqrt(r()) * 0.9;
+      ctx.beginPath(); ctx.arc(cx + Math.cos(a) * d * rx, cy + Math.sin(a) * d * ry, (0.003 + r() * 0.008) * M * s, 0, 6.2832); ctx.fill();
+    }
+    ctx.fillStyle = '#1c1f26';
+    ctx.beginPath(); ctx.ellipse(cx - rx * 0.985, cy, 0.012 * M * s, 0.028 * M * s, 0, 0, 6.2832); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx + rx * 0.985, cy, 0.012 * M * s, 0.028 * M * s, 0, 0, 6.2832); ctx.fill();
+  }
+
+  function drawSurface(ctx, v, s) { bg(ctx, v, rgb(curMat.base)); drawTiled(ctx, v, getSurf(cur.mat), 0.55, s); }
+  function drawGrains(ctx, v, s) { bg(ctx, v, rgb(curMat.base)); drawTiled(ctx, v, getGrain(cur.mat), 0.9, s); }
 
   // ---------- xoay 3D (dùng chung cho các tầng xoay được) ----------
   var THREE_D = [3, 4, 6];
+  var z = ZMIN, target = ZMIN;
   var rot = { yaw: 0, pitch: 0, vy: 0, vp: 0, drag: false, demo: null };
   function rotMag() { return Math.abs(rot.yaw) + Math.abs(rot.pitch); }
   function rotator() {
     var cy = Math.cos(rot.yaw), sy = Math.sin(rot.yaw), cp = Math.cos(rot.pitch), sp = Math.sin(rot.pitch);
-    return function (x, y, z) {
-      var x1 = x * cy + z * sy, z1 = -x * sy + z * cy;
-      return [x1, y * cp - z1 * sp, y * sp + z1 * cp];
-    };
+    return function (x, y, zz) { var x1 = x * cy + zz * sy, z1 = -x * sy + zz * cy; return [x1, y * cp - z1 * sp, y * sp + z1 * cp]; };
   }
-  function is3D() { return z >= 2.85 && THREE_D.indexOf(clamp(Math.round(z), 0, N - 1)) >= 0; }
+  function nearestLevel() { return clamp(Math.round(z), 0, N - 1); }
+  function is3D() { return z >= 2.85 && THREE_D.indexOf(nearestLevel()) >= 0; }
+  function limitLatticeTilt() { if (nearestLevel() !== 3) return; rot.yaw = clamp(rot.yaw, -0.9, 0.9); rot.pitch = clamp(rot.pitch, -0.9, 0.9); }
   function updateRot(dt) {
     if (rot.drag) return;
     if (!is3D()) {
@@ -381,63 +500,60 @@
       if (rotMag() < 0.002) rot.yaw = rot.pitch = 0;
       return;
     }
-    if (rot.demo) {
-      var kd = Math.min(1, dt * 1.6);
-      rot.yaw += (rot.demo[0] - rot.yaw) * kd; rot.pitch += (rot.demo[1] - rot.pitch) * kd;
-      return;
-    }
+    if (rot.demo) { var kd = Math.min(1, dt * 1.6); rot.yaw += (rot.demo[0] - rot.yaw) * kd; rot.pitch += (rot.demo[1] - rot.pitch) * kd; return; }
     rot.yaw += rot.vy * dt; rot.pitch = clamp(rot.pitch + rot.vp * dt, -1.2, 1.2);
     var damp = Math.exp(-dt * 5); rot.vy *= damp; rot.vp *= damp;
     limitLatticeTilt();
   }
-  function limitLatticeTilt() {
-    if (clamp(Math.round(z), 0, N - 1) !== 3) return;
-    rot.yaw = clamp(rot.yaw, -0.9, 0.9); rot.pitch = clamp(rot.pitch, -0.9, 0.9);
-  }
 
-  function drawLatticeLines(ctx, v, D, alpha) {
+  // ---------- mạng nguyên tử ----------
+  function latLines(ctx, v, D, alpha) {
     var i0 = Math.floor(-v.cx / D) - 1, i1 = Math.ceil((v.W - v.cx) / D) + 1, i;
     var j0 = Math.floor(-v.cy / D) - 1, j1 = Math.ceil((v.H - v.cy) / D) + 1;
     ctx.strokeStyle = 'rgba(143,212,255,' + alpha + ')'; ctx.lineWidth = 1.5;
     for (i = i0; i <= i1; i++) { ctx.beginPath(); ctx.moveTo(v.cx + i * D, 0); ctx.lineTo(v.cx + i * D, v.H); ctx.stroke(); }
     for (i = j0; i <= j1; i++) { ctx.beginPath(); ctx.moveTo(0, v.cy + i * D); ctx.lineTo(v.W, v.cy + i * D); ctx.stroke(); }
   }
-  function drawLattice2D(ctx, v, s, D) {
-    if (D < 0.08 * v.M) { drawTiled(ctx, v, LATTILE, 5 * 0.2, s); return; }
-    var a = A_PER_D * D, i, j;
-    var i0 = Math.floor(-v.cx / D) - 1, i1 = Math.ceil((v.W - v.cx) / D) + 1;
-    var j0 = Math.floor(-v.cy / D) - 1, j1 = Math.ceil((v.H - v.cy) / D) + 1;
-    drawLatticeLines(ctx, v, D, 0.07);
-    for (i = i0; i <= i1; i++) for (j = j0; j <= j1; j++) drawSprite(ctx, v.cx + (i + 0.5) * D, v.cy + (j + 0.5) * D, a, 0.5, 0.85);
-    for (i = i0; i <= i1; i++) for (j = j0; j <= j1; j++) drawSprite(ctx, v.cx + i * D, v.cy + j * D, a, 1, 1);
-  }
   function drawLattice(ctx, v, s) {
     bg(ctx, v, '#0b0e22');
-    var D = 0.2 * v.M * s, mg = rotMag();
-    if (mg < 0.004) { drawLattice2D(ctx, v, s, D); return; }
+    var lat = curLat, D = 0.2 * v.M * s, mg = rotMag(), a = lat.A * D, i, j, k, b;
+    if (mg < 0.004) {
+      if (D < 0.08 * v.M) { drawTiled(ctx, v, getLatTile(curLatKey), 1.0, s); return; }
+      var i0 = Math.floor(-v.cx / D) - 1, i1 = Math.ceil((v.W - v.cx) / D) + 1;
+      var j0 = Math.floor(-v.cy / D) - 1, j1 = Math.ceil((v.H - v.cy) / D) + 1;
+      latLines(ctx, v, D, 0.07);
+      for (var pass = 0; pass < 2; pass++) for (b = 0; b < lat.basis.length; b++) {
+        var bs = lat.basis[b], back = bs[2] < 0;
+        if ((pass === 0) !== back) continue;
+        for (i = i0; i <= i1; i++) for (j = j0; j <= j1; j++) drawSprite(ctx, v.cx + (i + bs[0]) * D, v.cy + (j + bs[1]) * D, a, back ? 0.5 : 1, back ? 0.85 : 1);
+      }
+      return;
+    }
     var k3 = smooth(0, 0.18, mg);
-    if (k3 < 1) drawLatticeLines(ctx, v, D, 0.07 * (1 - k3));
-    var R = rotator(), a = A_PER_D * D, nx = Math.min(7, Math.ceil(v.HD / D) + 1), list = [], i, j, k;
-    function add(x, y, zz, deep) { var p = R(x, y, zz); list.push([v.cx + p[0], v.cy + p[1], p[2], deep]); }
-    for (i = -nx; i <= nx; i++) for (j = -nx; j <= nx; j++) {
-      for (k = 0; k >= -2; k--) add(i * D, j * D, k * D, k < 0);
-      for (k = 0; k < 2; k++) add((i + 0.5) * D, (j + 0.5) * D, -(k + 0.5) * D, k > 0);
+    if (k3 < 1) latLines(ctx, v, D, 0.07 * (1 - k3));
+    var R = rotator(), nx = Math.min(7, Math.ceil(v.HD / D) + 1), list = [];
+    for (i = -nx; i <= nx; i++) for (j = -nx; j <= nx; j++) for (b = 0; b < lat.basis.length; b++) for (k = 0; k >= -2; k--) {
+      var bb = lat.basis[b], zz = bb[2] + k, p = R((i + bb[0]) * D, (j + bb[1]) * D, zz * D);
+      list.push([v.cx + p[0], v.cy + p[1], p[2], zz < -0.6, zz]);
     }
     list.sort(function (p, q) { return p[2] - q[2]; });
     var lim = 0.5 * D;
     for (i = 0; i < list.length; i++) {
-      var p = list[i];
-      if (p[0] < -lim || p[0] > v.W + lim || p[1] < -lim || p[1] > v.H + lim) continue;
-      var zz = p[2] / D, al = zz >= 0 ? 1 : Math.exp(zz * 1.386), sc = clamp(1 + 0.3 * zz, 0.35, 1.25);
-      if (p[3]) al *= k3;
+      var q = list[i];
+      if (q[0] < -lim || q[0] > v.W + lim || q[1] < -lim || q[1] > v.H + lim) continue;
+      // độ mờ theo lớp nguyên tử gốc (không theo độ sâu sau khi xoay), để cả tấm vẫn rõ khi nghiêng
+      var zl = q[4], zr = q[2] / D;
+      var al = Math.exp(zl * 1.386 * (1 - 0.6 * k3));
+      var sc = clamp(1 + 0.3 * zl * (1 - k3) + 0.06 * zr * k3, 0.5, 1.3);
+      if (q[3]) al *= k3;
       if (al < 0.02) continue;
-      drawSprite(ctx, p[0], p[1], a, al, sc);
+      drawSprite(ctx, q[0], q[1], a, al, sc);
     }
-    // khối lập phương của ô ở giữa: xoay lên mới thấy có một nguyên tử nằm ngay chính giữa
+    // khối lập phương của ô ở giữa
     var ca = 0.7 * k3;
     if (ca > 0.02) {
       var vs = [], e = [[0, 1], [1, 3], [3, 2], [2, 0], [4, 5], [5, 7], [7, 6], [6, 4], [0, 4], [1, 5], [2, 6], [3, 7]];
-      for (k = 0; k < 8; k++) { var q = R((k & 1) * D, ((k >> 1) & 1) * D, -((k >> 2) & 1) * D); vs.push([v.cx + q[0], v.cy + q[1]]); }
+      for (k = 0; k < 8; k++) { var c3 = R((k & 1) * D, ((k >> 1) & 1) * D, -((k >> 2) & 1) * D); vs.push([v.cx + c3[0], v.cy + c3[1]]); }
       ctx.strokeStyle = 'rgba(242,166,90,' + ca + ')'; ctx.lineWidth = 2;
       ctx.beginPath();
       for (k = 0; k < e.length; k++) { ctx.moveTo(vs[e[k][0]][0], vs[e[k][0]][1]); ctx.lineTo(vs[e[k][1]][0], vs[e[k][1]][1]); }
@@ -445,10 +561,20 @@
     }
   }
 
-  // ---------- electron sống ----------
-  var pts = [], pings = [], spawnAcc = 0, totalSeen = 0;
-  var slow = false, sinceRelease = 99;
-  var audio = null;
+  // các nguyên tử hàng xóm quanh nguyên tử chính giữa (lấy từ kiểu xếp)
+  function neighborsOf(lat) {
+    if (lat._nb) return lat._nb;
+    var out = [];
+    for (var i = -2; i <= 2; i++) for (var j = -2; j <= 2; j++) for (var b = 0; b < lat.basis.length; b++) {
+      var x = i + lat.basis[b][0], y = j + lat.basis[b][1], zz = lat.basis[b][2];
+      if (Math.abs(x) <= 1.001 && Math.abs(y) <= 1.001 && !(x === 0 && y === 0 && zz === 0)) out.push([x, y, zz, zz === 0 ? 0.45 : 0.25]);
+    }
+    lat._nb = out;
+    return out;
+  }
+
+  // ---------- electron ----------
+  var pts = [], pings = [], spawnAcc = 0, totalSeen = 0, slow = false, sinceRelease = 99, audio = null;
   function tick(snd) {
     if (!snd) return;
     try {
@@ -482,14 +608,10 @@
 
   function drawAtom(ctx, v, s, now) {
     bg(ctx, v, '#0b0e22');
-    var M = v.M, D8 = 1.6 * M * s, a = 0.14 * M * s, cx = v.cx, cy = v.cy, i, R = rotator(), k3 = smooth(0, 0.18, rotMag());
+    var M = v.M, lat = curLat, D8 = 1.6 * M * s, a = lat.A * 1.6 * M * s, cx = v.cx, cy = v.cy, i, R = rotator(), k3 = smooth(0, 0.18, rotMag());
     var cyw = Math.cos(rot.yaw), syw = Math.sin(rot.yaw), cp = Math.cos(rot.pitch), sp = Math.sin(rot.pitch);
-    var aN = A_PER_D * D8, lim = 4.6 * aN, nb = [];
-    [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]].forEach(function (c) { nb.push([c[0], c[1], 0, 0.45]); });
-    [[0.5, 0.5], [0.5, -0.5], [-0.5, 0.5], [-0.5, -0.5]].forEach(function (c) {
-      nb.push([c[0], c[1], -0.5, 0.25]);
-      if (k3 > 0) nb.push([c[0], c[1], 0.5, 0.25 * k3]);
-    });
+    var aN = lat.A * D8, lim = 4.6 * aN, nb = neighborsOf(lat).slice();
+    if (k3 > 0) neighborsOf(lat).forEach(function (n) { if (n[2] < 0) nb.push([n[0], n[1], -n[2], n[3] * k3]); });
     var proj = nb.map(function (n) { var p = R(n[0] * D8, n[1] * D8, n[2] * D8); return [cx + p[0], cy + p[1], p[2] / D8, n[3]]; });
     proj.sort(function (p, q) { return p[2] - q[2]; });
     function drawNb(front) {
@@ -501,7 +623,6 @@
       }
     }
     drawNb(false);
-
     cloudGlow(ctx, cx, cy, a, Math.min(1, pts.length / 3000));
     ctx.globalCompositeOperation = 'lighter';
     var lastC = -1;
@@ -525,26 +646,26 @@
     ctx.globalCompositeOperation = 'source-over';
     for (i = 0; i < pings.length; i++) {
       var q = pings[i], f = (now - q.b) / 0.6;
-      ctx.strokeStyle = 'rgba(143,212,255,' + (0.6 * (1 - f)) + ')'; ctx.lineWidth = 2;
       var qx = q.x * cyw + q.z * syw, qz1 = -q.x * syw + q.z * cyw, qy = q.y * cp - qz1 * sp;
+      ctx.strokeStyle = 'rgba(143,212,255,' + (0.6 * (1 - f)) + ')'; ctx.lineWidth = 2;
       ctx.beginPath(); ctx.arc(cx + qx * a, cy + qy * a, 6 + f * 34, 0, 6.2832); ctx.stroke();
     }
     drawNb(true);
-    var rn = Math.max(1.3, 0.33 * M * s / 512);
+    var rn = Math.max(1.3, nucR(curMat.el) * M * s / 512);
     ctx.fillStyle = '#f2a65a'; ctx.beginPath(); ctx.arc(cx, cy, rn, 0, 6.2832); ctx.fill();
   }
 
   var blips = [];
   function drawEmpty(ctx, v, s, now) {
     bg(ctx, v, '#080a1c');
-    ctx.fillStyle = 'rgb(143,212,255)';
+    ctx.fillStyle = 'rgb(60,212,255)';
     for (var i = 0; i < blips.length; i++) {
       var b = blips[i], al = 1 - (now - b.b) / 0.5;
       if (al <= 0) continue;
       ctx.globalAlpha = al; ctx.beginPath(); ctx.arc(b.x * v.W, b.y * v.H, 2.2, 0, 6.2832); ctx.fill();
     }
     ctx.globalAlpha = 1;
-    var rn = Math.max(1.3, 0.33 * v.M * s / 64);
+    var rn = Math.max(1.3, nucR(curMat.el) * v.M * s / 64);
     var g = ctx.createRadialGradient(v.cx, v.cy, 0, v.cx, v.cy, rn * 5);
     g.addColorStop(0, 'rgba(242,166,90,0.5)'); g.addColorStop(1, 'rgba(242,166,90,0)');
     ctx.fillStyle = g; ctx.beginPath(); ctx.arc(v.cx, v.cy, rn * 5, 0, 6.2832); ctx.fill();
@@ -553,17 +674,15 @@
 
   function drawNucleus(ctx, v, s, now) {
     bg(ctx, v, '#07091a');
-    var RN = 0.33 * v.M * s, cx = v.cx, cy = v.cy;
+    var RN = nucR(curMat.el) * v.M * s, cx = v.cx, cy = v.cy;
     var glow = ctx.createRadialGradient(cx, cy, RN * 0.3, cx, cy, RN * 1.9);
     glow.addColorStop(0, 'rgba(242,166,90,0.22)'); glow.addColorStop(1, 'rgba(242,166,90,0)');
     ctx.fillStyle = glow; ctx.fillRect(0, 0, v.W, v.H);
     var yaw = now * 0.22 + rot.yaw, pitch = 0.35 + rot.pitch, cyw = Math.cos(yaw), syw = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
-    var list = NUC.map(function (o) {
-      var j = 0.012 * Math.sin(now * 3 + o.ph);
-      var x = o.x + j, y = o.y, z = o.z;
-      var x1 = x * cyw + z * syw, z1 = -x * syw + z * cyw;
-      var y2 = y * cp - z1 * sp, z2 = y * sp + z1 * cp;
-      return { x: x1, y: y2, z: z2, p: o.p, rn: o.rn };
+    var list = getNuc(curMat.el).map(function (o) {
+      var x = o.x + 0.012 * Math.sin(now * 3 + o.ph), y = o.y, zz = o.z;
+      var x1 = x * cyw + zz * syw, z1 = -x * syw + zz * cyw;
+      return { x: x1, y: y * cp - z1 * sp, z: y * sp + z1 * cp, p: o.p, rn: o.rn };
     }).sort(function (a, b) { return a.z - b.z; });
     for (var i = 0; i < list.length; i++) {
       var o = list[i], persp = 1 + o.z * 0.09, x = cx + o.x * RN * persp, y = cy + o.y * RN * persp, rr = o.rn * RN * persp * 1.04;
@@ -576,41 +695,41 @@
     ctx.globalAlpha = 1;
   }
 
-  // ---------- dữ liệu module: cái đinh sắt ----------
-  var LEVELS = [
-    { id: 'vat-the', name: 'Cái đinh', frame: 0.06, trans: 'lens', img: true, draw: drawObject,
-      cap: 'Một cái đinh sắt. Con cầm được, nhìn được. Phóng to vào thân đinh xem bên trong có gì nhé.',
-      prompt: 'Ảnh chụp cận cảnh một cái đinh sắt nằm ngang trên mặt bàn gỗ, nhìn thẳng từ trên xuống. Thân đinh chạy ngang qua chính giữa khung hình, mũ đinh bên trái, mũi nhọn bên phải. Kim loại xám bạc có vài vết xước nhỏ, ánh sáng mềm chiếu từ trên xuống. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ, không có tay người.' },
-    { id: 'be-mat', name: 'Bề mặt', frame: 0.002, trans: 'lens', img: true, draw: drawSurface,
-      cap: 'Bề mặt đinh trông nhẵn bóng, phóng to lên mới thấy đầy vết xước và hố nhỏ.',
-      prompt: 'Ảnh kính hiển vi điện tử của bề mặt thân đinh thép, phóng to khoảng 30 lần. Kim loại xám bạc đầy vết xước song song, rãnh mài nhỏ và vài hốc li ti. Hoa văn trải đều kín toàn bộ khung hình, không có vật nào nổi bật ở giữa, không có khoảng nền trống. Ảnh vuông 1:1, sắc nét, không có chữ, không có thước đo.' },
-    { id: 'hat', name: 'Hạt tinh thể', frame: 2e-4, trans: 'lens', img: true, draw: drawGrains,
-      cap: 'Sắt không phải một khối liền. Nó ghép từ rất nhiều mảnh nhỏ gọi là hạt tinh thể, nằm sát vào nhau.',
-      prompt: 'Ảnh kính hiển vi kim tương của sắt đã đánh bóng và tẩy axit. Bề mặt gồm hàng chục hạt tinh thể hình đa giác ghép khít nhau như những thửa ruộng nhìn từ trên cao, ngăn cách bằng đường ranh giới mảnh màu sẫm. Mỗi hạt một sắc độ khác nhau: xám, nâu nhạt, hơi ánh xanh. Kín toàn bộ khung hình. Ảnh vuông 1:1, không có chữ, không có thước đo.' },
-    { id: 'mang', name: 'Nguyên tử xếp hàng', frame: 1.4e-9, trans: 'lens', img: false, draw: drawLattice,
-      fixed: 'Tầng này luôn vẽ bằng code: đúng kiểu xếp của sắt (có nguyên tử nằm giữa mỗi khối lập phương) và xoay 3D được.',
-      cap: 'Bên trong mỗi hạt, các nguyên tử sắt xếp hàng thẳng tắp. Kéo để xoay: mỗi ô là một khối lập phương, có một nguyên tử nằm ngay chính giữa.',
-      warn: 'Hình code đang đúng khoảng cách thật và nối liền với tầng electron. Ảnh AI hay xếp lệch hàng.',
-      prompt: 'Minh hoạ khoa học cho trẻ em: các nguyên tử sắt xếp thành hàng thẳng tắp đều đặn như ô bàn cờ, nhìn thẳng từ trên xuống. Mỗi nguyên tử là một đám mây chấm sáng xanh nhạt, dày ở giữa và mờ dần ra rìa, chính giữa có một chấm cam rất nhỏ. Giữa các nguyên tử có khoảng trống tối rõ ràng. Nền xanh đen thẳm, kín toàn khung hình. Ảnh vuông 1:1, không có chữ.' },
-    { id: 'nguyen-tu', name: 'Một nguyên tử', frame: 1.8e-10, trans: 'fade', img: false, draw: drawAtom,
-      fixed: 'Tầng này luôn vẽ bằng code để các lần phát hiện electron chuyển động, quay chậm và xoay được.',
-      cap: 'Nguyên tử sắt có 26 electron. Mỗi chấm là một lần phát hiện thấy electron ở chỗ đó. Kéo để xoay, giữ nút Quay chậm để xem từng lần một.',
-      capSlow: 'Mỗi chấm là một lần phát hiện thấy electron. Lần này ở chỗ này, lần sau ở chỗ khác, không có đường nào nối giữa chúng.',
-      capRelease: 'Thả ra rồi: phát hiện nhanh dần, hàng nghìn lần mỗi giây. Các chấm chồng lên nhau thành đám mây. Chỗ nào đậm là chỗ hay gặp electron nhất.' },
-    { id: 'trong', name: 'Khoảng trống', frame: 2e-12, trans: 'lens', img: false, draw: drawEmpty,
-      fixed: 'Tầng này luôn vẽ bằng code: nó là khoảng trống nối giữa đám mây electron và hạt nhân.',
-      cap: 'Trống, vẫn trống. Từ đám mây electron vào tới hạt nhân là một khoảng trống mênh mông. Chấm cam ở giữa là hạt nhân, và nó đã được vẽ to hơn thật rất nhiều.' },
-    { id: 'hat-nhan', name: 'Hạt nhân', frame: 1.5e-14, trans: null, img: false, draw: drawNucleus,
-      fixed: 'Tầng này luôn vẽ bằng code: đúng 26 proton và 30 neutron, xoay 3D được.',
-      cap: 'Hạt nhân sắt: 26 hạt cam là proton, 30 hạt xám là neutron, ôm chặt lấy nhau. Kéo để xoay xem mặt sau. Gần như cả sức nặng của cái đinh nằm ở đây.',
-      warn: 'Hình code có đúng 26 proton và 30 neutron. Ảnh AI sẽ không đếm đúng.',
-      prompt: 'Minh hoạ khoa học cho trẻ em: hạt nhân nguyên tử là một khối cầu gồm nhiều quả cầu nhỏ dính chặt vào nhau, khoảng một nửa màu cam ấm (proton), một nửa màu xám bạc (neutron) xen kẽ ngẫu nhiên, ánh sáng mềm, bóng đổ nhẹ giữa các quả cầu. Khối cầu nằm chính giữa và chiếm gần hết khung hình, nền đen thẳm có quầng sáng cam mờ. Ảnh vuông 1:1, không có chữ.' }
-  ];
-  var N = LEVELS.length, ATOM = 4;
+  // =====================================================================
+  // Ghép 7 tầng từ vật thể + vật liệu + nguyên tố
+  // =====================================================================
+  function buildLevels() {
+    var o = cur, m = curMat, e = curEl, latFrame = m.a * 1e-10 * 5;
+    var latCap = m.lattice === 'bcc'
+      ? 'Bên trong mỗi hạt, các nguyên tử ' + e.lower + ' xếp hàng thẳng tắp. Kéo để xoay: mỗi ô là một khối lập phương, có một nguyên tử nằm ngay chính giữa.' + (m.extra ? ' ' + m.extra : '')
+      : 'Bên trong mỗi hạt, các nguyên tử ' + e.lower + ' xếp hàng thẳng tắp. Kéo để xoay: mỗi ô là một khối lập phương, có một nguyên tử nằm giữa mỗi mặt, còn chính giữa khối thì trống.';
+    var latFixed = 'Tầng này luôn vẽ bằng code: đúng kiểu xếp của ' + e.lower + (m.lattice === 'bcc' ? ' (có nguyên tử nằm giữa mỗi khối lập phương)' : ' (có nguyên tử nằm giữa mỗi mặt khối lập phương)') + ' và xoay 3D được.';
+    return [
+      { id: 'vat-the', name: o.name, frame: o.frame, trans: 'lens', img: true, draw: o.draw, cap: o.cap, prompt: o.pObj },
+      { id: 'be-mat', name: 'Bề mặt', frame: 0.002, trans: 'lens', img: true, draw: drawSurface,
+        cap: 'Bề mặt ' + o.short + ' trông nhẵn, phóng to lên mới thấy đầy vết xước và hố nhỏ.', prompt: surfPrompt(o, m) },
+      { id: 'hat', name: 'Hạt tinh thể', frame: 2e-4, trans: 'lens', img: true, draw: drawGrains,
+        cap: m.name + ' không phải một khối liền. Nó ghép từ rất nhiều mảnh nhỏ gọi là hạt tinh thể, nằm sát vào nhau.', prompt: grainPrompt(o, m) },
+      { id: 'mang', name: 'Nguyên tử xếp hàng', frame: latFrame, trans: 'lens', img: false, draw: drawLattice, cap: latCap, fixed: latFixed },
+      { id: 'nguyen-tu', name: 'Một nguyên tử', frame: latFrame / 8, trans: 'fade', img: false, draw: drawAtom,
+        cap: 'Nguyên tử ' + e.lower + ' có ' + e.Z + ' electron. Mỗi chấm là một lần phát hiện thấy electron ở chỗ đó. Kéo để xoay, giữ nút Quay chậm để xem từng lần một.',
+        capSlow: 'Mỗi chấm là một lần phát hiện thấy electron. Lần này ở chỗ này, lần sau ở chỗ khác, không có đường nào nối giữa chúng.',
+        capRelease: 'Thả ra rồi: phát hiện nhanh dần, hàng nghìn lần mỗi giây. Các chấm chồng lên nhau thành đám mây. Chỗ nào đậm là chỗ hay gặp electron nhất.',
+        fixed: 'Tầng này luôn vẽ bằng code để các lần phát hiện electron chuyển động, quay chậm và xoay được.' },
+      { id: 'trong', name: 'Khoảng trống', frame: 2e-12, trans: 'lens', img: false, draw: drawEmpty,
+        cap: 'Trống, vẫn trống. Từ đám mây electron vào tới hạt nhân là một khoảng trống mênh mông. Chấm cam ở giữa là hạt nhân, và nó đã được vẽ to hơn thật rất nhiều.',
+        fixed: 'Tầng này luôn vẽ bằng code: nó là khoảng trống nối giữa đám mây electron và hạt nhân.' },
+      { id: 'hat-nhan', name: 'Hạt nhân', frame: 1.5e-14, trans: null, img: false, draw: drawNucleus,
+        cap: 'Hạt nhân ' + e.lower + ': ' + e.Z + ' hạt cam là proton, ' + e.N + ' hạt xám là neutron, ôm chặt lấy nhau. ' + e.isoNote + ' Kéo để xoay xem mặt sau.',
+        fixed: 'Tầng này luôn vẽ bằng code: đúng ' + e.Z + ' proton và ' + e.N + ' neutron, xoay 3D được.' }
+    ];
+  }
 
-  // ---------- ảnh người dùng ----------
-  var images = {};
-  var db = null;
+  // =====================================================================
+  // Ảnh người dùng: chọn trong trình duyệt (IndexedDB) hoặc để sẵn trong thư mục anh/<vật thể>/
+  // =====================================================================
+  var images = {}, db = null, folderTried = {};
+  function key(levelId) { return cur.id + ':' + levelId; }
   function idbOpen() {
     return new Promise(function (res) {
       try {
@@ -626,28 +745,39 @@
   function idbLoadAll(cb) {
     try {
       if (!db) return;
-      var st = db.transaction('anh', 'readonly').objectStore('anh'), rq = st.openCursor();
+      var rq = db.transaction('anh', 'readonly').objectStore('anh').openCursor();
       rq.onsuccess = function () { var c = rq.result; if (c) { cb(c.key, c.value); c.continue(); } };
     } catch (e) {}
   }
-  function useImage(levelId, src, isBlob) {
-    var img = new Image();
+  function setOwnImage(fullKey, blob) {
+    var url = URL.createObjectURL(blob), img = new Image();
     img.onload = function () {
-      if (!isBlob && images[levelId] && images[levelId].own) return;
-      if (images[levelId] && images[levelId].url) { try { URL.revokeObjectURL(images[levelId].url); } catch (e) {} }
-      images[levelId] = { img: img, url: isBlob ? src : null, own: isBlob };
+      var old = images[fullKey];
+      if (old && old.url) { try { URL.revokeObjectURL(old.url); } catch (e) {} }
+      images[fullKey] = { img: img, url: url, own: true };
       renderSlots();
     };
-    img.onerror = function () {};
-    img.src = src;
+    img.src = url;
   }
-  function key(id) { return 'dinh-sat:' + id; }
+  function tryFolder(objId, levelId, exts, k) {
+    if (k >= exts.length) return;
+    var img = new Image(), fk = objId + ':' + levelId;
+    img.onload = function () { if (images[fk] && images[fk].own) return; images[fk] = { img: img, url: null, own: false }; renderSlots(); };
+    img.onerror = function () { tryFolder(objId, levelId, exts, k + 1); };
+    img.src = 'anh/' + objId + '/' + levelId + '.' + exts[k];
+  }
+  function loadFolderImages(o) {
+    if (folderTried[o.id]) return;
+    folderTried[o.id] = true;
+    ['vat-the', 'be-mat', 'hat'].forEach(function (lid) { tryFolder(o.id, lid, ['png', 'jpg', 'jpeg', 'webp'], 0); });
+  }
 
-  // ---------- vẽ ----------
+  // =====================================================================
+  // Khung vẽ và chuyển tầng (kính lúp)
+  // =====================================================================
   var stage = document.getElementById('stage'), cv = document.getElementById('cv'), ctx = cv.getContext('2d');
   var off = document.createElement('canvas'), octx = off.getContext('2d');
   var V = { W: 300, H: 300, cx: 150, cy: 150, M: 300, HD: 212 }, DPR = 1;
-
   function resize() {
     var r = stage.getBoundingClientRect();
     if (!r.width) return;
@@ -656,9 +786,8 @@
     cv.width = off.width = Math.round(V.W * DPR);
     cv.height = off.height = Math.round(V.H * DPR);
   }
-
   function drawLayer(c, v, idx, s, now) {
-    var L = LEVELS[idx], im = L.img && images[L.id];
+    var L = LEVELS[idx], im = L.img && images[key(L.id)];
     c.save();
     if (im) drawImageLayer(c, v, im.img, s); else L.draw(c, v, s, now);
     c.restore();
@@ -668,8 +797,6 @@
     octx.clearRect(0, 0, off.width, off.height);
     octx.setTransform(DPR, 0, 0, DPR, 0, 0);
   }
-
-  var z = ZMIN, target = ZMIN;
   function render(now) {
     var i, f;
     if (z < 0) { i = 0; f = z; } else { i = Math.min(Math.floor(z), N - 1); f = z - i; }
@@ -696,13 +823,12 @@
     octx.globalCompositeOperation = 'source-over';
     ctx.globalAlpha = a; ctx.drawImage(off, 0, 0, V.W, V.H); ctx.globalAlpha = 1;
     var ra = 0.45 * a * (1 - smooth(0.7, 0.95, f));
-    if (ra > 0.01) {
-      ctx.strokeStyle = 'rgba(190,228,255,' + ra + ')'; ctx.lineWidth = 2.5;
-      ctx.beginPath(); ctx.arc(V.cx, V.cy, r * 0.86, 0, 6.2832); ctx.stroke();
-    }
+    if (ra > 0.01) { ctx.strokeStyle = 'rgba(190,228,255,' + ra + ')'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(V.cx, V.cy, r * 0.86, 0, 6.2832); ctx.stroke(); }
   }
 
-  // ---------- chữ hiển thị ----------
+  // =====================================================================
+  // Chữ hiển thị
+  // =====================================================================
   function fmtNum(x) {
     if (x < 10) { var r = Math.round(x * 10) / 10; return (r % 1 === 0 ? String(r) : r.toFixed(1)).replace('.', ','); }
     return String(Math.round(x));
@@ -728,15 +854,15 @@
   var lvlEl = document.getElementById('lvlName'), magEl = document.getElementById('mag'), capEl = document.getElementById('cap');
   var holdBtn = document.getElementById('hold'), countBox = document.getElementById('count'), countN = document.getElementById('countN');
   var zr = document.getElementById('zr'), track = document.getElementById('track'), hintEl = document.getElementById('hint');
-  var lastNearest = -1, lastCap = '', lastMag = '', speakOn = false;
+  var titleEl = document.getElementById('objTitle'), picker = document.getElementById('picker');
+  var lastNearest = -1, lastCap = '', lastMag = '', speakOn = false, chips = [];
 
-  LEVELS.forEach(function (L, idx) {
+  for (var ci = 0; ci < N; ci++) (function (idx) {
     var b = document.createElement('button');
-    b.type = 'button'; b.className = 'chip'; b.textContent = L.name; b.setAttribute('aria-current', 'false');
+    b.type = 'button'; b.className = 'chip'; b.setAttribute('aria-current', 'false');
     b.addEventListener('click', function () { stopAuto(); target = idx === 0 ? ZMIN : idx; });
-    track.appendChild(b);
-  });
-  var chips = track.querySelectorAll('.chip');
+    track.appendChild(b); chips.push(b);
+  })(ci);
 
   function captionFor(idx) {
     var L = LEVELS[idx];
@@ -754,9 +880,8 @@
       speechSynthesis.speak(u);
     } catch (e) {}
   }
-
   function updateHud() {
-    var nearest = clamp(Math.round(z), 0, N - 1);
+    var nearest = nearestLevel();
     if (nearest !== lastNearest) {
       lastNearest = nearest;
       lvlEl.textContent = LEVELS[nearest].name;
@@ -775,7 +900,38 @@
     if (!sliderActive) zr.value = z.toFixed(2);
   }
 
-  // ---------- điều khiển ----------
+  // =====================================================================
+  // Chọn vật thể
+  // =====================================================================
+  var pickBtns = [];
+  OBJECTS.forEach(function (o, idx) {
+    var e = ELEMENTS[MATERIALS[o.mat].el];
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'pick'; b.setAttribute('aria-pressed', 'false');
+    var sym = document.createElement('span'); sym.className = 'sym'; sym.textContent = e.sym; sym.style.background = e.color;
+    var nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = o.name;
+    var sm = document.createElement('small'); sm.textContent = e.name + ' · ' + e.Z + ' proton'; nm.appendChild(sm);
+    b.appendChild(sym); b.appendChild(nm);
+    b.addEventListener('click', function () { selectObject(idx); });
+    picker.appendChild(b); pickBtns.push(b);
+  });
+
+  function selectObject(idx) {
+    cur = OBJECTS[idx]; curMat = MATERIALS[cur.mat]; curEl = ELEMENTS[curMat.el];
+    curLatKey = curMat.lattice; curLat = LATTICES[curLatKey];
+    LEVELS = buildLevels();
+    titleEl.textContent = cur.title;
+    for (var i = 0; i < pickBtns.length; i++) pickBtns[i].setAttribute('aria-pressed', i === idx ? 'true' : 'false');
+    for (var c = 0; c < chips.length; c++) chips[c].textContent = LEVELS[c].name;
+    lastNearest = -1; lastCap = ''; lastMag = '';
+    loadFolderImages(cur);
+    updateLibHead();
+    renderSlots();
+  }
+
+  // =====================================================================
+  // Điều khiển
+  // =====================================================================
   var sliderActive = false;
   zr.addEventListener('input', function () { stopAuto(); sliderActive = true; target = +zr.value; });
   zr.addEventListener('change', function () { sliderActive = false; });
@@ -837,7 +993,7 @@
   holdBtn.addEventListener('keyup', function (e) { if (e.key === ' ' || e.key === 'Enter') setSlow(false); });
 
   // lặn tự động
-  var auto = { on: false, waitStart: 0 };
+  var auto = { on: false, waitStart: 0 }, autoSlowing = false;
   var btnAuto = document.getElementById('btnAuto');
   function stopAuto() {
     if (!auto.on) return;
@@ -845,7 +1001,6 @@
     rot.demo = null;
     if (autoSlowing) { autoSlowing = false; setSlow(false); }
   }
-  var autoSlowing = false;
   btnAuto.addEventListener('click', function () {
     if (auto.on) { stopAuto(); return; }
     auto.on = true; auto.waitStart = 0;
@@ -862,10 +1017,7 @@
     if (lvl === ATOM && autoSlowing && el > 4.5) { autoSlowing = false; setSlow(false); }
     var wait = lvl === ATOM ? 9 : (lvl === 3 || lvl === 6) ? 7 : 3.2;
     rot.demo = (lvl === 3 || lvl === 6) ? (el < wait * 0.6 ? [0.8, 0.5] : [0, 0]) : null;
-    if (el > wait) {
-      auto.waitStart = 0;
-      if (lvl < N - 1) target = lvl + 1; else stopAuto();
-    }
+    if (el > wait) { auto.waitStart = 0; if (lvl < N - 1) target = lvl + 1; else stopAuto(); }
   }
 
   document.getElementById('btnTop').addEventListener('click', function () { stopAuto(); target = ZMIN; });
@@ -878,73 +1030,75 @@
     if (speakOn) speak(lastCap); else { try { speechSynthesis.cancel(); } catch (e) {} }
   });
 
-  // ---------- thư viện ảnh ----------
+  // =====================================================================
+  // Thư viện ảnh
+  // =====================================================================
   var libEl = document.getElementById('lib'), slotsEl = document.getElementById('slots'), btnLib = document.getElementById('btnLib');
+  function updateLibHead() {
+    document.getElementById('libTitle').textContent = 'Thư viện ảnh: ' + cur.title.toLowerCase();
+    var intro = document.getElementById('libIntro');
+    intro.textContent = '';
+    intro.appendChild(document.createTextNode('Ba tầng đầu thay được bằng ảnh ChatGPT. Bốn tầng sâu luôn vẽ bằng code để đúng khoa học và xoay 3D được. Ảnh vuông là tốt nhất; để phần quan trọng ở giữa vì mép ảnh sẽ bị cắt khi phóng to. Ảnh chọn ở đây chỉ lưu trong trình duyệt này. Muốn mọi máy đều thấy thì đưa ảnh lên GitHub, vào thư mục '));
+    var b = document.createElement('b'); b.textContent = 'anh/' + cur.id + '/'; intro.appendChild(b);
+    intro.appendChild(document.createTextNode(', đặt tên vat-the, be-mat, hat.'));
+  }
   btnLib.addEventListener('click', function () {
     var open = libEl.hidden;
     libEl.hidden = !open;
     btnLib.setAttribute('aria-pressed', open ? 'true' : 'false');
     if (open) { renderSlots(); libEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
   });
-
   function thumbCanvas(idx) {
-    var c = canvas(176), g = c.getContext('2d');
-    var v = { W: 176, H: 176, cx: 88, cy: 88, M: 176, HD: 124.5 };
-    var keep = { pts: pts };
+    var c = canvas(176), g = c.getContext('2d'), v = { W: 176, H: 176, cx: 88, cy: 88, M: 176, HD: 124.5 };
     LEVELS[idx].draw(g, v, idx === 0 ? 0.75 : 1, performance.now() / 1000);
     return c;
   }
-
   function renderSlots() {
     if (libEl.hidden) return;
     slotsEl.textContent = '';
     LEVELS.forEach(function (L, idx) {
       var row = document.createElement('div'); row.className = 'slot';
       var th = document.createElement('div'); th.className = 'thumb';
-      var im = images[L.id];
+      var im = L.img && images[key(L.id)];
       if (im) { var ii = document.createElement('img'); ii.alt = ''; ii.src = im.img.src; th.appendChild(ii); }
       else th.appendChild(thumbCanvas(idx));
       var body = document.createElement('div'); body.className = 'body';
       var nm = document.createElement('div'); nm.className = 'name'; nm.textContent = (idx + 1) + '. ' + L.name; body.appendChild(nm);
       if (!L.img) {
-        var fx = document.createElement('p'); fx.className = 'fixed-note';
-        fx.textContent = L.fixed;
-        body.appendChild(fx);
+        var fx = document.createElement('p'); fx.className = 'fixed-note'; fx.textContent = L.fixed; body.appendChild(fx);
       } else {
         var st = document.createElement('div'); st.className = 'state';
         st.textContent = im ? (im.own ? 'Đang dùng ảnh của anh' : 'Đang dùng ảnh trong thư mục') : 'Đang dùng hình vẽ bằng code';
         body.appendChild(st);
         var acts = document.createElement('div'); acts.className = 'acts';
-        var fin = document.createElement('input'); fin.type = 'file'; fin.accept = 'image/*'; fin.id = 'file-' + L.id;
+        var fin = document.createElement('input'); fin.type = 'file'; fin.accept = 'image/*'; fin.id = 'file-' + cur.id + '-' + L.id;
         var lab = document.createElement('label'); lab.className = 'btn'; lab.htmlFor = fin.id; lab.textContent = im ? 'Đổi ảnh' : 'Chọn ảnh';
         fin.addEventListener('change', function () {
           var file = fin.files && fin.files[0];
           if (!file) return;
           idbPut(key(L.id), file);
-          useImage(L.id, URL.createObjectURL(file), true);
+          setOwnImage(key(L.id), file);
         });
         acts.appendChild(fin); acts.appendChild(lab);
-        if (im) {
+        if (im && im.own) {
           var del = document.createElement('button'); del.type = 'button'; del.className = 'btn'; del.textContent = 'Bỏ ảnh, dùng hình code';
           del.addEventListener('click', function () {
-            idbDel(key(L.id));
-            if (images[L.id] && images[L.id].url) { try { URL.revokeObjectURL(images[L.id].url); } catch (e) {} }
-            delete images[L.id]; renderSlots();
+            var k = key(L.id);
+            idbDel(k);
+            if (images[k] && images[k].url) { try { URL.revokeObjectURL(images[k].url); } catch (e) {} }
+            delete images[k]; renderSlots();
           });
           acts.appendChild(del);
         }
         body.appendChild(acts);
-        if (L.warn) { var w = document.createElement('p'); w.className = 'warn'; w.textContent = L.warn; body.appendChild(w); }
         var det = document.createElement('details');
         var sm = document.createElement('summary'); sm.textContent = 'Lệnh vẽ ảnh này bằng ChatGPT';
-        var ta = document.createElement('textarea'); ta.readOnly = true; ta.value = L.prompt; ta.id = 'prompt-' + L.id;
-        var cp = document.createElement('button'); cp.type = 'button'; cp.className = 'btn'; cp.textContent = 'Chép lệnh';
-        cp.style.marginTop = '8px';
+        var ta = document.createElement('textarea'); ta.readOnly = true; ta.value = L.prompt; ta.id = 'prompt-' + cur.id + '-' + L.id;
+        var cp = document.createElement('button'); cp.type = 'button'; cp.className = 'btn'; cp.textContent = 'Chép lệnh'; cp.style.marginTop = '8px';
         cp.addEventListener('click', function () {
           function fallback() { ta.focus(); ta.select(); cp.textContent = 'Đã bôi đen, bấm Ctrl+C'; }
-          try {
-            navigator.clipboard.writeText(L.prompt).then(function () { cp.textContent = 'Đã chép'; setTimeout(function () { cp.textContent = 'Chép lệnh'; }, 1800); }, fallback);
-          } catch (e) { fallback(); }
+          try { navigator.clipboard.writeText(L.prompt).then(function () { cp.textContent = 'Đã chép'; setTimeout(function () { cp.textContent = 'Chép lệnh'; }, 1800); }, fallback); }
+          catch (e) { fallback(); }
         });
         det.appendChild(sm); det.appendChild(ta); det.appendChild(cp);
         body.appendChild(det);
@@ -954,14 +1108,15 @@
     });
   }
 
-  // ---------- vòng lặp ----------
+  // =====================================================================
+  // Vòng lặp
+  // =====================================================================
   var lastT = 0;
   function frame(ms) {
     requestAnimationFrame(frame);
     var now = ms / 1000, dt = lastT ? Math.min(now - lastT, 0.1) : 0.016;
     lastT = now;
-    var speed = auto.on ? 1.15 : 4.5;
-    z += (target - z) * Math.min(1, dt * speed);
+    z += (target - z) * Math.min(1, dt * (auto.on ? 1.15 : 4.5));
     if (Math.abs(target - z) < 0.0005) z = target;
     runAuto(now);
     updateRot(dt);
@@ -972,24 +1127,12 @@
     updateHud();
   }
 
+  selectObject(0);
   window.addEventListener('resize', resize);
   resize();
   updateHud();
   requestAnimationFrame(frame);
-
-  function tryFolder(id, exts, k) {
-    if (k >= exts.length) return;
-    var img = new Image();
-    img.onload = function () {
-      if (images[id] && images[id].own) return;
-      images[id] = { img: img, url: null, own: false };
-      renderSlots();
-    };
-    img.onerror = function () { tryFolder(id, exts, k + 1); };
-    img.src = THU_MUC_ANH + id + '.' + exts[k];
-  }
-  TANG_CO_ANH.forEach(function (id) { tryFolder(id, ['png', 'jpg', 'jpeg', 'webp'], 0); });
-  idbOpen().then(function () { idbLoadAll(function (k, blob) { var id = String(k).split(':')[1]; if (id) useImage(id, URL.createObjectURL(blob), true); }); });
+  idbOpen().then(function () { idbLoadAll(function (k, blob) { if (String(k).indexOf(':') > 0) setOwnImage(String(k), blob); }); });
 })();
 </script>
 
