@@ -127,7 +127,7 @@
       <div class="mag" id="mag">Kích thước thật</div>
       <div class="hint" id="hint" hidden>Kéo trên hình để xoay 3D</div>
     </div>
-    <div class="count" id="count" hidden>Electron đã hiện ra <b id="countN">0</b> lần</div>
+    <div class="count" id="count" hidden>Số lần phát hiện electron: <b id="countN">0</b></div>
     <button class="hold" id="hold" type="button" hidden>Giữ để quay chậm</button>
   </div>
 
@@ -147,7 +147,7 @@
 
   <section class="lib" id="lib" hidden>
     <h2>Thư viện ảnh của cái đinh</h2>
-    <p class="intro">Mỗi tầng có sẵn hình vẽ bằng code. Anh tạo ảnh đẹp bằng ChatGPT rồi bấm "Chọn ảnh" để thay. Ảnh vuông là tốt nhất; để phần quan trọng ở giữa vì mép ảnh sẽ bị cắt khi phóng to. Ảnh chọn ở đây chỉ lưu trong trình duyệt này. Muốn mọi máy đều thấy thì đưa ảnh lên GitHub, vào thư mục <b>anh/dinh-sat/</b>, đặt tên <b>vat-the</b>, <b>be-mat</b>, <b>hat</b>, <b>mang</b>, <b>hat-nhan</b>.</p>
+    <p class="intro">Ba tầng đầu thay được bằng ảnh ChatGPT. Bốn tầng sâu luôn vẽ bằng code để đúng khoa học và xoay 3D được. Ảnh vuông là tốt nhất; để phần quan trọng ở giữa vì mép ảnh sẽ bị cắt khi phóng to. Ảnh chọn ở đây chỉ lưu trong trình duyệt này. Muốn mọi máy đều thấy thì đưa ảnh lên GitHub, vào thư mục <b>anh/dinh-sat/</b>, đặt tên <b>vat-the</b>, <b>be-mat</b>, <b>hat</b>.</p>
     <div id="slots"></div>
   </section>
 </div>
@@ -159,7 +159,7 @@
   // Ảnh để sẵn trên GitHub: thư mục anh/dinh-sat/, tên file theo tầng (đuôi .png hoặc .jpg đều được).
   // Thiếu ảnh nào thì tầng đó tự dùng hình vẽ bằng code.
   var THU_MUC_ANH = 'anh/dinh-sat/';
-  var TANG_CO_ANH = ['vat-the', 'be-mat', 'hat', 'mang', 'hat-nhan'];
+  var TANG_CO_ANH = ['vat-the', 'be-mat', 'hat'];
 
   var Z = 8;
   var ZMIN = -0.15, ZMAX = 6.6;
@@ -240,13 +240,26 @@
   }
 
   var SPRITE_N = 256, SPRITE_A = SPRITE_N / 2 / 4.57, SPRITE_K = SPRITE_N / SPRITE_A;
+  // Màu đám mây: lõi trắng xanh, giữa xanh lơ, rìa xanh dương đậm
+  var CLOUD_RGB = ['rgb(205,250,255)', 'rgb(60,212,255)', 'rgb(28,112,255)'];
+  function cloudBucket(r3) { return r3 < 1.2 ? 0 : r3 < 2.4 ? 1 : 2; }
+  function cloudGlow(g, x, y, a, k) {
+    var gl = g.createRadialGradient(x, y, 0, x, y, 2.6 * a);
+    gl.addColorStop(0, 'rgba(80,205,255,' + (0.38 * k) + ')'); gl.addColorStop(0.45, 'rgba(40,150,255,' + (0.14 * k) + ')'); gl.addColorStop(1, 'rgba(30,110,255,0)');
+    g.fillStyle = gl; g.beginPath(); g.arc(x, y, 2.6 * a, 0, 6.2832); g.fill();
+  }
+  // Nguyên tử nhìn từ xa: chỉ có đám mây, không vẽ hạt nhân (ở tỉ lệ này không thể thấy được)
   function makeCloudSprite() {
     var c = canvas(SPRITE_N), g = c.getContext('2d'), r = mulberry32(5), h = SPRITE_N / 2;
+    var cols = ['rgba(205,250,255,0.24)', 'rgba(60,212,255,0.2)', 'rgba(28,112,255,0.2)'];
+    cloudGlow(g, h, h, SPRITE_A, 1);
     g.globalCompositeOperation = 'lighter';
-    g.fillStyle = 'rgba(143,212,255,0.16)';
-    for (var i = 0; i < 5200; i++) { var p = sampleCloud(r); g.fillRect(h + p[0] * SPRITE_A - 0.65, h + p[1] * SPRITE_A - 0.65, 1.3, 1.3); }
+    for (var i = 0; i < 5200; i++) {
+      var p = sampleCloud3(r);
+      g.fillStyle = cols[cloudBucket(Math.hypot(p[0], p[1], p[2]))];
+      g.fillRect(h + p[0] * SPRITE_A - 0.65, h + p[1] * SPRITE_A - 0.65, 1.3, 1.3);
+    }
     g.globalCompositeOperation = 'source-over';
-    g.fillStyle = '#f2a65a'; g.beginPath(); g.arc(h, h, 1.8, 0, 6.2832); g.fill();
     return c;
   }
 
@@ -460,7 +473,7 @@
     var life = rate < 4 ? 6 : rate < 60 ? 2.4 : 1.4, size = rate < 4 ? 5 : rate < 60 ? 2.8 : 1.7;
     for (i = 0; i < n; i++) {
       var p = sampleCloud3(Math.random);
-      pts.push({ x: p[0], y: p[1], z: p[2], b: now, life: life, sz: size });
+      pts.push({ x: p[0], y: p[1], z: p[2], b: now, life: life, sz: size, c: cloudBucket(Math.hypot(p[0], p[1], p[2])) });
       if (rate < 4) { pings.push({ x: p[0], y: p[1], z: p[2], b: now }); tick(true); }
     }
     totalSeen += n;
@@ -489,8 +502,9 @@
     }
     drawNb(false);
 
+    cloudGlow(ctx, cx, cy, a, Math.min(1, pts.length / 3000));
     ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = 'rgb(143,212,255)';
+    var lastC = -1;
     for (i = 0; i < pts.length; i++) {
       var p = pts[i], age = now - p.b, al = 1 - age / p.life;
       if (al <= 0) continue;
@@ -498,6 +512,7 @@
       al *= 0.74 + 0.26 * clamp(z2 / 2.5, -1, 1);
       var x = cx + x1 * a, y = cy + y2 * a;
       if (x < -6 || x > v.W + 6 || y < -6 || y > v.H + 6) continue;
+      if (p.c !== lastC) { lastC = p.c; ctx.fillStyle = CLOUD_RGB[p.c]; }
       if (p.sz > 2) {
         ctx.globalAlpha = Math.min(1, al * 1.1);
         ctx.beginPath(); ctx.arc(x, y, p.sz * (age < 0.15 ? 1.6 - age * 4 : 1), 0, 6.2832); ctx.fill();
@@ -572,17 +587,21 @@
     { id: 'hat', name: 'Hạt tinh thể', frame: 2e-4, trans: 'lens', img: true, draw: drawGrains,
       cap: 'Sắt không phải một khối liền. Nó ghép từ rất nhiều mảnh nhỏ gọi là hạt tinh thể, nằm sát vào nhau.',
       prompt: 'Ảnh kính hiển vi kim tương của sắt đã đánh bóng và tẩy axit. Bề mặt gồm hàng chục hạt tinh thể hình đa giác ghép khít nhau như những thửa ruộng nhìn từ trên cao, ngăn cách bằng đường ranh giới mảnh màu sẫm. Mỗi hạt một sắc độ khác nhau: xám, nâu nhạt, hơi ánh xanh. Kín toàn bộ khung hình. Ảnh vuông 1:1, không có chữ, không có thước đo.' },
-    { id: 'mang', name: 'Nguyên tử xếp hàng', frame: 1.4e-9, trans: 'lens', img: true, draw: drawLattice,
+    { id: 'mang', name: 'Nguyên tử xếp hàng', frame: 1.4e-9, trans: 'lens', img: false, draw: drawLattice,
+      fixed: 'Tầng này luôn vẽ bằng code: đúng kiểu xếp của sắt (có nguyên tử nằm giữa mỗi khối lập phương) và xoay 3D được.',
       cap: 'Bên trong mỗi hạt, các nguyên tử sắt xếp hàng thẳng tắp. Kéo để xoay: mỗi ô là một khối lập phương, có một nguyên tử nằm ngay chính giữa.',
       warn: 'Hình code đang đúng khoảng cách thật và nối liền với tầng electron. Ảnh AI hay xếp lệch hàng.',
       prompt: 'Minh hoạ khoa học cho trẻ em: các nguyên tử sắt xếp thành hàng thẳng tắp đều đặn như ô bàn cờ, nhìn thẳng từ trên xuống. Mỗi nguyên tử là một đám mây chấm sáng xanh nhạt, dày ở giữa và mờ dần ra rìa, chính giữa có một chấm cam rất nhỏ. Giữa các nguyên tử có khoảng trống tối rõ ràng. Nền xanh đen thẳm, kín toàn khung hình. Ảnh vuông 1:1, không có chữ.' },
     { id: 'nguyen-tu', name: 'Một nguyên tử', frame: 1.8e-10, trans: 'fade', img: false, draw: drawAtom,
-      cap: 'Một nguyên tử sắt. Đám mây này là 26 electron. Kéo để xoay quanh nó, giữ nút Quay chậm để xem từng electron hiện ra.',
-      capSlow: 'Mỗi chấm là một lần electron hiện ra. Nó không chạy theo đường nào cả: hiện ở chỗ này, rồi nhảy sang chỗ khác.',
-      capRelease: 'Thả ra rồi: electron hiện ra nhanh dần, hàng nghìn lần mỗi giây. Các chấm chồng lên nhau thành đám mây.' },
+      fixed: 'Tầng này luôn vẽ bằng code để các lần phát hiện electron chuyển động, quay chậm và xoay được.',
+      cap: 'Nguyên tử sắt có 26 electron. Mỗi chấm là một lần phát hiện thấy electron ở chỗ đó. Kéo để xoay, giữ nút Quay chậm để xem từng lần một.',
+      capSlow: 'Mỗi chấm là một lần phát hiện thấy electron. Lần này ở chỗ này, lần sau ở chỗ khác, không có đường nào nối giữa chúng.',
+      capRelease: 'Thả ra rồi: phát hiện nhanh dần, hàng nghìn lần mỗi giây. Các chấm chồng lên nhau thành đám mây. Chỗ nào đậm là chỗ hay gặp electron nhất.' },
     { id: 'trong', name: 'Khoảng trống', frame: 2e-12, trans: 'lens', img: false, draw: drawEmpty,
+      fixed: 'Tầng này luôn vẽ bằng code: nó là khoảng trống nối giữa đám mây electron và hạt nhân.',
       cap: 'Trống, vẫn trống. Từ đám mây electron vào tới hạt nhân là một khoảng trống mênh mông. Chấm cam ở giữa là hạt nhân, và nó đã được vẽ to hơn thật rất nhiều.' },
-    { id: 'hat-nhan', name: 'Hạt nhân', frame: 1.5e-14, trans: null, img: true, draw: drawNucleus,
+    { id: 'hat-nhan', name: 'Hạt nhân', frame: 1.5e-14, trans: null, img: false, draw: drawNucleus,
+      fixed: 'Tầng này luôn vẽ bằng code: đúng 26 proton và 30 neutron, xoay 3D được.',
       cap: 'Hạt nhân sắt: 26 hạt cam là proton, 30 hạt xám là neutron, ôm chặt lấy nhau. Kéo để xoay xem mặt sau. Gần như cả sức nặng của cái đinh nằm ở đây.',
       warn: 'Hình code có đúng 26 proton và 30 neutron. Ảnh AI sẽ không đếm đúng.',
       prompt: 'Minh hoạ khoa học cho trẻ em: hạt nhân nguyên tử là một khối cầu gồm nhiều quả cầu nhỏ dính chặt vào nhau, khoảng một nửa màu cam ấm (proton), một nửa màu xám bạc (neutron) xen kẽ ngẫu nhiên, ánh sáng mềm, bóng đổ nhẹ giữa các quả cầu. Khối cầu nằm chính giữa và chiếm gần hết khung hình, nền đen thẳm có quầng sáng cam mờ. Ảnh vuông 1:1, không có chữ.' }
@@ -889,7 +908,7 @@
       var nm = document.createElement('div'); nm.className = 'name'; nm.textContent = (idx + 1) + '. ' + L.name; body.appendChild(nm);
       if (!L.img) {
         var fx = document.createElement('p'); fx.className = 'fixed-note';
-        fx.textContent = idx === ATOM ? 'Tầng này luôn vẽ bằng code để electron chuyển động và quay chậm được.' : 'Tầng này luôn vẽ bằng code: nó là khoảng trống nối giữa đám mây electron và hạt nhân.';
+        fx.textContent = L.fixed;
         body.appendChild(fx);
       } else {
         var st = document.createElement('div'); st.className = 'state';
