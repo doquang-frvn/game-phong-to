@@ -135,6 +135,7 @@
   <p class="caption" id="cap"></p>
 
   <div class="panel">
+    <div class="track" id="elRow" hidden></div>
     <div class="track" id="track"></div>
     <label for="zr" class="eyebrow">Độ sâu — kéo, hoặc chụm hai ngón trên hình</label>
     <input type="range" id="zr" min="-0.15" max="6.6" step="0.01" value="-0.15">
@@ -183,7 +184,15 @@
     Au: { sym: 'Au', name: 'Vàng', lower: 'vàng', Z: 79, N: 118, color: '#f0c95a',
       isoNote: 'Vàng trong tự nhiên chỉ có đúng một loại nguyên tử này.' },
     Pb: { sym: 'Pb', name: 'Chì', lower: 'chì', Z: 82, N: 126, color: '#98a0b2',
-      isoNote: 'Đây là loại nguyên tử chì hay gặp nhất; còn vài loại khác ít neutron hơn.' }
+      isoNote: 'Đây là loại nguyên tử chì hay gặp nhất; còn vài loại khác ít neutron hơn.' },
+    Si: { sym: 'Si', name: 'Silic', lower: 'silic', Z: 14, N: 14, color: '#7fc8c0',
+      isoNote: 'Đây là loại nguyên tử silic hay gặp nhất; có loại mang thêm một hai neutron.' },
+    O: { sym: 'O', name: 'Oxy', lower: 'oxy', Z: 8, N: 8, color: '#8fb8f5',
+      isoNote: 'Đây là loại nguyên tử oxy hay gặp nhất — đúng loại trong không khí con đang thở.' },
+    C: { sym: 'C', name: 'Carbon', lower: 'carbon', Z: 6, N: 6, color: '#9a8f85',
+      isoNote: 'Đây là loại nguyên tử carbon hay gặp nhất. Than, kim cương và cả cơ thể con cũng làm từ carbon.' },
+    H: { sym: 'H', name: 'Hydro', lower: 'hydro', Z: 1, N: 0, color: '#f3b8d2',
+      isoNote: '' }
   };
 
   // =====================================================================
@@ -199,7 +208,9 @@
       extra: 'Thép còn có một chút carbon len giữa các nguyên tử sắt, ở đây chưa vẽ.' },
     dong: { name: 'Đồng', lower: 'đồng', lattice: 'fcc', a: 3.61, el: 'Cu', base: [196, 116, 74], hv: 30, colorWord: 'màu đồng cam hồng' },
     vang: { name: 'Vàng', lower: 'vàng', lattice: 'fcc', a: 4.08, el: 'Au', base: [222, 180, 82], hv: 24, colorWord: 'vàng óng' },
-    chi:  { name: 'Chì', lower: 'chì', lattice: 'fcc', a: 4.95, el: 'Pb', base: [116, 122, 134], hv: 12, colorWord: 'xám chì xỉn, hơi ánh xanh' }
+    chi:  { name: 'Chì', lower: 'chì', lattice: 'fcc', a: 4.95, el: 'Pb', base: [116, 122, 134], hv: 12, colorWord: 'xám chì xỉn, hơi ánh xanh' },
+    thuytinh: { name: 'Thủy tinh', lower: 'thủy tinh', structure: 'glass', el: 'Si', els: ['Si', 'O'], base: [120, 150, 185], colorWord: 'trong suốt hơi ánh xanh' },
+    hdpe: { name: 'Nhựa HDPE', lower: 'nhựa HDPE', structure: 'polymer', el: 'C', els: ['C', 'H'], base: [214, 218, 224], colorWord: 'trắng đục' }
   };
 
   // =====================================================================
@@ -215,9 +226,15 @@
     { id: 'nhan-vang', name: 'Nhẫn vàng', title: 'Chiếc nhẫn vàng', short: 'chiếc nhẫn', surfWhat: 'chiếc nhẫn vàng', mat: 'vang', frame: 0.03, draw: drawRing,
       cap: 'Một chiếc nhẫn vàng. Vàng không bao giờ gỉ, để cả nghìn năm vẫn sáng. Phóng to vào thân nhẫn xem nào.',
       pObj: 'Ảnh chụp cận cảnh một chiếc nhẫn vàng trơn đặt nghiêng trên nền vải nhung xanh thẫm, nhìn từ trên xuống. Phần thân nhẫn phía dưới nằm ngay chính giữa khung hình, vàng óng ánh, ánh sáng mềm. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ, không có tay người.' },
-    { id: 'cuc-chi', name: 'Cục chì', title: 'Cục chì câu cá', short: 'cục chì', surfWhat: 'cục chì câu cá', mat: 'chi', frame: 0.04, draw: drawSinker,
-      cap: 'Một cục chì câu cá. Nhỏ xíu mà nặng trịch, thả xuống nước là chìm ngay. Phóng to vào xem vì sao nó nặng thế.',
-      pObj: 'Ảnh chụp cận cảnh một cục chì câu cá hình quả ô liu, màu xám chì xỉn, nằm trên mặt bàn gỗ, nhìn từ trên xuống. Cục chì nằm chính giữa khung hình và chiếm phần lớn khung, thấy rõ lỗ xỏ dây ở hai đầu. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ, không có tay người.' }
+    { id: 'thoi-chi', name: 'Thỏi chì', title: 'Thỏi chì', short: 'thỏi chì', surfWhat: 'thỏi chì', mat: 'chi', frame: 0.07, draw: drawIngot,
+      cap: 'Một thỏi chì. Nhỏ mà nặng trịch — cầm lên là bất ngờ ngay. Phóng to vào xem vì sao nó nặng thế.',
+      pObj: 'Ảnh chụp cận cảnh một thỏi chì hình chữ nhật dày, màu xám chì xỉn, đặt trên nền vải sẫm, nhìn hơi chếch từ trên xuống. Thỏi chì nằm chính giữa khung hình và chiếm phần lớn khung. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ, không có tay người.' },
+    { id: 'coc-thuy-tinh', name: 'Cốc thủy tinh', title: 'Cốc thủy tinh', short: 'cái cốc', surfWhat: 'thành cốc thủy tinh', mat: 'thuytinh', frame: 0.09, draw: drawGlassCup,
+      cap: 'Một cái cốc thủy tinh. Trong suốt — ánh sáng xuyên thẳng qua được. Phóng to vào thành cốc xem vì sao.',
+      pObj: 'Ảnh chụp cận cảnh một cốc thủy tinh trong suốt nằm nghiêng trên nền vải xanh thẫm, ánh sáng mềm, phản chiếu lấp lánh trên thành cốc. Cốc nằm chính giữa khung hình. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ, không có tay người.' },
+    { id: 'chai-nhua', name: 'Chai nhựa', title: 'Chai nhựa HDPE', short: 'cái chai', surfWhat: 'thành chai nhựa', mat: 'hdpe', frame: 0.12, draw: drawBottle,
+      cap: 'Một cái chai nhựa HDPE, loại đựng sữa hay dầu gội. Nhẹ, dẻo, bóp không vỡ. Phóng to vào thành chai xem nó làm từ gì.',
+      pObj: 'Ảnh chụp cận cảnh một chai nhựa HDPE trắng đục có nắp vặn, đặt thẳng đứng trên nền vải xanh thẫm, ánh sáng mềm. Chai nằm chính giữa khung hình. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ, không có tay người.' }
   ];
 
   function surfPrompt(o, m) {
@@ -361,10 +378,11 @@
   function getLatTile(lk) { return cache.lat[lk] || (cache.lat[lk] = makeLatticeTile(1024, LATTICES[lk])); }
   function getNuc(ek) { var e = ELEMENTS[ek]; return cache.nuc[ek] || (cache.nuc[ek] = makeNucleus(e.Z, e.N)); }
   // Bán kính hạt nhân trên màn hình (so với khung): to theo căn bậc ba số hạt, như ngoài đời
-  function nucR(ek) { var e = ELEMENTS[ek]; return 0.26 * Math.cbrt((e.Z + e.N) / 56); }
+  function nucR(ek) { var e = ELEMENTS[ek]; return Math.max(0.09, 0.26 * Math.cbrt((e.Z + e.N) / 56)); }
 
   // vật thể đang chọn
-  var cur, curMat, curEl, curLatKey, curLat, LEVELS, N = 7, ATOM = 4;
+  var cur, curMat, curEl, curElKey, curLatKey, curLat, LEVELS, N = 7, ATOM = 4;
+  var PSEUDO_LAT = { A: 0.0875, basis: [[0, 0, 0]] };
 
   // =====================================================================
   // Vẽ các tầng
@@ -458,29 +476,175 @@
     ctx.beginPath(); ctx.ellipse(rcx, rcy - lw * 0.16, rx, ry, 0, 0.1, Math.PI - 0.1); ctx.stroke();
   }
 
-  function drawSinker(ctx, v, s) {
-    drawWood(ctx, v, s);
-    var M = v.M, cx = v.cx, cy = v.cy, rx = 0.42 * M * s, ry = 0.22 * M * s;
-    shadow(ctx, v, s, 0.03, 0.2, 0.42, 0.06);
-    var g = ctx.createRadialGradient(cx - rx * 0.3, cy - ry * 0.45, ry * 0.1, cx, cy, rx * 1.05);
-    g.addColorStop(0, '#cdd2dc'); g.addColorStop(0.45, '#828895'); g.addColorStop(1, '#3a3f49');
-    ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, 6.2832); ctx.fill();
+  function velvet(ctx, v) {
+    var g = ctx.createRadialGradient(v.cx, v.cy, 0, v.cx, v.cy, v.HD);
+    g.addColorStop(0, '#22306a'); g.addColorStop(1, '#0b1030');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, v.W, v.H);
+  }
+  function drawIngot(ctx, v, s) {
+    velvet(ctx, v);
+    var M = v.M, cx = v.cx, cy = v.cy, w = 0.62 * M * s, h = 0.34 * M * s, d = 0.16 * M * s;
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.beginPath(); ctx.ellipse(cx + 0.02 * M * s, cy + h / 2 + d * 0.72, w * 0.62, d * 0.55, 0, 0, 6.2832); ctx.fill();
+    var fg = ctx.createLinearGradient(0, cy + h / 2 - d, 0, cy + h / 2 + d);
+    fg.addColorStop(0, '#6a707c'); fg.addColorStop(1, '#3a3f49');
+    ctx.fillStyle = fg;
+    ctx.beginPath(); ctx.roundRect(cx - w / 2, cy + h / 2 - d * 0.3, w, d * 1.2, d * 0.2); ctx.fill();
+    var tg = ctx.createLinearGradient(cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2);
+    tg.addColorStop(0, '#b4bac6'); tg.addColorStop(0.5, '#878d99'); tg.addColorStop(1, '#5f6570');
+    ctx.fillStyle = tg;
+    ctx.beginPath(); ctx.roundRect(cx - w / 2, cy - h / 2, w, h, d * 0.3); ctx.fill();
     var r = mulberry32(17);
-    ctx.fillStyle = 'rgba(40,44,52,0.25)';
-    for (var k = 0; k < 40; k++) {
-      var a = r() * 6.28, d = Math.sqrt(r()) * 0.9;
-      ctx.beginPath(); ctx.arc(cx + Math.cos(a) * d * rx, cy + Math.sin(a) * d * ry, (0.003 + r() * 0.008) * M * s, 0, 6.2832); ctx.fill();
+    ctx.strokeStyle = 'rgba(230,235,244,0.3)'; ctx.lineWidth = Math.max(0.5, 0.0022 * M * s);
+    for (var k = 0; k < 16; k++) {
+      var sx = cx - w * 0.44 + r() * w * 0.88, sy = cy - h * 0.42 + r() * h * 0.84;
+      ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx + (0.02 + r() * 0.06) * M * s, sy + (r() - 0.5) * 0.015 * M * s); ctx.stroke();
     }
-    ctx.fillStyle = '#1c1f26';
-    ctx.beginPath(); ctx.ellipse(cx - rx * 0.985, cy, 0.012 * M * s, 0.028 * M * s, 0, 0, 6.2832); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(cx + rx * 0.985, cy, 0.012 * M * s, 0.028 * M * s, 0, 0, 6.2832); ctx.fill();
+  }
+  function drawGlassCup(ctx, v, s) {
+    velvet(ctx, v);
+    var M = v.M, cx = v.cx, cy = v.cy, w = 0.46 * M * s, h = 0.6 * M * s;
+    ctx.fillStyle = 'rgba(0,0,0,0.28)';
+    ctx.beginPath(); ctx.ellipse(cx + 0.02 * M * s, cy + h * 0.55, w * 0.62, h * 0.09, 0, 0, 6.2832); ctx.fill();
+    ctx.fillStyle = 'rgba(205,230,250,0.13)';
+    ctx.beginPath();
+    ctx.moveTo(cx - w * 0.5, cy - h * 0.5); ctx.lineTo(cx - w * 0.42, cy + h * 0.5);
+    ctx.lineTo(cx + w * 0.42, cy + h * 0.5); ctx.lineTo(cx + w * 0.5, cy - h * 0.5); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = 'rgba(225,244,255,0.75)'; ctx.lineWidth = Math.max(1.5, 0.012 * M * s);
+    ctx.beginPath(); ctx.ellipse(cx, cy - h * 0.5, w * 0.5, h * 0.07, 0, 0, 6.2832); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx - w * 0.5, cy - h * 0.5); ctx.lineTo(cx - w * 0.42, cy + h * 0.5); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx + w * 0.5, cy - h * 0.5); ctx.lineTo(cx + w * 0.42, cy + h * 0.5); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(cx, cy + h * 0.5, w * 0.42, h * 0.055, 0, 0, Math.PI); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,0.85)'; ctx.lineWidth = Math.max(1, 0.02 * M * s);
+    ctx.beginPath(); ctx.moveTo(cx - w * 0.34, cy - h * 0.38); ctx.lineTo(cx - w * 0.3, cy + h * 0.32); ctx.stroke();
+  }
+  function drawBottle(ctx, v, s) {
+    velvet(ctx, v);
+    var M = v.M, cx = v.cx, cy = v.cy, w = 0.4 * M * s, h = 0.62 * M * s;
+    ctx.fillStyle = 'rgba(0,0,0,0.28)';
+    ctx.beginPath(); ctx.ellipse(cx + 0.02 * M * s, cy + h * 0.55, w * 0.62, h * 0.07, 0, 0, 6.2832); ctx.fill();
+    var g = ctx.createLinearGradient(cx - w / 2, 0, cx + w / 2, 0);
+    g.addColorStop(0, '#c9cdd4'); g.addColorStop(0.25, '#f2f4f7'); g.addColorStop(0.55, '#e4e7ec'); g.addColorStop(1, '#b9bec6');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.roundRect(cx - w / 2, cy - h * 0.32, w, h * 0.86, w * 0.16); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(cx - w * 0.5, cy - h * 0.26); ctx.quadraticCurveTo(cx - w * 0.46, cy - h * 0.46, cx - w * 0.17, cy - h * 0.5);
+    ctx.lineTo(cx + w * 0.17, cy - h * 0.5); ctx.quadraticCurveTo(cx + w * 0.46, cy - h * 0.46, cx + w * 0.5, cy - h * 0.26);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#fcfdfe';
+    ctx.beginPath(); ctx.roundRect(cx - w * 0.2, cy - h * 0.62, w * 0.4, h * 0.14, w * 0.04); ctx.fill();
+    ctx.strokeStyle = 'rgba(160,166,176,0.6)'; ctx.lineWidth = Math.max(0.8, 0.004 * M * s);
+    for (var k = 0; k < 5; k++) { var y = cy - h * 0.6 + k * h * 0.025; ctx.beginPath(); ctx.moveTo(cx - w * 0.19, y); ctx.lineTo(cx + w * 0.19, y); ctx.stroke(); }
   }
 
   function drawSurface(ctx, v, s) { bg(ctx, v, rgb(curMat.base)); drawTiled(ctx, v, getSurf(cur.mat), 0.55, s); }
   function drawGrains(ctx, v, s) { bg(ctx, v, rgb(curMat.base)); drawTiled(ctx, v, getGrain(cur.mat), 0.9, s); }
 
+  function cellRand(i, j, k) {
+    var h = (i * 374761393 + j * 668265263 + k * 1442695041) | 0;
+    h = Math.imul(h ^ (h >>> 13), 1274126177); h ^= h >>> 16;
+    return (h >>> 0) / 4294967296;
+  }
+
+  // Thủy tinh nhìn sâu: vẫn liền một khối, chỉ có vài vệt sáng lượn
+  function drawGlassBody(ctx, v, s, now) {
+    var g = ctx.createLinearGradient(0, 0, v.W, v.H);
+    g.addColorStop(0, '#39506e'); g.addColorStop(0.5, '#2c405c'); g.addColorStop(1, '#22344e');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, v.W, v.H);
+    ctx.strokeStyle = 'rgba(190,220,245,0.1)'; ctx.lineWidth = Math.max(1.5, 0.02 * v.M * s);
+    for (var k = -4; k <= 4; k++) {
+      ctx.beginPath();
+      for (var x = 0; x <= v.W; x += 16) {
+        var xw = (x - v.cx) / (v.M * s), y = v.cy + (k * 0.22 + 0.05 * Math.sin(xw * 3 + k * 2.1)) * v.M * s;
+        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+  }
+
+  // Mạng silic–oxy lộn xộn: nguyên tử đặt lệch khỏi lưới, mỗi chỗ một kiểu
+  function drawGlassNetwork(ctx, v, s) {
+    bg(ctx, v, '#0b0e22');
+    var D = 0.22 * v.M * s;
+    var i0 = Math.floor(-v.cx / D) - 1, i1 = Math.ceil((v.W - v.cx) / D) + 1;
+    var j0 = Math.floor(-v.cy / D) - 1, j1 = Math.ceil((v.H - v.cy) / D) + 1;
+    if ((i1 - i0) * (j1 - j0) > 9000) { i0 = -48; i1 = 48; j0 = -48; j1 = 48; }
+    function pt(i, j) {
+      return [v.cx + (i + (cellRand(i, j, 1) - 0.5) * 0.6) * D, v.cy + (j + (cellRand(i, j, 2) - 0.5) * 0.6) * D];
+    }
+    var i, j;
+    ctx.strokeStyle = 'rgba(110,170,220,0.22)'; ctx.lineWidth = Math.max(1, 0.012 * D);
+    for (i = i0; i <= i1; i++) for (j = j0; j <= j1; j++) {
+      var p = pt(i, j);
+      if (cellRand(i, j, 3) > 0.12) { var q = pt(i + 1, j); ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); ctx.stroke(); }
+      if (cellRand(i, j, 4) > 0.12) { var q2 = pt(i, j + 1); ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q2[0], q2[1]); ctx.stroke(); }
+    }
+    var a = 0.0875 * D;
+    for (i = i0; i <= i1; i++) for (j = j0; j <= j1; j++) {
+      var p2 = pt(i, j), si = ((i + j) % 2 + 2) % 2 === 0;
+      drawSprite(ctx, p2[0], p2[1], a, si ? 1 : 0.8, si ? 1.05 : 0.6);
+    }
+  }
+
+  // Nhựa: các sợi phân tử rối như mì, có vùng xếp ngay ngắn
+  function makeFiberTile(n) {
+    var c = canvas(n), g = c.getContext('2d'), r = mulberry32(31), i, k;
+    g.fillStyle = '#b6bbc4'; g.fillRect(0, 0, n, n);
+    for (i = 0; i < 70; i++) {
+      var x = r() * n, y = r() * n, lt = r() < 0.5;
+      g.strokeStyle = lt ? 'rgba(245,248,252,' + (0.25 + r() * 0.3) + ')' : 'rgba(96,102,114,' + (0.2 + r() * 0.3) + ')';
+      g.lineWidth = 1.5 + r() * 3;
+      for (var ox = -n; ox <= n; ox += n) for (var oy = -n; oy <= n; oy += n) {
+        g.beginPath(); g.moveTo(x + ox, y + oy);
+        var px = x + ox, py = y + oy;
+        for (k = 0; k < 6; k++) {
+          var nx2 = px + (r() - 0.5) * n * 0.5, ny2 = py + (r() - 0.5) * n * 0.5;
+          g.quadraticCurveTo(px + (r() - 0.5) * 60, py + (r() - 0.5) * 60, nx2, ny2);
+          px = nx2; py = ny2;
+        }
+        g.stroke();
+      }
+    }
+    // vài vùng sợi xếp song song (vùng tinh thể — chỗ làm nhựa cứng)
+    for (i = 0; i < 6; i++) {
+      var bx = r() * n, by = r() * n, bw = 60 + r() * 90, ang = r() * 3.14;
+      g.save(); g.translate(bx, by); g.rotate(ang);
+      g.strokeStyle = 'rgba(255,255,255,0.5)'; g.lineWidth = 2;
+      for (k = -5; k <= 5; k++) { g.beginPath(); g.moveTo(-bw / 2, k * 5); g.lineTo(bw / 2, k * 5); g.stroke(); }
+      g.restore();
+    }
+    return c;
+  }
+  function drawFibers(ctx, v, s) { bg(ctx, v, '#b6bbc4'); drawTiled(ctx, v, cache.fiber || (cache.fiber = makeFiberTile(512)), 0.9, s); }
+
+  // Một chuỗi –CH2–CH2–: carbon zíc zắc, mỗi carbon cầm hai hydro
+  function drawChain(ctx, v, s) {
+    bg(ctx, v, '#0b0e22');
+    var D = 0.3 * v.M * s, cx = v.cx, cy = v.cy;
+    var aC = 0.1 * D, aH = 0.055 * D;
+    var n = Math.ceil(v.W / D) + 2;
+    function row(yOff, alpha, phase) {
+      var pts = [];
+      for (var k = -n; k <= n; k++) pts.push([cx + k * 0.5 * D, cy + yOff + ((k + phase) % 2 === 0 ? -0.16 : 0.16) * D]);
+      ctx.strokeStyle = 'rgba(150,200,240,' + 0.3 * alpha + ')'; ctx.lineWidth = Math.max(1, 0.02 * D);
+      ctx.beginPath();
+      for (var k2 = 0; k2 < pts.length; k2++) { if (k2 === 0) ctx.moveTo(pts[k2][0], pts[k2][1]); else ctx.lineTo(pts[k2][0], pts[k2][1]); }
+      ctx.stroke();
+      for (var k3 = 0; k3 < pts.length; k3++) {
+        var up = ((k3 - n + phase) % 2 === 0) ? 1 : -1;
+        ctx.beginPath(); ctx.moveTo(pts[k3][0], pts[k3][1]); ctx.lineTo(pts[k3][0] - 0.1 * D, pts[k3][1] + up * 0.3 * D); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(pts[k3][0], pts[k3][1]); ctx.lineTo(pts[k3][0] + 0.1 * D, pts[k3][1] + up * 0.3 * D); ctx.stroke();
+        drawSprite(ctx, pts[k3][0] - 0.1 * D, pts[k3][1] + up * 0.3 * D, aH, 0.8 * alpha, 1);
+        drawSprite(ctx, pts[k3][0] + 0.1 * D, pts[k3][1] + up * 0.3 * D, aH, 0.8 * alpha, 1);
+        drawSprite(ctx, pts[k3][0], pts[k3][1], aC, alpha, 1);
+      }
+    }
+    row(-1.5 * D, 0.3, 1);
+    row(1.5 * D, 0.3, 0);
+    row(0, 1, 0);
+  }
+
   // ---------- xoay 3D (dùng chung cho các tầng xoay được) ----------
-  var THREE_D = [3, 4, 6];
+  function levels3d() { return cur && cur.l3d ? cur.l3d : [3, 4, 6]; }
   var z = ZMIN, target = ZMIN;
   var rot = { yaw: 0, pitch: 0, vy: 0, vp: 0, drag: false, demo: null };
   function rotMag() { return Math.abs(rot.yaw) + Math.abs(rot.pitch); }
@@ -489,8 +653,11 @@
     return function (x, y, zz) { var x1 = x * cy + zz * sy, z1 = -x * sy + zz * cy; return [x1, y * cp - z1 * sp, y * sp + z1 * cp]; };
   }
   function nearestLevel() { return clamp(Math.round(z), 0, N - 1); }
-  function is3D() { return z >= 2.85 && THREE_D.indexOf(nearestLevel()) >= 0; }
-  function limitLatticeTilt() { if (nearestLevel() !== 3) return; rot.yaw = clamp(rot.yaw, -0.9, 0.9); rot.pitch = clamp(rot.pitch, -0.9, 0.9); }
+  function is3D() { return z >= 2.85 && levels3d().indexOf(nearestLevel()) >= 0; }
+  function limitLatticeTilt() {
+    if (nearestLevel() !== 3 || levels3d().indexOf(3) < 0) return;
+    rot.yaw = clamp(rot.yaw, -0.9, 0.9); rot.pitch = clamp(rot.pitch, -0.9, 0.9);
+  }
   function updateRot(dt) {
     if (rot.drag) return;
     if (!is3D()) {
@@ -651,7 +818,7 @@
       ctx.beginPath(); ctx.arc(cx + qx * a, cy + qy * a, 6 + f * 34, 0, 6.2832); ctx.stroke();
     }
     drawNb(true);
-    var rn = Math.max(1.3, nucR(curMat.el) * M * s / 512);
+    var rn = Math.max(1.3, nucR(curElKey) * M * s / 512);
     ctx.fillStyle = '#f2a65a'; ctx.beginPath(); ctx.arc(cx, cy, rn, 0, 6.2832); ctx.fill();
   }
 
@@ -665,7 +832,7 @@
       ctx.globalAlpha = al; ctx.beginPath(); ctx.arc(b.x * v.W, b.y * v.H, 2.2, 0, 6.2832); ctx.fill();
     }
     ctx.globalAlpha = 1;
-    var rn = Math.max(1.3, nucR(curMat.el) * v.M * s / 64);
+    var rn = Math.max(1.3, nucR(curElKey) * v.M * s / 64);
     var g = ctx.createRadialGradient(v.cx, v.cy, 0, v.cx, v.cy, rn * 5);
     g.addColorStop(0, 'rgba(242,166,90,0.5)'); g.addColorStop(1, 'rgba(242,166,90,0)');
     ctx.fillStyle = g; ctx.beginPath(); ctx.arc(v.cx, v.cy, rn * 5, 0, 6.2832); ctx.fill();
@@ -674,12 +841,12 @@
 
   function drawNucleus(ctx, v, s, now) {
     bg(ctx, v, '#07091a');
-    var RN = nucR(curMat.el) * v.M * s, cx = v.cx, cy = v.cy;
+    var RN = nucR(curElKey) * v.M * s, cx = v.cx, cy = v.cy;
     var glow = ctx.createRadialGradient(cx, cy, RN * 0.3, cx, cy, RN * 1.9);
     glow.addColorStop(0, 'rgba(242,166,90,0.22)'); glow.addColorStop(1, 'rgba(242,166,90,0)');
     ctx.fillStyle = glow; ctx.fillRect(0, 0, v.W, v.H);
     var yaw = now * 0.22 + rot.yaw, pitch = 0.35 + rot.pitch, cyw = Math.cos(yaw), syw = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
-    var list = getNuc(curMat.el).map(function (o) {
+    var list = getNuc(curElKey).map(function (o) {
       var x = o.x + 0.012 * Math.sin(now * 3 + o.ph), y = o.y, zz = o.z;
       var x1 = x * cyw + zz * syw, z1 = -x * syw + zz * cyw;
       return { x: x1, y: y * cp - z1 * sp, z: y * sp + z1 * cp, p: o.p, rn: o.rn };
@@ -698,7 +865,59 @@
   // =====================================================================
   // Ghép 7 tầng từ vật thể + vật liệu + nguyên tố
   // =====================================================================
-  function buildLevels() {
+  function atomLevels(e) {
+    var nucCap = e.N === 0
+      ? 'Hạt nhân hydro: chỉ có đúng 1 hạt proton màu cam, không có neutron nào. Đơn giản nhất trong mọi nguyên tử. Kéo để xoay.'
+      : 'Hạt nhân ' + e.lower + ': ' + e.Z + ' hạt cam là proton, ' + e.N + ' hạt xám là neutron, ôm chặt lấy nhau. ' + e.isoNote + ' Kéo để xoay xem mặt sau.';
+    return [
+      { id: 'nguyen-tu', name: 'Một nguyên tử', trans: 'fade', img: false, draw: drawAtom,
+        cap: 'Nguyên tử ' + e.lower + ' có ' + e.Z + ' electron. Mỗi chấm là một lần phát hiện thấy electron ở chỗ đó. Kéo để xoay, giữ nút Quay chậm để xem từng lần một.',
+        capSlow: 'Mỗi chấm là một lần phát hiện thấy electron. Lần này ở chỗ này, lần sau ở chỗ khác, không có đường nào nối giữa chúng.',
+        capRelease: 'Thả ra rồi: phát hiện nhanh dần, hàng nghìn lần mỗi giây. Các chấm chồng lên nhau thành đám mây. Chỗ nào đậm là chỗ hay gặp electron nhất.',
+        fixed: 'Tầng này luôn vẽ bằng code để các lần phát hiện electron chuyển động, quay chậm và xoay được.' },
+      { id: 'trong', name: 'Khoảng trống', frame: 2e-12, trans: 'lens', img: false, draw: drawEmpty,
+        cap: 'Trống, vẫn trống. Từ đám mây electron vào tới hạt nhân là một khoảng trống mênh mông. Chấm cam ở giữa là hạt nhân, và nó đã được vẽ to hơn thật rất nhiều.',
+        fixed: 'Tầng này luôn vẽ bằng code: nó là khoảng trống nối giữa đám mây electron và hạt nhân.' },
+      { id: 'hat-nhan', name: 'Hạt nhân', frame: 1.5e-14, trans: null, img: false, draw: drawNucleus, cap: nucCap,
+        fixed: 'Tầng này luôn vẽ bằng code: đúng ' + e.Z + ' proton và ' + e.N + ' neutron, xoay 3D được.' }
+    ];
+  }
+
+  function buildGlassLevels(o, m, e) {
+    var tail = atomLevels(e);
+    tail[0].frame = 2.2e-9 / 8;
+    return [
+      { id: 'vat-the', name: o.name, frame: o.frame, trans: 'lens', img: true, draw: o.draw, cap: o.cap, prompt: o.pObj, view: 'camera' },
+      { id: 'be-mat', name: 'Bề mặt', frame: 0.002, trans: 'lens', img: true, draw: drawSurface, view: 'micro',
+        cap: 'Bề mặt ' + o.short + ' phóng to lên: vẫn khá nhẵn, chỉ có vài vết xước mờ. Thủy tinh mịn hơn kim loại nhiều.',
+        prompt: 'Ảnh kính hiển vi của bề mặt thủy tinh, phóng to khoảng 30 lần. Bề mặt gần như nhẵn, chỉ có vài vết xước rất mảnh và vệt sáng loang. Tông màu xanh lam nhạt. Kín toàn bộ khung hình, không có vật nổi bật ở giữa. Ảnh vuông 1:1, không có chữ.' },
+      { id: 'hat', name: 'Nhìn sâu hơn', frame: 2e-4, trans: 'lens', img: false, draw: drawGlassBody, view: 'micro',
+        cap: 'Phóng tiếp mà… vẫn không thấy gì mới. Thủy tinh không có hạt tinh thể như kim loại. Nó liền một khối, như nước bị đông cứng giữa chừng.',
+        fixed: 'Tầng này luôn vẽ bằng code: điểm hay của nó là không có gì để nhìn — thủy tinh không có hạt tinh thể.' },
+      { id: 'mang', name: 'Mạng lộn xộn', frame: 2.2e-9, trans: 'lens', img: false, draw: drawGlassNetwork, view: 'sim',
+        cap: 'Nguyên tử silic (đám mây to) và oxy (nhỏ) nắm tay nhau thành mạng lưới — nhưng không xếp hàng, mỗi chỗ một kiểu. Vì thế ánh sáng chui qua dễ. Đây là bản vẽ rút gọn: thủy tinh thật còn có thêm natri và canxi.',
+        fixed: 'Tầng này luôn vẽ bằng code: mạng lưới phải lộn xộn đúng kiểu thủy tinh, không lặp lại.' }
+    ].concat(tail);
+  }
+
+  function buildPolymerLevels(o, m, e) {
+    var tail = atomLevels(e);
+    tail[0].frame = 1.6e-9 / 8;
+    return [
+      { id: 'vat-the', name: o.name, frame: o.frame, trans: 'lens', img: true, draw: o.draw, cap: o.cap, prompt: o.pObj, view: 'camera' },
+      { id: 'be-mat', name: 'Bề mặt', frame: 0.002, trans: 'lens', img: true, draw: drawSurface, view: 'micro',
+        cap: 'Bề mặt ' + o.short + ' trắng đục, phóng to thấy những vệt chảy mềm — dấu vết lúc nhựa nóng chảy được đổ khuôn.',
+        prompt: 'Ảnh kính hiển vi của bề mặt nhựa HDPE trắng đục, phóng to khoảng 30 lần. Bề mặt có những vệt chảy mềm, gợn sóng nhẹ và vài vết xước mảnh. Kín toàn bộ khung hình. Ảnh vuông 1:1, không có chữ.' },
+      { id: 'hat', name: 'Sợi rối', frame: 2e-4, trans: 'lens', img: true, draw: drawFibers, view: 'micro',
+        cap: 'Bên trong nhựa là những sợi phân tử dài rối vào nhau như mì sợi. Chỗ nào các sợi xếp song song ngay ngắn, chỗ đó nhựa cứng hơn.',
+        prompt: 'Minh hoạ khoa học: các sợi polymer dài màu trắng xám rối vào nhau như đám mì sợi, xen kẽ vài vùng nhỏ nơi các sợi xếp song song ngay ngắn. Kín toàn bộ khung hình. Ảnh vuông 1:1, không có chữ.' },
+      { id: 'mang', name: 'Chuỗi phân tử', frame: 1.6e-9, trans: 'lens', img: false, draw: drawChain, view: 'sim',
+        cap: 'Một sợi chính là một chuỗi nguyên tử carbon (đám mây to) nối đuôi nhau, mỗi carbon cầm thêm hai hydro (nhỏ). Chuỗi thật dài hàng vạn mắt xích.',
+        fixed: 'Tầng này luôn vẽ bằng code: chuỗi –CH₂– phải đúng cấu trúc và nối liền với tầng nguyên tử.' }
+    ].concat(tail);
+  }
+
+  function buildMetalLevels() {
     var o = cur, m = curMat, e = curEl, latFrame = m.a * 1e-10 * 5;
     var latCap = m.lattice === 'bcc'
       ? 'Bên trong mỗi hạt, các nguyên tử ' + e.lower + ' xếp hàng thẳng tắp. Kéo để xoay: mỗi ô là một khối lập phương, có một nguyên tử nằm ngay chính giữa.' + (m.extra ? ' ' + m.extra : '')
@@ -723,6 +942,12 @@
         cap: 'Hạt nhân ' + e.lower + ': ' + e.Z + ' hạt cam là proton, ' + e.N + ' hạt xám là neutron, ôm chặt lấy nhau. ' + e.isoNote + ' Kéo để xoay xem mặt sau.',
         fixed: 'Tầng này luôn vẽ bằng code: đúng ' + e.Z + ' proton và ' + e.N + ' neutron, xoay 3D được.' }
     ];
+  }
+
+  function buildLevels() {
+    if (curMat.structure === 'glass') return buildGlassLevels(cur, curMat, curEl);
+    if (curMat.structure === 'polymer') return buildPolymerLevels(cur, curMat, curEl);
+    return buildMetalLevels();
   }
 
   // =====================================================================
@@ -769,7 +994,7 @@
   function loadFolderImages(o) {
     if (folderTried[o.id]) return;
     folderTried[o.id] = true;
-    ['vat-the', 'be-mat', 'hat'].forEach(function (lid) { tryFolder(o.id, lid, ['png', 'jpg', 'jpeg', 'webp'], 0); });
+    (o.imgLevels || ['vat-the', 'be-mat', 'hat']).forEach(function (lid) { tryFolder(o.id, lid, ['png', 'jpg', 'jpeg', 'webp'], 0); });
   }
 
   // =====================================================================
@@ -778,6 +1003,19 @@
   var stage = document.getElementById('stage'), cv = document.getElementById('cv'), ctx = cv.getContext('2d');
   var off = document.createElement('canvas'), octx = off.getContext('2d');
   var V = { W: 300, H: 300, cx: 150, cy: 150, M: 300, HD: 212 }, DPR = 1;
+  var reduceMotion = false;
+  try { reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  var canBlur = !reduceMotion && typeof ctx.filter === 'string';
+  // viền tối tròn như nhìn qua thị kính — dựng sẵn một lần mỗi cỡ màn
+  var vigCv = null;
+  function buildVig() {
+    vigCv = document.createElement('canvas');
+    vigCv.width = Math.max(2, Math.round(V.W / 2)); vigCv.height = Math.max(2, Math.round(V.H / 2));
+    var g = vigCv.getContext('2d');
+    var rad = g.createRadialGradient(vigCv.width / 2, vigCv.height / 2, Math.min(vigCv.width, vigCv.height) * 0.32, vigCv.width / 2, vigCv.height / 2, Math.hypot(vigCv.width, vigCv.height) / 2);
+    rad.addColorStop(0, 'rgba(4,6,16,0)'); rad.addColorStop(0.75, 'rgba(4,6,16,0.25)'); rad.addColorStop(1, 'rgba(4,6,16,0.75)');
+    g.fillStyle = rad; g.fillRect(0, 0, vigCv.width, vigCv.height);
+  }
   function resize() {
     var r = stage.getBoundingClientRect();
     if (!r.width) return;
@@ -785,6 +1023,7 @@
     V.W = r.width; V.H = r.height; V.cx = V.W / 2; V.cy = V.H / 2; V.M = Math.min(V.W, V.H); V.HD = 0.5 * Math.hypot(V.W, V.H);
     cv.width = off.width = Math.round(V.W * DPR);
     cv.height = off.height = Math.round(V.H * DPR);
+    buildVig();
   }
   function drawLayer(c, v, idx, s, now) {
     var L = LEVELS[idx], im = L.img && images[key(L.id)];
@@ -809,21 +1048,44 @@
       if (k < 1) { prepOff(); drawLayer(octx, V, i, s, now); ctx.globalAlpha = 1 - k; ctx.drawImage(off, 0, 0, V.W, V.H); ctx.globalAlpha = 1; }
       return;
     }
+    // tầng đang rời đi: mất nét dần như khi vặn núm lấy nét sang tiêu cự sâu hơn
+    var outBlur = hasNext && canBlur ? 7 * smooth(0.55, 1, f) : 0;
+    if (outBlur > 0.3) { ctx.filter = 'blur(' + outBlur.toFixed(1) + 'px)'; }
     drawLayer(ctx, V, i, s, now);
-    if (!hasNext) return;
+    ctx.filter = 'none';
+    if (!hasNext) {
+      if (i === 1 || i === 2) ctx.drawImage(vigCv, 0, 0, V.W, V.H);
+      return;
+    }
     var a = smooth(0.1, 0.38, f);
-    if (a < 0.01) return;
-    prepOff();
-    drawLayer(octx, V, i + 1, sN, now);
-    var r = 1.22 * V.HD * sN;
-    octx.globalCompositeOperation = 'destination-in';
-    var g = octx.createRadialGradient(V.cx, V.cy, r * 0.82, V.cx, V.cy, r);
-    g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(1, 'rgba(0,0,0,0)');
-    octx.fillStyle = g; octx.fillRect(0, 0, V.W, V.H);
-    octx.globalCompositeOperation = 'source-over';
-    ctx.globalAlpha = a; ctx.drawImage(off, 0, 0, V.W, V.H); ctx.globalAlpha = 1;
-    var ra = 0.45 * a * (1 - smooth(0.7, 0.95, f));
-    if (ra > 0.01) { ctx.strokeStyle = 'rgba(190,228,255,' + ra + ')'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(V.cx, V.cy, r * 0.86, 0, 6.2832); ctx.stroke(); }
+    if (a >= 0.01) {
+      // tầng mới hiện trong kính: lúc đầu còn nhòe, "xoay núm" đến đâu nét đến đó, kèm hơi thở tiêu cự
+      var foc = canBlur ? smooth(0.3, 0.85, f) : 1;
+      prepOff();
+      drawLayer(octx, V, i + 1, sN * (1 + 0.045 * (1 - foc)), now);
+      var r = 1.22 * V.HD * sN;
+      octx.globalCompositeOperation = 'destination-in';
+      var g = octx.createRadialGradient(V.cx, V.cy, r * 0.82, V.cx, V.cy, r);
+      g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+      octx.fillStyle = g; octx.fillRect(0, 0, V.W, V.H);
+      octx.globalCompositeOperation = 'source-over';
+      if (foc < 1) ctx.filter = 'blur(' + (6 * (1 - foc)).toFixed(1) + 'px)';
+      ctx.globalAlpha = a; ctx.drawImage(off, 0, 0, V.W, V.H); ctx.globalAlpha = 1;
+      ctx.filter = 'none';
+      var ra = 0.45 * a * (1 - smooth(0.7, 0.95, f));
+      if (ra > 0.01) { ctx.strokeStyle = 'rgba(190,228,255,' + ra + ')'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(V.cx, V.cy, r * 0.86, 0, 6.2832); ctx.stroke(); }
+    }
+    // viền thị kính ở hai tầng soi hiển vi, hiện dần khi đi vào và tan dần khi rời đi
+    var vig = 0;
+    if (i === 0) vig = smooth(0.5, 1, f);
+    else if (i === 1) vig = 1;
+    else if (i === 2) vig = 1 - smooth(0.45, 0.95, f);
+    if (vig > 0.02) { ctx.globalAlpha = vig; ctx.drawImage(vigCv, 0, 0, V.W, V.H); ctx.globalAlpha = 1; }
+    // rời kính hiển vi sang mô hình mô phỏng: màn tối đi một nhịp như lúc đổi thiết bị
+    if (i === 2) {
+      var dk = 0.5 * Math.sin(Math.PI * smooth(0.25, 0.95, f));
+      if (dk > 0.02) { ctx.fillStyle = 'rgba(3,5,14,' + dk + ')'; ctx.fillRect(0, 0, V.W, V.H); }
+    }
   }
 
   // =====================================================================
@@ -888,7 +1150,7 @@
       for (var c = 0; c < chips.length; c++) chips[c].setAttribute('aria-current', c === nearest ? 'true' : 'false');
       var atAtom = nearest === ATOM;
       holdBtn.hidden = !atAtom; countBox.hidden = !atAtom;
-      hintEl.hidden = THREE_D.indexOf(nearest) < 0;
+      hintEl.hidden = levels3d().indexOf(nearest) < 0;
       if (!atAtom && slow) setSlow(false);
     }
     var cap = captionFor(nearest);
@@ -916,14 +1178,45 @@
     picker.appendChild(b); pickBtns.push(b);
   });
 
-  function selectObject(idx) {
-    cur = OBJECTS[idx]; curMat = MATERIALS[cur.mat]; curEl = ELEMENTS[curMat.el];
-    curLatKey = curMat.lattice; curLat = LATTICES[curLatKey];
+  function refreshLevels() {
     LEVELS = buildLevels();
-    titleEl.textContent = cur.title;
-    for (var i = 0; i < pickBtns.length; i++) pickBtns[i].setAttribute('aria-pressed', i === idx ? 'true' : 'false');
     for (var c = 0; c < chips.length; c++) chips[c].textContent = LEVELS[c].name;
     lastNearest = -1; lastCap = ''; lastMag = '';
+  }
+  function setElement(ek) {
+    curElKey = ek; curEl = ELEMENTS[ek];
+    var btns = elRow.querySelectorAll('.chip');
+    for (var i = 0; i < btns.length; i++) btns[i].setAttribute('aria-current', btns[i].dataset.el === ek ? 'true' : 'false');
+    refreshLevels();
+    renderSlots();
+  }
+  var elRow = document.getElementById('elRow');
+  function buildElRow() {
+    elRow.textContent = '';
+    var els = curMat.els || [curMat.el];
+    elRow.hidden = els.length < 2;
+    if (els.length < 2) return;
+    var lab = document.createElement('span'); lab.className = 'eyebrow'; lab.style.alignSelf = 'center';
+    lab.textContent = 'Lặn vào nguyên tử nào?'; elRow.appendChild(lab);
+    els.forEach(function (ek) {
+      var e = ELEMENTS[ek], b = document.createElement('button');
+      b.type = 'button'; b.className = 'chip'; b.dataset.el = ek;
+      b.textContent = e.name + ' (' + e.sym + ')';
+      b.setAttribute('aria-current', ek === curElKey ? 'true' : 'false');
+      b.addEventListener('click', function () { setElement(ek); });
+      elRow.appendChild(b);
+    });
+  }
+  function selectObject(idx) {
+    cur = OBJECTS[idx]; curMat = MATERIALS[cur.mat];
+    curElKey = curMat.el; curEl = ELEMENTS[curElKey];
+    curLatKey = curMat.lattice || 'bcc'; curLat = curMat.lattice ? LATTICES[curLatKey] : PSEUDO_LAT;
+    cur.l3d = curMat.structure === 'glass' || curMat.structure === 'polymer' ? [4, 6] : [3, 4, 6];
+    cur.imgLevels = curMat.structure === 'glass' ? ['vat-the', 'be-mat'] : ['vat-the', 'be-mat', 'hat'];
+    refreshLevels();
+    titleEl.textContent = cur.title;
+    for (var i = 0; i < pickBtns.length; i++) pickBtns[i].setAttribute('aria-pressed', i === idx ? 'true' : 'false');
+    buildElRow();
     loadFolderImages(cur);
     updateLibHead();
     renderSlots();
@@ -1015,8 +1308,9 @@
     if (!auto.waitStart) { auto.waitStart = now; if (lvl === ATOM) { autoSlowing = true; setSlow(true); } }
     var el = now - auto.waitStart;
     if (lvl === ATOM && autoSlowing && el > 4.5) { autoSlowing = false; setSlow(false); }
-    var wait = lvl === ATOM ? 9 : (lvl === 3 || lvl === 6) ? 7 : 3.2;
-    rot.demo = (lvl === 3 || lvl === 6) ? (el < wait * 0.6 ? [0.8, 0.5] : [0, 0]) : null;
+    var demo3d = lvl !== ATOM && levels3d().indexOf(lvl) >= 0;
+    var wait = lvl === ATOM ? 9 : demo3d ? 7 : 3.2;
+    rot.demo = demo3d ? (el < wait * 0.6 ? [0.8, 0.5] : [0, 0]) : null;
     if (el > wait) { auto.waitStart = 0; if (lvl < N - 1) target = lvl + 1; else stopAuto(); }
   }
 
@@ -1040,7 +1334,7 @@
     intro.textContent = '';
     intro.appendChild(document.createTextNode('Ba tầng đầu thay được bằng ảnh ChatGPT. Bốn tầng sâu luôn vẽ bằng code để đúng khoa học và xoay 3D được. Ảnh vuông là tốt nhất; để phần quan trọng ở giữa vì mép ảnh sẽ bị cắt khi phóng to. Ảnh chọn ở đây chỉ lưu trong trình duyệt này. Muốn mọi máy đều thấy thì đưa ảnh lên GitHub, vào thư mục '));
     var b = document.createElement('b'); b.textContent = 'anh/' + cur.id + '/'; intro.appendChild(b);
-    intro.appendChild(document.createTextNode(', đặt tên vat-the, be-mat, hat.'));
+    intro.appendChild(document.createTextNode(', đặt tên ' + (cur.imgLevels || []).join(', ') + '.'));
   }
   btnLib.addEventListener('click', function () {
     var open = libEl.hidden;
