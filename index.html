@@ -118,7 +118,7 @@
 
 <div class="wrap">
   <header>
-    <p class="eyebrow">Game Phóng To · bản 10</p>
+    <p class="eyebrow">Game Phóng To · bản 11</p>
     <h1 id="objTitle">Cái đinh thép</h1>
   </header>
 
@@ -345,7 +345,7 @@
       fixed: 'Tầng này vẽ bằng code: sợi cơ co duỗi theo nút bấm.' };
   }
   function lvChain() {
-    return { id: 'chuoi', kind: 'strands', name: 'Chuỗi protein', frame: 6e-9, draw: drawProteinChain, d3: true, tilt: true, lod: true,
+    return { id: 'chuoi', kind: 'strands', name: 'Chuỗi protein', frame: 6e-9, draw: drawProteinChain, d3: true, lod: true,
       cap: 'Phóng vào một sợi mảnh: protein là một chuỗi hạt rất dài, mỗi hạt là một axit amin, mỗi màu một loại. Chuỗi tự cuộn thành lò xo nhỏ. Kéo để xoay.',
       fixed: 'Tầng này vẽ bằng code: chuỗi axit amin cuộn xoắn.' };
   }
@@ -358,12 +358,12 @@
       fixed: 'Tầng này vẽ bằng code: phân tử mỡ ba đuôi, chuyển động theo nhiệt độ.' };
   }
   function lvKeratin() {
-    return { id: 'keratin', kind: 'strands', name: 'Sợi keratin xoắn', frame: 1e-8, draw: drawKeratin, d3: true, tilt: true, lod: true,
+    return { id: 'keratin', kind: 'strands', name: 'Sợi keratin xoắn', frame: 1e-8, draw: drawKeratin, d3: true, lod: true,
       cap: 'Ruột tóc là hàng triệu sợi protein keratin. Mỗi sợi là hai chuỗi xoắn lò xo quấn vào nhau như dây thừng, móc chặt bằng những "khóa" lưu huỳnh (vàng). Kéo để xoay.',
       fixed: 'Tầng này vẽ bằng code: hai chuỗi keratin quấn nhau, có cầu lưu huỳnh.' };
   }
   function lvCollagen() {
-    return { id: 'collagen', kind: 'strands', name: 'Sợi collagen bện ba', frame: 1e-8, draw: drawCollagen, d3: true, tilt: true, lod: true,
+    return { id: 'collagen', kind: 'strands', name: 'Sợi collagen bện ba', frame: 1e-8, draw: drawCollagen, d3: true, lod: true,
       cap: 'Mỗi sợi trong lưới da là collagen: ba chuỗi protein bện vào nhau như bím tóc. Bện ba thì rất dai — da kéo căng được mà không rách. Kéo để xoay.',
       fixed: 'Tầng này vẽ bằng code: ba chuỗi collagen bện nhau.' };
   }
@@ -1586,13 +1586,15 @@
     if (rot.drag) return;
     if (!is3D()) {
       rot.yaw = Math.atan2(Math.sin(rot.yaw), Math.cos(rot.yaw));
+      rot.pitch = Math.atan2(Math.sin(rot.pitch), Math.cos(rot.pitch));
       var k = Math.min(1, dt * 4);
       rot.yaw -= rot.yaw * k; rot.pitch -= rot.pitch * k; rot.vy = rot.vp = 0;
       if (rotMag() < 0.002) rot.yaw = rot.pitch = 0;
       return;
     }
     if (rot.demo) { var kd = Math.min(1, dt * 1.6); rot.yaw += (rot.demo[0] - rot.yaw) * kd; rot.pitch += (rot.demo[1] - rot.pitch) * kd; return; }
-    rot.yaw += rot.vy * dt; rot.pitch = clamp(rot.pitch + rot.vp * dt, -1.2, 1.2);
+    rot.yaw += rot.vy * dt; rot.pitch += rot.vp * dt;
+    if (LEVELS[nearestLevel()].tilt) rot.pitch = clamp(rot.pitch, -1.2, 1.2);
     var damp = Math.exp(-dt * 5); rot.vy *= damp; rot.vp *= damp;
     limitTilt();
   }
@@ -2383,7 +2385,7 @@
       if (m.hat) lv.push(L({ id: 'hat', kind: 'tissue', name: m.hat[0], frame: m.hat[1], img: true, draw: o.hd || drawSurface, view: 'micro', lod: true, cap: m.hat[2], prompt: o.pHat || m.hat[3] }));
       m.chain.forEach(function (c) { lv.push(L(c)); });
       var U = UNITS[m.unit];
-      lv.push(L({ id: 'phan-tu', kind: 'chain', name: U.name, frame: 1.3e-9, draw: drawStruct, temp: true, d3: true, tilt: true, lod: true, cap: U.cap,
+      lv.push(L({ id: 'phan-tu', kind: 'chain', name: U.name, frame: 1.3e-9, draw: drawStruct, temp: true, d3: true, lod: true, cap: U.cap,
         fixed: 'Tầng này vẽ bằng code: đúng các nguyên tử trong phân tử, rung theo nhiệt độ, xoay 3D được.' }));
       return { fAtom: 1.6e-10, levels: lv };
     }
@@ -2918,7 +2920,8 @@
       if (is3D()) {
         var dx = e.clientX - dragX, dy = e.clientY - dragY;
         rot.drag = true;
-        rot.yaw += dx * 0.009; rot.pitch = clamp(rot.pitch + dy * 0.009, -1.2, 1.2);
+        rot.yaw += dx * 0.009; rot.pitch += dy * 0.009;
+        if (LEVELS[nearestLevel()].tilt) rot.pitch = clamp(rot.pitch, -1.2, 1.2);
         rot.vy = clamp(dx * 0.009 * 30, -3, 3); rot.vp = clamp(dy * 0.009 * 30, -3, 3);
         limitTilt();
       } else {
