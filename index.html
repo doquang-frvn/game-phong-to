@@ -46,6 +46,17 @@
   .picker .grp { grid-column: 1 / -1; margin-top: 6px; }
   .picker .grp:first-child { margin-top: 0; }
   .pick:hover { border-color: var(--electron); }
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .btn-pick { flex: 0 0 auto; background: var(--electron); color: #081022; border-color: var(--electron); font-weight: 700; font-size: .95rem; padding: 12px 18px; }
+  .sheet { position: fixed; inset: 0; z-index: 30; background: rgba(4,6,18,.72); display: flex; align-items: flex-end; justify-content: center; }
+  .sheet-card {
+    width: min(980px, 100%); max-height: 86vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    background: var(--panel); border: 1px solid var(--rule); border-radius: 20px 20px 0 0;
+    padding: 16px 16px calc(20px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 12px;
+  }
+  .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .sheet-head h2 { margin: 0; font-family: var(--display); font-size: 1.25rem; }
+  .sheet-head .btn { flex: 0 0 auto; }
   .tabs { display: flex; gap: 6px; flex-wrap: wrap; border-bottom: 1px solid var(--rule); padding-bottom: 10px; }
   .tab { font: inherit; font-size: .95rem; font-weight: 600; color: var(--ink-dim); background: transparent; border: 1px solid var(--rule); border-radius: 999px; padding: 9px 16px; cursor: pointer; }
   .tab:hover { color: var(--ink); border-color: var(--electron); }
@@ -117,13 +128,24 @@
 <body>
 
 <div class="wrap">
-  <header>
-    <p class="eyebrow">Game Phóng To · bản 11</p>
-    <h1 id="objTitle">Cái đinh thép</h1>
+  <header class="top">
+    <div>
+      <p class="eyebrow">Game Phóng To · bản 12</p>
+      <h1 id="objTitle">Cái đinh thép</h1>
+    </div>
+    <button class="btn btn-pick" id="btnPick" type="button" aria-haspopup="dialog">Đổi vật thể</button>
   </header>
 
-  <div class="tabs" id="tabs" role="tablist" aria-label="Chọn bộ sưu tập"></div>
-  <div id="pickers"></div>
+  <div class="sheet" id="sheet" hidden>
+    <div class="sheet-card" role="dialog" aria-modal="true" aria-label="Chọn vật thể">
+      <div class="sheet-head">
+        <h2>Soi gì tiếp đây?</h2>
+        <button class="btn" id="btnSheetClose" type="button">Đóng</button>
+      </div>
+      <div class="tabs" id="tabs" role="tablist" aria-label="Chọn bộ sưu tập"></div>
+      <div id="pickers"></div>
+    </div>
+  </div>
 
   <div class="stage" id="stage">
     <canvas id="cv"></canvas>
@@ -272,7 +294,7 @@
       ['Ruột sợi tóc', 3e-5, 'Cắt ngang sợi tóc: ngoài là vòng vảy, ruột là bó sợi dày đặc xếp song song như bó đũa.',
         'Ảnh kính hiển vi điện tử mặt cắt ngang một sợi tóc người: vòng vảy mỏng ngoài cùng, bên trong là bó sợi dày đặc xếp song song. Tông xám tô màu nâu nhạt.'],
       [lvKeratin()]),
-    da: bioMat('Da', '#f0b9a0', 'Protein bện ba', ['C', 'H', 'O', 'N'], 'amino', [226, 170, 150],
+    landa: bioMat('Da', '#f0b9a0', 'Protein bện ba', ['C', 'H', 'O', 'N'], 'amino', [226, 170, 150],
       ['Bề mặt da dưới kính hiển vi điện tử: những vảy da mỏng dẹt chồng lên nhau như lá khô. Da bong vảy mỗi ngày mà con không biết!',
         'Ảnh kính hiển vi điện tử bề mặt da người: những vảy da mỏng dẹt chồng lên nhau như lá khô, có rãnh vân da chạy chéo. Tông xám tô màu hồng nhạt.'],
       ['Lưới sợi dưới da', 3e-5, 'Bên dưới lớp vảy là một tấm lưới sợi đan chéo nhau — sợi collagen. Nhờ tấm lưới này da kéo căng được rồi bật lại.',
@@ -467,7 +489,7 @@
       pObj: 'Ảnh vật thể: một lọn tóc đen óng của người Việt, buộc gọn, nằm uốn nhẹ trên nền vải nhung xanh thẫm. Lọn tóc nằm chính giữa. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ.',
       pSurf: 'Ảnh kính hiển vi điện tử một sợi tóc người nằm chéo khung hình: bề mặt phủ những vảy mỏng chồng lên nhau như ngói lợp nhà, mép vảy hơi vểnh. Tông xám tô màu nâu nhạt. Sợi tóc phủ gần kín khung. Ảnh vuông 1:1, sắc nét, không có chữ.',
       pHat: 'Ảnh kính hiển vi điện tử mặt cắt ngang một sợi tóc người: vòng vảy mỏng ở ngoài cùng, bên trong là bó sợi dày đặc xếp song song nhìn từ đầu cắt. Tông xám tô màu nâu nhạt. Mặt cắt chiếm gần kín khung. Ảnh vuông 1:1, sắc nét, không có chữ.' },
-    { id: 'lan-da', name: 'Làn da', title: 'Làn da', short: 'làn da', mat: 'da', frame: 0.1, draw: drawHand, surfName: 'Vảy da', sf: 4e-4, hd: drawCollagenNet,
+    { id: 'lan-da', name: 'Làn da', title: 'Làn da', short: 'làn da', mat: 'landa', frame: 0.1, draw: drawHand, surfName: 'Vảy da', sf: 4e-4, hd: drawCollagenNet,
       cap: 'Mu bàn tay. Da là bộ áo giáp bọc kín người con: chống nước, chặn vi khuẩn, kéo căng được rồi lại bật về. Phóng to vào xem.',
       pObj: 'Ảnh cận cảnh mu bàn tay người lớn đặt trên nền vải nhung xanh thẫm, thấy rõ các vân da nhỏ và lỗ chân lông, ánh sáng mềm. Phần mu tay nằm chính giữa. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ.',
       pSurf: 'Ảnh kính hiển vi điện tử bề mặt da người: những vảy da mỏng dẹt chồng lên nhau như lá khô, có rãnh vân da chạy chéo. Tông xám tô màu hồng nhạt. Phủ kín khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.',
@@ -2800,6 +2822,14 @@
       });
     });
   });
+  var sheetEl = document.getElementById('sheet'), btnPick = document.getElementById('btnPick');
+  function openSheet() { sheetEl.hidden = false; var t = tabBtns[curTab()] || tabBtns[0]; if (t) t.focus(); }
+  function closeSheet() { sheetEl.hidden = true; }
+  function curTab() { var i = OBJECTS.indexOf(cur); return (i >= 0 && objTab[i]) || 0; }
+  btnPick.addEventListener('click', openSheet);
+  document.getElementById('btnSheetClose').addEventListener('click', closeSheet);
+  sheetEl.addEventListener('click', function (e) { if (e.target === sheetEl) closeSheet(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheetEl.hidden) closeSheet(); });
   function showTab(ti) {
     for (var i = 0; i < tabBtns.length; i++) {
       tabBtns[i].setAttribute('aria-selected', i === ti ? 'true' : 'false'); tabBtns[i].tabIndex = i === ti ? 0 : -1;
@@ -2868,24 +2898,21 @@
     });
   }
   function selectObject(idx) {
-    var oldKind = LEVELS ? LEVELS[nearestLevel()].kind : null, frac = z - Math.round(z);
     cur = OBJECTS[idx]; curMat = MATERIALS[cur.mat];
     eggCook = 0; musC = 0;
     curElKey = curMat.el; curEl = ELEMENTS[curElKey];
     curLatKey = curMat.lattice || 'bcc'; curLat = LATTICES[curLatKey];
     pts = []; pings = [];
+    stopAuto();
     refreshLevels();
-    // giữ nguyên độ sâu theo loại tầng khi đổi vật (ví dụ đang ở hạt nhân thì vẫn ở hạt nhân)
-    if (oldKind) {
-      var ni = -1;
-      for (var i = 0; i < N; i++) if (LEVELS[i].kind === oldKind) ni = i;
-      if (ni < 0) ni = clamp(Math.round(z), 0, N - 1);
-      z = target = clamp(ni + frac, ZMIN, ZMAX);
-      if (ni === 0 && z < 0.01) z = target = ZMIN;
-    }
+    // vật mới luôn bắt đầu từ cỡ thật, soi lại từ đầu
+    z = target = ZMIN;
+    rot.yaw = rot.pitch = rot.vy = rot.vp = 0;
     titleEl.textContent = cur.title;
+    btnPick.textContent = 'Đổi vật thể';
     for (var p = 0; p < pickBtns.length; p++) if (pickBtns[p]) pickBtns[p].setAttribute('aria-pressed', p === idx ? 'true' : 'false');
     showTab(objTab[idx] || 0);
+    closeSheet();
     buildElRow();
     loadFolderImages();
     updateLibHead();
