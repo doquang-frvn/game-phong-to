@@ -85,6 +85,12 @@
     background: var(--electron); color: #081022; box-shadow: 0 4px 22px rgba(143,212,255,.35); touch-action: none;
   }
   .hold.on { background: var(--amber); box-shadow: 0 4px 22px rgba(242,166,90,.45); }
+  .curr { left: auto; right: 14px; transform: none; }
+  .curr[aria-pressed="true"] { background: var(--amber); box-shadow: 0 4px 22px rgba(242,166,90,.5); }
+  .thermo { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; pointer-events: none; }
+  .thermo-tube { width: 12px; height: clamp(90px, 22vh, 170px); background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.3); border-radius: 8px 8px 0 0; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
+  .thermo-fill { width: 100%; height: 45%; background: linear-gradient(#ffb45a, #e4493f); transition: height .1s linear; }
+  .thermo-bulb { width: 22px; height: 22px; border-radius: 50%; background: #e4493f; border: 1px solid rgba(255,255,255,.35); margin-top: -3px; }
   .hold:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 
   .caption { margin: 0; min-height: 3em; font-family: var(--display); font-style: italic; font-weight: 500; font-size: clamp(1rem, 2.6vw, 1.15rem); line-height: 1.5; text-wrap: pretty; }
@@ -98,6 +104,7 @@
   .chip .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
   .chip:focus-visible, .btn:focus-visible { outline: 2px solid var(--electron); outline-offset: 2px; }
   input[type=range] { width: 100%; height: 30px; accent-color: var(--electron); }
+  #tempSlider { flex: 1; width: auto; accent-color: #f2a65a; }
   input[type=range]:focus-visible { outline: 2px solid var(--electron); outline-offset: 4px; }
   .row { display: flex; flex-wrap: wrap; gap: 8px; }
   .btn { font: inherit; font-size: .88rem; font-weight: 500; color: var(--ink); background: transparent; border: 1px solid var(--rule); border-radius: 999px; padding: 10px 15px; cursor: pointer; flex: 1 1 auto; min-width: 0; }
@@ -130,7 +137,7 @@
 <div class="wrap">
   <header class="top">
     <div>
-      <p class="eyebrow">Game Phóng To · bản 12</p>
+      <p class="eyebrow">Game Phóng To · bản 15</p>
       <h1 id="objTitle">Cái đinh thép</h1>
     </div>
     <button class="btn btn-pick" id="btnPick" type="button" aria-haspopup="dialog">Đổi vật thể</button>
@@ -155,7 +162,9 @@
       <div class="hint" id="hint" hidden>Kéo trên hình để xoay 3D</div>
     </div>
     <div class="count" id="count" hidden>Số lần phát hiện electron: <b id="countN">0</b></div>
+    <div class="thermo" id="thermo" hidden aria-hidden="true"><div class="thermo-tube"><div class="thermo-fill" id="thermoFill"></div></div><div class="thermo-bulb"></div></div>
     <button class="hold" id="hold" type="button" hidden>Giữ để quay chậm</button>
+    <button class="hold curr" id="currBtn" type="button" hidden aria-pressed="false">⚡ Dòng điện</button>
   </div>
 
   <p class="caption" id="cap"></p>
@@ -334,6 +343,8 @@
       ['Vi khuẩn sữa chua: những que nhỏ xíu, có con nối nhau thành chuỗi. Chính chúng biến sữa thành sữa chua.',
         'Ảnh kính hiển vi điện tử vi khuẩn sữa chua: nhiều vi khuẩn hình que nhỏ, có con nối nhau thành chuỗi ngắn, trên nền sữa đông xốp. Tô màu xanh lá nhạt.'],
       null, [lvBact(), lvDna()]),
+    giay: { structure: 'paper', phase: 'solid', name: 'Giấy', lower: 'giấy', el: 'C', els: ['C', 'O', 'H'], base: [232, 228, 216], sym: 'C₆', symColor: '#efe9d8', sub: 'Gỗ nghiền ép mỏng' },
+    bancau: bioMat('Bẩn', '#b9a27a', 'Vi khuẩn bám khắp nơi', ['C', 'H', 'O', 'N', 'P'], 'nucleotide', [150, 128, 96], null, null, [lvBact(), lvDna()]),
     virus: bioMat('Virus', '#b7a6ff', 'Không phải tế bào', ['C', 'H', 'O', 'N'], 'amino', [150, 140, 200],
       ['Một giọt bắn đã khô dưới kính hiển vi điện tử: vài hạt tròn tí hon nằm rải rác — đó là virus.',
         'Ảnh kính hiển vi điện tử bề mặt một giọt bắn đã khô: nền xốp có vài hạt virus tròn nhỏ nằm rải rác. Tô màu xanh tím nhẹ trên nền tối.'],
@@ -526,12 +537,46 @@
       cap: 'Hắt xì! Mỗi cái hắt hơi bắn ra hàng nghìn giọt nước li ti. Người đang bị cúm thì trong giọt có virus. Vì thế hắt hơi phải che miệng! Phóng vào một giọt.',
       pObj: 'Ảnh chụp ngược sáng một chùm giọt nước li ti bay tung ra trong không khí, như lúc hắt hơi, lấp lánh trên nền tối xanh thẫm, không có người. Chùm giọt dày nhất nằm chính giữa khung hình. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ.',
       pSurf: 'Ảnh kính hiển vi điện tử bề mặt một giọt bắn đã khô: nền xốp có vài hạt virus tròn nhỏ nằm rải rác. Tô màu xanh tím nhẹ trên nền tối. Một hạt virus nằm chính giữa khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.',
-      pHat: 'Ảnh kính hiển vi điện tử cận cảnh một hạt virus cúm: hình cầu, mặt ngoài phủ dày những gai protein ngắn nhô lên như bàn chải. Tô màu xanh tím và cam nhẹ trên nền đen. Hạt virus nằm chính giữa, chiếm phần lớn khung. Ảnh vuông 1:1, sắc nét, không có chữ.' }
+      pHat: 'Ảnh kính hiển vi điện tử cận cảnh một hạt virus cúm: hình cầu, mặt ngoài phủ dày những gai protein ngắn nhô lên như bàn chải. Tô màu xanh tím và cam nhẹ trên nền đen. Hạt virus nằm chính giữa, chiếm phần lớn khung. Ảnh vuông 1:1, sắc nét, không có chữ.' },
+    // ----- MODULE ĐỒ BẨN -----
+    { id: 'mong-tay', name: 'Móng tay bẩn', title: 'Móng tay bẩn', short: 'kẽ móng', mat: 'bancau', frame: 0.05, draw: drawNailObj, surfName: 'Kẽ móng tay', sf: 0.0025, hd: drawGerms,
+      surfCap: 'Phóng vào kẽ móng: vệt đen ấy là đất, vụn da, dầu — và cả một đàn vi khuẩn đang trốn trong đó. Rửa tay không kỳ móng là chúng ở lại đấy!',
+      hatName: 'Ổ vi khuẩn', hatCap: 'Nhìn gần nữa: vi khuẩn đủ hình — que dài, hạt tròn nối chuỗi — bám giữa các vụn da. Đa số vô hại, nhưng có con gây đau bụng nếu theo tay vào miệng. Vì thế ăn gì cũng phải rửa tay trước!',
+      cap: 'Một ngón tay có kẽ móng hơi đen. Trông chỉ hơi bẩn thôi — nhưng phóng to lên xem trong kẽ móng có gì nhé.',
+      pObj: 'Ảnh macro một ngón tay cái của trẻ em đưa ra trước ống kính, móng tay hơi dài có viền đất mỏng màu sẫm trong kẽ móng, nền vải nhung xanh thẫm mờ. Ngón tay nằm chính giữa khung hình. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ.',
+      pSurf: 'Ảnh macro cực gần kẽ móng tay có viền đất sẫm: thấy rõ rìa móng, da xước nhẹ và vụn đất li ti kẹt trong kẽ. Kín toàn bộ khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.',
+      pHat: 'Ảnh kính hiển vi điện tử vùng kẽ móng tay: nhiều vi khuẩn hình que và hình cầu nối chuỗi bám giữa các vảy da bong và vụn bẩn. Tô màu nhẹ vàng nâu và tím trên nền tối. Kín khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.' },
+    { id: 'mieng-rua-bat', name: 'Miếng rửa bát', title: 'Miếng rửa bát', short: 'miếng mút', mat: 'bancau', frame: 0.12, draw: drawSpongeObj, surfName: 'Lỗ xốp', sf: 0.006, hd: drawGerms,
+      surfCap: 'Miếng mút toàn lỗ là lỗ, lúc nào cũng ẩm và dính vụn thức ăn — đúng kiểu "khách sạn 5 sao" của vi khuẩn.',
+      hatName: 'Ổ vi khuẩn', hatCap: 'Trong một miếng rửa bát có thể có nhiều vi khuẩn hơn cả bồn cầu! Chúng ăn vụn thức ăn, ở nhà ấm và ẩm. Vì thế miếng rửa bát phải vắt khô, phơi nắng và thay thường xuyên.',
+      cap: 'Miếng rửa bát vàng quen thuộc. Nó rửa sạch bát — nhưng chính nó có sạch không? Phóng to xem.',
+      pObj: 'Ảnh chụp một miếng rửa bát màu vàng có mặt xanh lá, hơi ẩm với vài bọt xà phòng, đặt trên nền vải nhung xanh thẫm. Miếng mút nằm chính giữa khung hình. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ.',
+      pSurf: 'Ảnh macro bề mặt miếng mút rửa bát vàng: các lỗ xốp to nhỏ đan nhau như hang động, hơi ẩm bóng, vài vụn thức ăn nhỏ kẹt trong lỗ. Kín toàn bộ khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.',
+      pHat: 'Ảnh kính hiển vi điện tử sợi mút xốp phủ dày vi khuẩn: rất nhiều vi khuẩn hình que và chuỗi hạt tròn phủ kín bề mặt sợi, có lớp màng nhầy mỏng. Tô màu vàng cam và tím nhạt trên nền tối. Kín khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.' },
+    { id: 'dien-thoai', name: 'Điện thoại', title: 'Màn hình điện thoại', short: 'màn hình', mat: 'bancau', frame: 0.16, draw: drawPhoneObj, surfName: 'Vết vân tay', sf: 0.003, hd: drawGerms,
+      surfCap: 'Nghiêng màn hình ra nắng: toàn vết vân tay! Đó là dầu từ da mình, và dính theo dầu là bụi với vi khuẩn — từ mọi thứ tay mình đã sờ trong ngày.',
+      hatName: 'Vi khuẩn trên kính', hatCap: 'Vi khuẩn nằm rải rác theo vệt vân tay. Điện thoại được sờ cả trăm lần một ngày mà chẳng mấy khi được rửa — vì thế đừng vừa ăn vừa cầm điện thoại nhé!',
+      cap: 'Chiếc điện thoại — thứ cả nhà ai cũng cầm cả ngày. Màn hình trông bóng loáng sạch sẽ… phóng to xem có đúng không.',
+      pObj: 'Ảnh chụp một chiếc điện thoại màn hình tắt đặt trên nền vải nhung xanh thẫm, nghiêng nhẹ dưới ánh sáng để lộ những vết vân tay loang mờ trên mặt kính đen. Điện thoại nằm chính giữa khung hình. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ.',
+      pSurf: 'Ảnh macro mặt kính điện thoại dưới ánh sáng xiên: các vết vân tay dầu loang thành đường vân rõ, lấm tấm bụi nhỏ và một vệt lau mờ. Kín toàn bộ khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.',
+      pHat: 'Ảnh kính hiển vi điện tử bề mặt kính có vết vân tay: màng dầu mỏng loang theo đường vân, vi khuẩn hình que và hình cầu nằm rải rác dọc vệt dầu cùng vài hạt bụi. Tô màu xanh ngọc và cam nhạt trên nền tối. Kín khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.' },
+    { id: 'chiec-rang', name: 'Răng chưa đánh', title: 'Chiếc răng chưa đánh', short: 'mặt răng', mat: 'bancau', frame: 0.018, draw: drawToothObj, surfName: 'Mảng bám răng', sf: 0.002, hd: drawGerms,
+      surfCap: 'Sát chân răng có một lớp vàng nhạt hơi nhám — đó là mảng bám: "ngôi làng" do vi khuẩn xây bằng thức ăn thừa, nhất là đường.',
+      hatName: 'Vi khuẩn mảng bám', hatCap: 'Vi khuẩn trong mảng bám ăn đường rồi thải ra axit — axit gặm thủng lớp men cứng nhất cơ thể, thành lỗ sâu răng. Đánh răng sáng tối là quét sạch "ngôi làng" này trước khi chúng kịp đục!',
+      cap: 'Một chiếc răng chưa được đánh từ hôm qua. Răng là thứ cứng nhất trong cơ thể — mà vẫn bị sâu đục thủng. Thủ phạm bé tí, phóng to là thấy.',
+      pObj: 'Ảnh chụp mô hình một chiếc răng hàm người màu trắng ngà có đủ thân răng và chân răng, đặt trên nền vải nhung xanh thẫm, gần cổ răng có lớp ố vàng nhạt. Chiếc răng nằm chính giữa khung hình. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ.',
+      pSurf: 'Ảnh macro bề mặt răng gần chân răng: men răng trắng ngà bóng, sát viền lợi có lớp mảng bám vàng nhạt hơi nhám phủ không đều. Kín toàn bộ khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.',
+      pHat: 'Ảnh kính hiển vi điện tử mảng bám răng: dày đặc vi khuẩn hình que và chuỗi hạt tròn chồng lên nhau thành lớp, dính trong màng nhầy. Tô màu vàng và tím nhạt trên nền tối. Kín khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.' },
+    // ----- TỜ GIẤY -----
+    { id: 'to-giay', name: 'Tờ giấy', title: 'Tờ giấy', short: 'tờ giấy', mat: 'giay', frame: 0.3, draw: drawPaperObj,
+      cap: 'Một tờ giấy trắng. Mỏng tang, nhẹ bẫng — mà xé ngang thì khó rách theo đường thẳng. Phóng to xem giấy làm từ gì.',
+      pObj: 'Ảnh chụp một tờ giấy trắng hơi cong nhẹ đặt trên nền vải nhung xanh thẫm, ánh sáng xiên làm lộ bề mặt hơi nhám. Tờ giấy nằm chính giữa khung hình. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ.',
+      pSurf: 'Ảnh kính hiển vi điện tử bề mặt tờ giấy: những sợi gỗ dẹt như ruy băng đan rối và ép bẹp lên nhau thành thảm. Tông xám tô trắng ngà. Kín toàn bộ khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.' }
   ];
   var GROUPS = [
     ['Kim loại', ['dinh-sat', 'day-dong', 'nhan-vang', 'thoi-chi', 'khoi-nhom']],
     ['Đá, sứ và thủy tinh', ['coc-thuy-tinh', 'bat-su', 'hat-muoi', 'cuc-than', 'kim-cuong']],
-    ['Nhựa và gỗ', ['chai-nhua', 'khoi-go']],
+    ['Nhựa, gỗ và giấy', ['chai-nhua', 'khoi-go', 'to-giay']],
     ['Nước và không khí', ['giot-nuoc', 'cuc-da', 'hoi-nuoc', 'qua-bong']]
   ];
   var BIO_GROUPS = [
@@ -543,7 +588,11 @@
     ['Cả con chỉ một tế bào', ['trung-giay', 'vi-khuan']],
     ['Không phải tế bào', ['virus']]
   ];
-  var TABS = [['Vật chất', GROUPS], ['Cơ thể', BIO_GROUPS], ['Sinh vật tí hon', MICRO_GROUPS]];
+  var DIRTY_GROUPS = [
+    ['Đầy vi khuẩn hơn con tưởng', ['mong-tay', 'mieng-rua-bat', 'dien-thoai']],
+    ['Trong miệng mình', ['chiec-rang']]
+  ];
+  var TABS = [['Vật chất', GROUPS], ['Cơ thể', BIO_GROUPS], ['Sinh vật tí hon', MICRO_GROUPS], ['Đồ bẩn', DIRTY_GROUPS]];
 
   // =====================================================================
   // Kết cấu dựng bằng code (tạo một lần, lưu lại)
@@ -727,8 +776,9 @@
   // =====================================================================
   // Nhiệt độ và dao động nhiệt
   // =====================================================================
-  var TEMPS = [0.12, 1, 2.2], tempIdx = 1;
-  function Tm() { return TEMPS[tempIdx]; }
+  var tempVal = 0.4, tempIdx = 1;
+  function Tm() { return tempVal < 0.4 ? 0.12 + (tempVal / 0.4) * 0.88 : 1 + (tempVal - 0.4) / 0.6 * 1.2; }
+  function tIdxOf() { return tempVal < 0.15 ? 0 : tempVal < 0.72 ? 1 : 2; }
   var VIB = 0.012; // biên độ rung (đơn vị khung) ở nhiệt độ phòng — đã phóng đại cho dễ nhìn
   function jit(a, b, c, t) {
     var f1 = 5 + 3 * cellRand(a, b, c + 21), f2 = 6 + 3 * cellRand(a, b, c + 22), f3 = 5.5 + 3 * cellRand(a, b, c + 23);
@@ -748,16 +798,32 @@
     var x0 = v.cx - Math.ceil(v.cx / ts) * ts, y0 = v.cy - Math.ceil(v.cy / ts) * ts;
     for (var x = x0; x < v.W; x += ts) for (var y = y0; y < v.H; y += ts) ctx.drawImage(tile, x, y, ts + 0.6, ts + 0.6);
   }
-  // ảnh được đặt sao cho điểm focus của ảnh luôn nằm giữa màn hình
+  // lúc chưa phóng: thấy trọn ảnh; phóng tới đâu, camera trượt dần về điểm cần soi (focus) tới đó.
+  // lúc còn nhỏ trong ống kính (s < 1): nhắm thẳng vào điểm soi, lót sau một bản to hơn để không hở mép kính
   function drawImageLayer(ctx, v, img, s, focus) {
     bg(ctx, v, '#000');
-    var side = 2 * v.HD * s, w = img.naturalWidth, h = img.naturalHeight, dw, dh;
-    if (w >= h) { dh = side; dw = side * w / h; } else { dw = side; dh = side * h / w; }
-    var fx = focus ? focus[0] : 0.5, fy = focus ? focus[1] : 0.5;
-    // điểm phóng lệch tâm thì ảnh phải to hơn để vẫn phủ kín khung
-    var cover = Math.max(1, 0.5 / Math.min(fx, 1 - fx), 0.5 / Math.min(fy, 1 - fy));
-    dw *= cover; dh *= cover;
-    ctx.drawImage(img, v.cx - dw * fx, v.cy - dh * fy, dw, dh);
+    var base = Math.max(v.W, v.H), w = img.naturalWidth, h = img.naturalHeight, bw, bh;
+    if (w >= h) { bh = base; bw = base * w / h; } else { bw = base; bh = base * h / w; }
+    var fx = focus ? focus[0] : 0.5, fy = focus ? focus[1] : 0.5, g = s <= 1 ? s : 1 / s;
+    // trong ống kính (s < 1) ảnh to theo s^0,5 thay vì s: vẫn luôn lớn dần, nhưng đủ to để lấp vòng kính
+    var se = s < 1 ? Math.sqrt(s) : s, dw = bw * se, dh = bh * se;
+    // điểm soi luôn nằm trong vùng nhìn thấy (màn soi bè ngang thì ảnh vuông bị cắt trên dưới)
+    var px = clamp(v.cx + bw * (fx - 0.5) * g, v.cx - 0.32 * v.W, v.cx + 0.32 * v.W);
+    var py = clamp(v.cy + bh * (fy - 0.5) * g, v.cy - 0.32 * v.H, v.cy + 0.32 * v.H);
+    var x0 = px - dw * fx, y0 = py - dh * fy;
+    // không để lộ mép ảnh
+    if (dw >= v.W) x0 = clamp(x0, v.W - dw, 0);
+    if (dh >= v.H) y0 = clamp(y0, v.H - dh, 0);
+    ctx.drawImage(img, x0, y0, dw, dh);
+    // trong ống kính ảnh còn nhỏ: ghép thêm 8 bản soi gương xung quanh để mép nối liền màu, không hở
+    if (s < 1) for (var i = -1; i <= 1; i++) for (var j = -1; j <= 1; j++) {
+      if (!i && !j) continue;
+      ctx.save();
+      ctx.translate(x0 + dw * (i + 0.5), y0 + dh * (j + 0.5));
+      ctx.scale(i ? -1 : 1, j ? -1 : 1);
+      ctx.drawImage(img, -dw / 2, -dh / 2, dw, dh);
+      ctx.restore();
+    }
   }
   function velvet(ctx, v) {
     var g = ctx.createRadialGradient(v.cx, v.cy, 0, v.cx, v.cy, v.HD);
@@ -1109,6 +1175,138 @@
     }
   }
   function gauss0(r) { var u = 1 - r(), w = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(6.2832 * w); }
+
+  // ---------- module đồ bẩn + giấy: hình vật thể ----------
+  function drawNailObj(ctx, v, s) {
+    velvet(ctx, v);
+    var M = v.M * s, cx = v.cx, cy = v.cy;
+    var g = ctx.createLinearGradient(cx - 0.3 * M, cy, cx + 0.3 * M, cy);
+    g.addColorStop(0, '#d9a07e'); g.addColorStop(0.5, '#eebb97'); g.addColorStop(1, '#cf9573');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.roundRect(cx - 0.21 * M, cy - 0.28 * M, 0.42 * M, 1 * M, 0.21 * M); ctx.fill();
+    ctx.strokeStyle = 'rgba(150,95,70,0.35)'; ctx.lineWidth = Math.max(1, 0.004 * M);
+    ctx.beginPath(); ctx.moveTo(cx - 0.18 * M, cy + 0.3 * M); ctx.quadraticCurveTo(cx, cy + 0.26 * M, cx + 0.18 * M, cy + 0.3 * M); ctx.stroke();
+    var n = ctx.createRadialGradient(cx - 0.04 * M, cy - 0.12 * M, 0.02 * M, cx, cy - 0.06 * M, 0.2 * M);
+    n.addColorStop(0, '#f6dfd2'); n.addColorStop(1, '#e8bfae');
+    ctx.fillStyle = n; ctx.beginPath(); ctx.ellipse(cx, cy - 0.05 * M, 0.145 * M, 0.17 * M, 0, 0, 6.2832); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.75)'; ctx.beginPath(); ctx.ellipse(cx, cy - 0.185 * M, 0.13 * M, 0.05 * M, 0, 0, 6.2832); ctx.fill();
+    ctx.strokeStyle = '#4a3828'; ctx.lineWidth = Math.max(2, 0.018 * M);
+    ctx.beginPath(); ctx.ellipse(cx, cy - 0.19 * M, 0.132 * M, 0.052 * M, 0, 3.4, 6.02); ctx.stroke();
+  }
+  function drawSpongeObj(ctx, v, s) {
+    velvet(ctx, v);
+    var M = v.M * s, cx = v.cx, cy = v.cy, r = mulberry32(71), i;
+    ctx.fillStyle = '#2e8f5e'; ctx.beginPath(); ctx.roundRect(cx - 0.36 * M, cy - 0.24 * M, 0.72 * M, 0.14 * M, 0.03 * M); ctx.fill();
+    var g = ctx.createLinearGradient(cx, cy - 0.1 * M, cx, cy + 0.3 * M);
+    g.addColorStop(0, '#f5d44a'); g.addColorStop(1, '#d9ad2a');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.roundRect(cx - 0.36 * M, cy - 0.11 * M, 0.72 * M, 0.4 * M, 0.04 * M); ctx.fill();
+    ctx.fillStyle = 'rgba(140,100,20,0.35)';
+    for (i = 0; i < 46; i++) {
+      var x = cx + (r() - 0.5) * 0.66 * M, y = cy - 0.08 * M + r() * 0.34 * M, rr = (0.006 + r() * 0.018) * M;
+      ctx.beginPath(); ctx.ellipse(x, y, rr, rr * (0.6 + r() * 0.4), r() * 3, 0, 6.2832); ctx.fill();
+    }
+  }
+  function drawPhoneObj(ctx, v, s) {
+    velvet(ctx, v);
+    var M = v.M * s, cx = v.cx, cy = v.cy, r = mulberry32(77), i;
+    ctx.fillStyle = '#20242e'; ctx.beginPath(); ctx.roundRect(cx - 0.22 * M, cy - 0.42 * M, 0.44 * M, 0.84 * M, 0.06 * M); ctx.fill();
+    var g = ctx.createLinearGradient(cx - 0.2 * M, cy - 0.4 * M, cx + 0.2 * M, cy + 0.4 * M);
+    g.addColorStop(0, '#11141c'); g.addColorStop(0.45, '#070910'); g.addColorStop(0.55, '#141a28'); g.addColorStop(1, '#0a0d16');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.roundRect(cx - 0.2 * M, cy - 0.4 * M, 0.4 * M, 0.8 * M, 0.05 * M); ctx.fill();
+    ctx.save(); ctx.beginPath(); ctx.roundRect(cx - 0.2 * M, cy - 0.4 * M, 0.4 * M, 0.8 * M, 0.05 * M); ctx.clip();
+    ctx.strokeStyle = 'rgba(180,200,230,0.07)'; ctx.lineWidth = Math.max(1, 0.0035 * M);
+    for (i = 0; i < 26; i++) {
+      var ox = cx + (r() - 0.5) * 0.3 * M, oy = cy + (r() - 0.5) * 0.7 * M, rr = (0.025 + r() * 0.02) * M, a = r() * 3;
+      for (var k = 0; k < 5; k++) { ctx.beginPath(); ctx.ellipse(ox, oy, rr * (1 - k * 0.16), rr * 1.4 * (1 - k * 0.16), a, 0, 6.2832); ctx.stroke(); }
+    }
+    ctx.fillStyle = 'rgba(210,225,255,0.05)';
+    ctx.beginPath(); ctx.moveTo(cx - 0.2 * M, cy - 0.4 * M); ctx.lineTo(cx + 0.05 * M, cy - 0.4 * M); ctx.lineTo(cx - 0.12 * M, cy + 0.4 * M); ctx.lineTo(cx - 0.2 * M, cy + 0.4 * M); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+  function drawToothObj(ctx, v, s) {
+    velvet(ctx, v);
+    var M = v.M * s, cx = v.cx, cy = v.cy;
+    var g = ctx.createRadialGradient(cx - 0.06 * M, cy - 0.16 * M, 0.02 * M, cx, cy - 0.05 * M, 0.35 * M);
+    g.addColorStop(0, '#fbf6ea'); g.addColorStop(1, '#dfd3ba');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(cx - 0.2 * M, cy - 0.1 * M);
+    ctx.bezierCurveTo(cx - 0.24 * M, cy - 0.3 * M, cx - 0.1 * M, cy - 0.32 * M, cx - 0.05 * M, cy - 0.27 * M);
+    ctx.bezierCurveTo(cx, cy - 0.31 * M, cx + 0.08 * M, cy - 0.31 * M, cx + 0.12 * M, cy - 0.27 * M);
+    ctx.bezierCurveTo(cx + 0.2 * M, cy - 0.31 * M, cx + 0.25 * M, cy - 0.22 * M, cx + 0.2 * M, cy - 0.08 * M);
+    ctx.bezierCurveTo(cx + 0.18 * M, cy + 0.02 * M, cx + 0.16 * M, cy + 0.08 * M, cx + 0.14 * M, cy + 0.26 * M);
+    ctx.bezierCurveTo(cx + 0.12 * M, cy + 0.33 * M, cx + 0.05 * M, cy + 0.33 * M, cx + 0.05 * M, cy + 0.22 * M);
+    ctx.bezierCurveTo(cx + 0.04 * M, cy + 0.12 * M, cx - 0.02 * M, cy + 0.12 * M, cx - 0.03 * M, cy + 0.22 * M);
+    ctx.bezierCurveTo(cx - 0.04 * M, cy + 0.33 * M, cx - 0.12 * M, cy + 0.33 * M, cx - 0.13 * M, cy + 0.24 * M);
+    ctx.bezierCurveTo(cx - 0.15 * M, cy + 0.08 * M, cx - 0.18 * M, cy + 0.01 * M, cx - 0.2 * M, cy - 0.1 * M);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = 'rgba(214,178,92,0.5)';
+    ctx.beginPath(); ctx.ellipse(cx, cy + 0.015 * M, 0.185 * M, 0.05 * M, 0, 0, 3.4); ctx.fill();
+    ctx.strokeStyle = 'rgba(160,140,100,0.5)'; ctx.lineWidth = Math.max(1, 0.008 * M);
+    ctx.beginPath(); ctx.moveTo(cx - 0.1 * M, cy - 0.2 * M); ctx.quadraticCurveTo(cx, cy - 0.14 * M, cx + 0.08 * M, cy - 0.21 * M); ctx.stroke();
+  }
+  function drawPaperObj(ctx, v, s) {
+    velvet(ctx, v);
+    var M = v.M * s, cx = v.cx, cy = v.cy;
+    ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.roundRect(cx - 0.3 * M + 0.02 * M, cy - 0.41 * M + 0.03 * M, 0.6 * M, 0.82 * M, 0.01 * M); ctx.fill();
+    var g = ctx.createLinearGradient(cx - 0.3 * M, cy, cx + 0.3 * M, cy);
+    g.addColorStop(0, '#efece2'); g.addColorStop(0.5, '#fbf9f2'); g.addColorStop(1, '#e4e0d4');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.roundRect(cx - 0.3 * M, cy - 0.41 * M, 0.6 * M, 0.82 * M, 0.008 * M); ctx.fill();
+    ctx.strokeStyle = 'rgba(120,115,100,0.18)'; ctx.lineWidth = Math.max(1, 0.002 * M);
+    for (var k = 0; k < 8; k++) { var y = cy - 0.3 * M + k * 0.085 * M; ctx.beginPath(); ctx.moveTo(cx - 0.24 * M, y); ctx.lineTo(cx + 0.24 * M, y); ctx.stroke(); }
+  }
+  function drawPaperNet(ctx, v, s) {
+    bg(ctx, v, '#8d8878');
+    if (!cache.paper) {
+      var n = 384, c = canvas(n), g = c.getContext('2d'), r = mulberry32(83), i;
+      g.fillStyle = '#8d8878'; g.fillRect(0, 0, n, n); g.lineCap = 'round';
+      for (i = 0; i < 60; i++) {
+        var x = r() * n, y = r() * n, a = r() * 6.28, L = 180 + r() * 260, w = 7 + r() * 11, bend = (r() - 0.5) * 120;
+        var x2 = x + Math.cos(a) * L, y2 = y + Math.sin(a) * L, mx = (x + x2) / 2 + Math.cos(a + 1.57) * bend, my = (y + y2) / 2 + Math.sin(a + 1.57) * bend;
+        var sh = 200 + r() * 55;
+        for (var ox = -n; ox <= n; ox += n) for (var oy = -n; oy <= n; oy += n) {
+          g.beginPath(); g.moveTo(x + ox, y + oy); g.quadraticCurveTo(mx + ox, my + oy, x2 + ox, y2 + oy);
+          g.lineWidth = w; g.strokeStyle = 'rgba(' + sh + ',' + (sh - 6) + ',' + (sh - 22) + ',0.85)'; g.stroke();
+          g.lineWidth = w * 0.4; g.strokeStyle = 'rgba(255,253,244,0.3)'; g.stroke();
+        }
+      }
+      cache.paper = c;
+    }
+    drawTiled(ctx, v, cache.paper, 0.75, s);
+  }
+  // ổ vi khuẩn: que + chuỗi hạt tròn giữa vụn bẩn
+  function drawGerms(ctx, v, s, now) {
+    bg(ctx, v, '#191410');
+    if (!cache.germs) {
+      var n = 420, c = canvas(n), g = c.getContext('2d'), r = mulberry32(89), i, k;
+      g.fillStyle = '#191410'; g.fillRect(0, 0, n, n);
+      g.fillStyle = 'rgba(120,105,85,0.5)';
+      for (i = 0; i < 14; i++) {
+        var fx = r() * n, fy = r() * n, fr = 14 + r() * 30;
+        for (var ox = -n; ox <= n; ox += n) for (var oy = -n; oy <= n; oy += n) { g.beginPath(); g.ellipse(fx + ox, fy + oy, fr, fr * 0.55, r() * 3, 0, 6.2832); g.fill(); }
+      }
+      for (i = 0; i < 20; i++) {
+        var x = r() * n, y = r() * n, a = r() * 3.14, cnt = 1 + Math.floor(r() * 3);
+        for (k = 0; k < cnt; k++) for (var ox2 = -n; ox2 <= n; ox2 += n) for (var oy2 = -n; oy2 <= n; oy2 += n) {
+          g.save(); g.translate(x + ox2 + Math.cos(a) * k * 38, y + oy2 + Math.sin(a) * k * 38); g.rotate(a + (r() - 0.5) * 0.4);
+          var gr = g.createLinearGradient(0, -7, 0, 7); gr.addColorStop(0, '#f2d8a8'); gr.addColorStop(0.5, '#d8a860'); gr.addColorStop(1, '#8a6028');
+          g.fillStyle = gr; g.beginPath(); g.roundRect(-18, -7, 36, 14, 7); g.fill(); g.restore();
+        }
+      }
+      for (i = 0; i < 16; i++) {
+        var sx = r() * n, sy = r() * n, sa = r() * 6.28, m = 3 + Math.floor(r() * 5);
+        for (k = 0; k < m; k++) {
+          sa += (r() - 0.5) * 1.2; sx += Math.cos(sa) * 15; sy += Math.sin(sa) * 15;
+          for (var ox3 = -n; ox3 <= n; ox3 += n) for (var oy3 = -n; oy3 <= n; oy3 += n) {
+            var cg = g.createRadialGradient(sx + ox3 - 2, sy + oy3 - 2, 1, sx + ox3, sy + oy3, 9);
+            cg.addColorStop(0, '#e8c8f2'); cg.addColorStop(1, '#8a5aa0');
+            g.fillStyle = cg; g.beginPath(); g.arc(sx + ox3, sy + oy3, 8.5, 0, 6.2832); g.fill();
+          }
+        }
+      }
+      cache.germs = c;
+    }
+    drawTiled(ctx, v, cache.germs, 0.62, s);
+  }
 
   // ---------- mô và tế bào: ô lưới tự nối liền, có vách và nhân ----------
   var TISSUE = {
@@ -1603,7 +1801,7 @@
   }
   function nearestLevel() { return clamp(Math.round(z), 0, N - 1); }
   function is3D() { var n = nearestLevel(); return LEVELS[n].d3 && z >= n - 0.15; }
-  function limitTilt() { if (!LEVELS[nearestLevel()].tilt) return; rot.yaw = clamp(rot.yaw, -0.9, 0.9); rot.pitch = clamp(rot.pitch, -0.9, 0.9); }
+  function limitTilt() {}
   function updateRot(dt) {
     if (rot.drag) return;
     if (!is3D()) {
@@ -1616,7 +1814,6 @@
     }
     if (rot.demo) { var kd = Math.min(1, dt * 1.6); rot.yaw += (rot.demo[0] - rot.yaw) * kd; rot.pitch += (rot.demo[1] - rot.pitch) * kd; return; }
     rot.yaw += rot.vy * dt; rot.pitch += rot.vp * dt;
-    if (LEVELS[nearestLevel()].tilt) rot.pitch = clamp(rot.pitch, -1.2, 1.2);
     var damp = Math.exp(-dt * 5); rot.vy *= damp; rot.vp *= damp;
     limitTilt();
   }
@@ -1630,6 +1827,31 @@
     for (i = j0; i <= j1; i++) { ctx.beginPath(); ctx.moveTo(0, v.cy + i * D); ctx.lineTo(v.W, v.cy + i * D); ctx.stroke(); }
   }
   function latShift() { var sh = curMat.elShift && curMat.elShift[curElKey]; return sh || [0, 0]; }
+  // biển electron tự do của kim loại: chạy loạn, nóng thì nhanh, có điện thì trôi về một phía
+  var EGAS = [], egLast = 0, currentOn = false;
+  function isMetalNow() { return curMat.structure === 'metal' && curLatKey !== 'diamond'; }
+  function idR3(x, y, z) { return [x, y, z]; }
+  function drawEgas(ctx, v, D, Rfn, fade, now) {
+    if (!EGAS.length) { var r0 = mulberry32(5); for (var k = 0; k < 85; k++) EGAS.push({ x: (r0() - 0.5) * 12, y: (r0() - 0.5) * 12, a: r0() * 6.283 }); }
+    var al = 0.95 * fade;
+    if (al < 0.03) return;
+    var dt = clamp(now - egLast, 0, 0.05); egLast = now;
+    var sp = 1.15 * Math.sqrt(Tm()), drift = currentOn ? 1.6 : 0;
+    ctx.fillStyle = '#9fe8ff';
+    for (var i = 0; i < EGAS.length; i++) {
+      var e = EGAS[i];
+      if (Math.random() < dt * 2.5) e.a = Math.random() * 6.283;
+      e.x += (Math.cos(e.a) * sp + drift) * dt; e.y += Math.sin(e.a) * sp * dt;
+      if (e.x > 6.1) e.x -= 12.2; if (e.x < -6.1) e.x += 12.2;
+      if (e.y > 6.1) e.y -= 12.2; if (e.y < -6.1) e.y += 12.2;
+      var p = Rfn(e.x * D, e.y * D, -0.18 * D), X = v.cx + p[0], Y = v.cy + p[1];
+      var rr = Math.max(2, 0.05 * D);
+      if (X < -rr * 3 || X > v.W + rr * 3 || Y < -rr * 3 || Y > v.H + rr * 3) continue;
+      ctx.globalAlpha = 0.2 * al; ctx.beginPath(); ctx.arc(X, Y, rr * 2.1, 0, 6.2832); ctx.fill();
+      ctx.globalAlpha = al; ctx.beginPath(); ctx.arc(X, Y, rr * 0.72, 0, 6.2832); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
   function drawLattice(ctx, v, s, now) {
     bg(ctx, v, '#0b0e22');
     var lat = curLat, D = 0.2 * v.M * s, mg = rotMag(), a = lat.A * D, i, j, k, b, sh = latShift();
@@ -1637,7 +1859,7 @@
     // tinh thể có nhiều lớp sâu (kim cương) thì vẽ cả 4 lớp; loại hai lớp thì vẽ 3 ô sâu
     var depth = lat.basis.length > 4 ? 1 : 2;
     if (mg < 0.004) {
-      if (D < 0.08 * v.M) { drawTiled(ctx, v, getLatTile(curLatKey), 1.0, s); return; }
+      if (D < 0.08 * v.M) { drawTiled(ctx, v, getLatTile(curLatKey), 1.0, s); if (isMetalNow()) drawEgas(ctx, v, D, idR3, clamp(D / (0.08 * v.M), 0, 1), now); return; }
       var i0 = Math.floor(-v.cx / D) - 1, i1 = Math.ceil((v.W - v.cx) / D) + 1;
       var j0 = Math.floor(-v.cy / D) - 1, j1 = Math.ceil((v.H - v.cy) / D) + 1;
       latLines(ctx, v, D, 0.07);
@@ -1649,16 +1871,23 @@
           drawSprite(ctx, v.cx + (X + (jj[0] - jc[0]) * ampD) * D, v.cy + (Y + (jj[1] - jc[1]) * ampD) * D, a, dep, sc0, bs[3] || curElKey);
         }
       }
+      if (isMetalNow()) drawEgas(ctx, v, D, idR3, 1, now);
       return;
     }
     var k3 = smooth(0, 0.18, mg);
     if (k3 < 1) latLines(ctx, v, D, 0.07 * (1 - k3));
-    var R = rotator(), nx = Math.min(7, Math.ceil(v.HD / D) + 1), list = [];
-    for (i = -nx; i <= nx; i++) for (j = -nx; j <= nx; j++) for (b = 0; b < lat.basis.length; b++) for (k = 0; k >= -depth; k--) {
-      var bb = lat.basis[b], zz = bb[2] + k, X2 = i + bb[0] - sh[0], Y2 = j + bb[1] - sh[1];
-      var j2 = jit(Math.round(2 * (X2 + sh[0])), Math.round(2 * (Y2 + sh[1])), Math.round(4 * zz), now);
-      var p = R((X2 + (j2[0] - jc[0]) * ampD) * D, (Y2 + (j2[1] - jc[1]) * ampD) * D, (zz + (j2[2] - jc[2]) * ampD) * D);
-      list.push([v.cx + p[0], v.cy + p[1], p[2], zz < -0.6, zz, bb[3] || curElKey, bb[4] || 1]);
+    // nghiêng nhẹ: bức tường dày lên; xoay mạnh: gom thành một khối tinh thể cầm tay, xoay tròn được
+    var R = rotator(), nx = Math.min(7, Math.ceil(v.HD / D) + 1), list = [], CU = 2, full = smooth(0.5, 1.1, mg), zoff = full * CU;
+    // xoay càng mạnh khung càng lùi ra xa để thấy trọn khối
+    D *= 1 - 0.45 * full; a = lat.A * D;
+    for (i = -nx; i <= nx; i++) for (j = -nx; j <= nx; j++) {
+      var inC = i >= -CU && i <= CU && j >= -CU && j <= CU, kmin = inC ? -2 * CU : -depth;
+      for (b = 0; b < lat.basis.length; b++) for (k = 0; k >= kmin; k--) {
+        var bb = lat.basis[b], zz = bb[2] + k, X2 = i + bb[0] - sh[0], Y2 = j + bb[1] - sh[1];
+        var j2 = jit(Math.round(2 * (X2 + sh[0])), Math.round(2 * (Y2 + sh[1])), Math.round(4 * zz), now);
+        var p = R((X2 + (j2[0] - jc[0]) * ampD) * D, (Y2 + (j2[1] - jc[1]) * ampD) * D, (zz + zoff + (j2[2] - jc[2]) * ampD) * D);
+        list.push([v.cx + p[0], v.cy + p[1], p[2], zz < -0.6, zz, bb[3] || curElKey, bb[4] || 1, inC && zz >= -2 * CU - 0.76 ? 1 : 0]);
+      }
     }
     list.sort(function (p, q) { return p[2] - q[2]; });
     var lim = 0.5 * D;
@@ -1666,16 +1895,18 @@
       var q = list[i];
       if (q[0] < -lim || q[0] > v.W + lim || q[1] < -lim || q[1] > v.H + lim) continue;
       var zl = q[4], zr = q[2] / D;
-      var al = Math.exp(zl * 1.386 * (1 - 0.6 * k3));
+      var alFlat = Math.exp(zl * 1.386 * (1 - 0.6 * k3));
+      if (q[3]) alFlat *= k3;
+      var al = alFlat * (1 - full) + (q[7] ? 0.3 + 0.7 * clamp((zr + 3) / 5, 0, 1) : 0) * full;
       var sc = q[6] * clamp(1 + 0.3 * zl * (1 - k3) + 0.06 * zr * k3, 0.5, 1.3);
-      if (q[3]) al *= k3;
       if (al < 0.02) continue;
       drawSprite(ctx, q[0], q[1], a, al, sc, q[5]);
     }
+    if (isMetalNow()) drawEgas(ctx, v, D, R, 1 - full, now);
     var ca = 0.7 * k3;
     if (ca > 0.02) {
       var vs = [], e = [[0, 1], [1, 3], [3, 2], [2, 0], [4, 5], [5, 7], [7, 6], [6, 4], [0, 4], [1, 5], [2, 6], [3, 7]];
-      for (k = 0; k < 8; k++) { var c3 = R((k & 1) * D, ((k >> 1) & 1) * D, -((k >> 2) & 1) * D); vs.push([v.cx + c3[0], v.cy + c3[1]]); }
+      for (k = 0; k < 8; k++) { var c3 = R((k & 1) * D, ((k >> 1) & 1) * D, (zoff - ((k >> 2) & 1)) * D); vs.push([v.cx + c3[0], v.cy + c3[1]]); }
       ctx.strokeStyle = 'rgba(242,166,90,' + ca + ')'; ctx.lineWidth = 2;
       ctx.beginPath();
       for (k = 0; k < e.length; k++) { ctx.moveTo(vs[e[k][0]][0], vs[e[k][0]][1]); ctx.lineTo(vs[e[k][1]][0], vs[e[k][1]][1]); }
@@ -2401,10 +2632,21 @@
 
   function headFor(o, m, e) {
     var st = m.structure;
+    if (st === 'paper') {
+      return { fAtom: 1.6e-10, levels: [
+        objLevel(o),
+        L({ id: 'be-mat', kind: 'fibers', name: 'Rừng sợi giấy', frame: 2e-4, img: true, draw: drawPaperNet, view: 'micro', lod: true,
+          cap: 'Bề mặt giấy là một thảm sợi gỗ dẹt như ruy băng, đan rối rồi ép bẹp vào nhau. Vì sợi chạy đủ mọi hướng nên xé giấy khó đi theo đường thẳng!',
+          prompt: o.pSurf }),
+        L({ id: 'mang', kind: 'chain', name: 'Sợi cellulose', frame: 1.3e-9, draw: drawStruct, temp: true, d3: true, lod: true,
+          cap: 'Giấy chính là gỗ nghiền nhỏ rồi ép lại! Mỗi sợi giấy là bó chuỗi cellulose: vòng carbon (xanh dương) và oxy (hồng) nối thành chuỗi rất dài, hydro (xanh lá) bám quanh. Kéo để xoay.',
+          fixed: 'Tầng này luôn vẽ bằng code: chuỗi cellulose rút gọn, rung theo nhiệt độ, xoay 3D được.' })
+      ] };
+    }
     if (st === 'bio') {
       var lv = [objLevel(o)];
-      if (m.surf) lv.push(L({ id: 'be-mat', kind: 'surface', name: o.surfName || 'Nhìn gần', frame: o.sf || 0.002, img: true, draw: o.sd || drawSurface, view: o.sv || 'micro', lod: true, cap: m.surf[0], prompt: o.pSurf || m.surf[1] }));
-      if (m.hat) lv.push(L({ id: 'hat', kind: 'tissue', name: m.hat[0], frame: m.hat[1], img: true, draw: o.hd || drawSurface, view: 'micro', lod: true, cap: m.hat[2], prompt: o.pHat || m.hat[3] }));
+      if (m.surf || o.surfCap) lv.push(L({ id: 'be-mat', kind: 'surface', name: o.surfName || 'Nhìn gần', frame: o.sf || 0.002, img: true, draw: o.sd || drawSurface, view: o.sv || 'micro', lod: true, cap: o.surfCap || m.surf[0], prompt: o.pSurf || (m.surf && m.surf[1]) }));
+      if (m.hat || o.hatCap) lv.push(L({ id: 'hat', kind: 'tissue', name: o.hatName || m.hat[0], frame: o.hatFrame || (m.hat ? m.hat[1] : 2e-5), img: true, draw: o.hd || drawSurface, view: 'micro', lod: true, cap: o.hatCap || m.hat[2], prompt: o.pHat || (m.hat && m.hat[3]) }));
       m.chain.forEach(function (c) { lv.push(L(c)); });
       var U = UNITS[m.unit];
       lv.push(L({ id: 'phan-tu', kind: 'chain', name: U.name, frame: 1.3e-9, draw: drawStruct, temp: true, d3: true, lod: true, cap: U.cap,
@@ -2517,9 +2759,9 @@
         objLevel(o),
         surfLevel(o, m, 'Bề mặt ' + o.short + ' trắng đục, phóng to thấy những vệt chảy mềm — dấu vết lúc nhựa nóng chảy được đổ khuôn.',
           'Ảnh kính hiển vi của bề mặt nhựa HDPE trắng đục, phóng to khoảng 30 lần: vệt chảy mềm, gợn sóng nhẹ và vài vết xước mảnh. Kín toàn bộ khung hình. Ảnh vuông 1:1, không có chữ.'),
-        L({ id: 'hat', kind: 'fibers', name: 'Sợi rối', frame: 5e-8, img: true, draw: drawFibers,
-          cap: 'Bên trong nhựa là những sợi phân tử dài rối vào nhau như mì sợi. Chỗ nào các sợi gấp lại xếp song song ngay ngắn, chỗ đó nhựa cứng hơn.',
-          prompt: 'Minh hoạ khoa học: các sợi polymer dài phát sáng xanh trắng rối vào nhau như đám mì sợi trên nền tối, xen kẽ vài vùng nhỏ nơi các sợi xếp song song ngay ngắn. Kín toàn bộ khung hình. Ảnh vuông 1:1, không có chữ.' }),
+        L({ id: 'hat', kind: 'fibers', name: 'Bông tinh thể', frame: 5e-5, img: true, draw: drawFibers, view: 'micro',
+          cap: 'Soi nhựa dưới kính hiển vi có ánh sáng đặc biệt: hiện ra những "bông hoa" tròn nhiều màu! Mỗi bông là vô số sợi phân tử dài gấp nếp, xếp tỏa ra từ tâm. Chỗ xếp ngay ngắn làm nhựa cứng, khe giữa các bông là chỗ sợi rối lộn xộn làm nhựa dẻo.',
+          prompt: 'Ảnh kính hiển vi ánh sáng phân cực của nhựa HDPE: những tinh thể hình cầu tỏa tia như bông hoa xếp sát nhau, nhiều màu xanh tím vàng, mỗi bông có hình chữ thập tối ở giữa. Kín toàn bộ khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.' }),
         L({ id: 'mang', kind: 'chain', name: 'Chuỗi phân tử', frame: 1.3e-9, draw: drawStruct, temp: true, d3: true, tilt: true,
           cap: 'Một sợi chính là một chuỗi carbon (xanh dương) nối đuôi nhau zíc zắc, mỗi carbon cầm hai hydro (xanh lá). Chuỗi thật dài hàng vạn mắt xích. Kéo để xoay.',
           fixed: 'Tầng này luôn vẽ bằng code: chuỗi –CH₂– đúng cấu trúc, rung theo nhiệt độ, xoay 3D được.' })
@@ -2559,9 +2801,18 @@
         fixed: 'Tầng này luôn vẽ bằng code: cặp nguyên tử xoay đúng theo phân tử đang bay ở tầng trên.' })
     ] };
   }
+  // điểm soi trên từng ảnh (0–1): nơi chứa thứ mà tầng sau phóng vào; đã soát bằng mắt từng ảnh
+  var FOCI = {
+    'dinh-sat': { 'vat-the': [0.5, 0.505], hat: [0.47, 0.46] },
+    'mong-tay': { 'vat-the': [0.5, 0.132], 'be-mat': [0.42, 0.47], hat: [0.575, 0.29] },
+    'mieng-rua-bat': { 'vat-the': [0.5, 0.66], 'be-mat': [0.43, 0.5], hat: [0.535, 0.49] },
+    'dien-thoai': { 'vat-the': [0.4, 0.45], 'be-mat': [0.5, 0.55], hat: [0.377, 0.535] },
+    'chiec-rang': { 'vat-the': [0.47, 0.37], 'be-mat': [0.62, 0.22], hat: [0.33, 0.36] }
+  };
   function buildLevels() {
-    var h = headFor(cur, curMat, curEl);
-    return h.levels.concat(atomLevels(curEl, h.fAtom));
+    var h = headFor(cur, curMat, curEl), lv = h.levels.concat(atomLevels(curEl, h.fAtom)), f = FOCI[cur.id];
+    if (f) lv.forEach(function (l) { if (f[l.id]) l.focus = f[l.id]; });
+    return lv;
   }
 
   // =====================================================================
@@ -2736,6 +2987,13 @@
 
   var lvlEl = document.getElementById('lvlName'), magEl = document.getElementById('mag'), capEl = document.getElementById('cap');
   var holdBtn = document.getElementById('hold'), countBox = document.getElementById('count'), countN = document.getElementById('countN');
+  var currBtn = document.getElementById('currBtn');
+  currBtn.addEventListener('click', function () {
+    currentOn = !currentOn;
+    currBtn.setAttribute('aria-pressed', currentOn ? 'true' : 'false');
+    currBtn.textContent = currentOn ? '⚡ Đang có điện' : '⚡ Dòng điện';
+    lastCap = '';
+  });
   var zr = document.getElementById('zr'), track = document.getElementById('track'), hintEl = document.getElementById('hint');
   var titleEl = document.getElementById('objTitle');
   var elRow = document.getElementById('elRow'), tempRow = document.getElementById('tempRow');
@@ -2748,6 +3006,17 @@
     var cap = Lv.cap;
     if (Lv.kind === 'egg' && eggCook > 0.6 && tempIdx < 2) return cap + ' Để nguội rồi mà vẫn trắng đục: protein đã duỗi ra rối vào nhau thì không cuộn lại được nữa. Trứng chín không "sống" lại được! Bấm lại nút Lòng trắng trứng ở trên để lấy quả trứng mới.';
     if (Lv.temp) cap += ' ' + (Lv.tempText || curMat.tempText || TEMP_TEXT[curMat.phase])[tempIdx];
+    if (Lv.kind === 'lattice') {
+      if (isMetalNow()) {
+        cap += currentOn
+          ? ' ⚡ Dòng điện đang chạy: đám electron vẫn chạy loạn, nhưng cả đám trôi dần về một phía — dòng trôi ấy chính là dòng điện. Tắt nút là chúng lại chạy loạn như cũ.'
+          : (tempIdx === 2
+            ? ' Những đốm xanh là electron tự do: nóng lên chúng phóng nhanh hơn, cõng năng lượng chạy đi khắp nơi — vì thế kim loại dẫn nhiệt rất tốt, chạm vào thấy nóng ngay.'
+            : ' Những đốm xanh chạy loạn là electron tự do — không thuộc về nguyên tử nào. Nhờ chúng kim loại dẫn điện, dẫn nhiệt tốt. Bấm nút ⚡ xem dòng điện chạy!');
+      } else if (tempIdx === 2) {
+        cap += ' Ở đây không có electron tự do — electron nào cũng bị giữ chặt — nên điện không chạy qua được, nhiệt chỉ lan chậm bằng cách rung truyền tay nhau.';
+      }
+    }
     return cap;
   }
   function speak(text) {
@@ -2776,6 +3045,8 @@
       holdBtn.hidden = !(atAtom || atMus); countBox.hidden = !atAtom;
       hintEl.hidden = !Lv.d3;
       tempRow.hidden = !Lv.temp;
+      thermoEl.hidden = !Lv.temp;
+      currBtn.hidden = !(Lv.kind === 'lattice' && isMetalNow());
     }
     var cap = captionFor(nearest);
     if (cap !== lastCap) { lastCap = cap; capEl.textContent = cap; if (speakOn) speak(cap); }
@@ -2880,26 +3151,29 @@
       elRow.appendChild(b);
     });
   }
+  var thermoEl = document.getElementById('thermo'), thermoFill = document.getElementById('thermoFill');
+  function setThermo() { thermoFill.style.height = (8 + 88 * tempVal) + '%'; }
   function buildTempRow() {
     tempRow.textContent = '';
     var lab = document.createElement('span'); lab.className = 'eyebrow'; lab.textContent = 'Nhiệt độ';
-    tempRow.appendChild(lab);
-    ['Lạnh cóng', 'Nhiệt độ phòng', 'Nóng'].forEach(function (t, k) {
-      var b = document.createElement('button');
-      b.type = 'button'; b.className = 'chip'; b.textContent = t;
-      b.setAttribute('aria-current', k === tempIdx ? 'true' : 'false');
-      b.addEventListener('click', function () {
-        tempIdx = k;
-        var bs = tempRow.querySelectorAll('.chip');
-        for (var i = 0; i < bs.length; i++) bs[i].setAttribute('aria-current', i === k ? 'true' : 'false');
-        lastCap = '';
-      });
-      tempRow.appendChild(b);
+    var cold = document.createElement('span'); cold.textContent = '❄️'; cold.setAttribute('aria-hidden', 'true');
+    var hot = document.createElement('span'); hot.textContent = '🔥'; hot.setAttribute('aria-hidden', 'true');
+    var sl = document.createElement('input');
+    sl.type = 'range'; sl.min = '0'; sl.max = '1'; sl.step = '0.01'; sl.value = tempVal;
+    sl.id = 'tempSlider'; sl.setAttribute('aria-label', 'Nhiệt độ');
+    sl.addEventListener('input', function () {
+      tempVal = +sl.value;
+      var ni = tIdxOf();
+      if (ni !== tempIdx) { tempIdx = ni; lastCap = ''; }
+      setThermo();
     });
+    tempRow.appendChild(lab); tempRow.appendChild(cold); tempRow.appendChild(sl); tempRow.appendChild(hot);
+    setThermo();
   }
   function selectObject(idx) {
     cur = OBJECTS[idx]; curMat = MATERIALS[cur.mat];
     eggCook = 0; musC = 0;
+    currentOn = false; currBtn.setAttribute('aria-pressed', 'false'); currBtn.textContent = '⚡ Dòng điện';
     curElKey = curMat.el; curEl = ELEMENTS[curElKey];
     curLatKey = curMat.lattice || 'bcc'; curLat = LATTICES[curLatKey];
     pts = []; pings = [];
@@ -2948,7 +3222,6 @@
         var dx = e.clientX - dragX, dy = e.clientY - dragY;
         rot.drag = true;
         rot.yaw += dx * 0.009; rot.pitch += dy * 0.009;
-        if (LEVELS[nearestLevel()].tilt) rot.pitch = clamp(rot.pitch, -1.2, 1.2);
         rot.vy = clamp(dx * 0.009 * 30, -3, 3); rot.vp = clamp(dy * 0.009 * 30, -3, 3);
         limitTilt();
       } else {
@@ -3126,8 +3399,8 @@
     if ((st === 'air' || st === 'steam') && z > -0.2) gasStep(dt);
     if (st === 'bio') {
       musC += ((contracting ? 1 : 0) - musC) * Math.min(1, dt * 2.5);
-      fatMelt += ([0, 0.12, 1][tempIdx] - fatMelt) * Math.min(1, dt * 0.8);
-      if (cur.mat === 'trung' && tempIdx === 2) eggCook = Math.min(1, eggCook + dt * 0.3);
+      fatMelt += (smooth(0.45, 0.95, tempVal) - fatMelt) * Math.min(1, dt * 0.8);
+      if (cur.mat === 'trung' && tempVal > 0.75) eggCook = Math.min(1, eggCook + dt * 0.3);
     }
     updateElectrons(dt, now, z > ATOM - 1.6 && z < ATOM + 1.6);
     if (z > ATOM + 0.3 && z < ATOM + 2.1 && Math.random() < dt * 2.5) blips.push({ x: Math.random(), y: Math.random(), b: now });
