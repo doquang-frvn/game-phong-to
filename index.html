@@ -186,7 +186,7 @@
 <div class="wrap">
   <header class="top">
     <div>
-      <p class="eyebrow">Game Phóng To · bản 18</p>
+      <p class="eyebrow">Game Phóng To · bản 19</p>
       <h1 id="objTitle">Cái đinh thép</h1>
     </div>
     <div class="top-btns">
@@ -321,6 +321,42 @@
     P:  { sym: 'P', name: 'Phốt-pho', lower: 'phốt-pho', Z: 15, N: 16, pal: 'orange', isoNote: 'Phốt-pho trong tự nhiên chỉ có đúng một loại nguyên tử này.' },
     S:  { sym: 'S', name: 'Lưu huỳnh', lower: 'lưu huỳnh', Z: 16, N: 16, pal: 'yellow', isoNote: 'Đây là loại nguyên tử lưu huỳnh hay gặp nhất.' }
   };
+  // ---------- cỡ nguyên tử tương quan trong cùng một chất ----------
+  // chất dùng chung electron: bán kính van der Waals (cỡ đám mây ngoài khi các phân tử chạm nhau, Bondi 1964)
+  // chất ion: bán kính ion (Shannon 1976)
+  var VDW = { H: 120, C: 170, N: 155, O: 152, S: 180, P: 180, Ar: 188, Si: 210 };
+  var IONR = { Na: 102, Cl: 181, Si: 26, O: 135 };
+  function vdwA(els) { var o = {}; els.forEach(function (e) { o[e] = 0.0175 * VDW[e] / 170; }); return o; }
+  var sizeKey = null;
+  function setSizeKey(els, ion) { sizeKey = { els: els, ion: !!ion }; }
+  function drawSizeKey(c, v) {
+    var k = sizeKey; if (!k || k.els.length < 2) return;
+    var T = k.ion ? IONR : VDW, els = k.els.slice().sort(function (a, b) { return T[b] - T[a]; }), rMax = T[els[0]], R0 = 19;
+    var rows = els.map(function (e) { return Math.max(2.5, R0 * T[e] / rMax); });
+    var bw = 196, bh = 34 + rows.reduce(function (a, r) { return a + Math.max(2 * r, 16) + 8; }, 0) + 30, bx = v.W - bw - 12, by = v.W < 560 ? 112 : 60;
+    c.save();
+    c.fillStyle = 'rgba(8,12,30,0.8)'; c.strokeStyle = 'rgba(255,255,255,0.22)'; c.lineWidth = 1;
+    c.beginPath(); if (c.roundRect) c.roundRect(bx, by, bw, bh, 10); else c.rect(bx, by, bw, bh); c.fill(); c.stroke();
+    c.textAlign = 'left'; c.textBaseline = 'middle'; c.font = '700 12px system-ui, sans-serif'; c.fillStyle = 'rgba(230,236,255,0.92)';
+    c.fillText('Ai to, ai nhỏ? (đúng tỉ lệ)', bx + 10, by + 16);
+    var y = by + 34, ION = { Na: ' (ion +)', Cl: ' (ion −)', Si: ' (ion +)', O: ' (ion −)' };
+    els.forEach(function (e, i) {
+      var r = rows[i], h = Math.max(2 * r, 16), cy = y + h / 2, pc = PALS[palOf(e)].c;
+      var g = c.createRadialGradient(bx + 30, cy, 0, bx + 30, cy, r);
+      g.addColorStop(0, 'rgb(' + pc[0] + ')'); g.addColorStop(0.55, 'rgb(' + pc[1] + ')'); g.addColorStop(1, 'rgba(' + pc[2] + ',0.6)');
+      c.fillStyle = g; c.beginPath(); c.arc(bx + 30, cy, r, 0, 6.2832); c.fill();
+      var nm = (ELEMENTS[e] && ELEMENTS[e].name) || (PT.filter(function (q) { return q.sym === e; })[0] || {}).vn || e;
+      c.fillStyle = 'rgba(230,236,255,0.92)'; c.font = '600 12px system-ui, sans-serif';
+      c.fillText(nm + (k.ion ? ION[e] || '' : ''), bx + 58, cy - 7);
+      c.fillStyle = 'rgba(200,210,240,0.8)'; c.font = '500 11px system-ui, sans-serif';
+      c.fillText(T[e] + ' pm' + (i ? ' · nhỏ hơn ' + vnum(Math.round(rMax / T[e] * 10) / 10) + ' lần' : ' · to nhất'), bx + 58, cy + 8);
+      y += h + 8;
+    });
+    c.fillStyle = 'rgba(200,210,240,0.7)'; c.font = '500 10px system-ui, sans-serif';
+    c.fillText(k.ion ? 'cỡ khi đã thành ion' : 'cỡ đám mây electron bên ngoài', bx + 10, y + 4);
+    c.fillText('1 pm = 1 phần nghìn tỉ mét', bx + 10, y + 18);
+    c.restore();
+  }
   var PALS = {
     blue:   { c: ['205,250,255', '60,212,255', '28,112,255'], g: ['80,205,255', '40,150,255', '30,110,255'], chip: '#3cd4ff' },
     pink:   { c: ['255,230,238', '255,120,160', '205,45,95'], g: ['255,130,170', '230,70,120', '190,40,90'], chip: '#ff78a0' },
@@ -342,8 +378,9 @@
     bcc: { A: 0.0875, basis: [[0, 0, 0], [0.5, 0.5, -0.5]] },
     fcc: { A: 0.07, basis: [[0, 0, 0], [0.5, 0.5, 0], [0.5, 0, -0.5], [0, 0.5, -0.5]] },
     // muối ăn: natri và clo xen kẽ như bàn cờ, lớp dưới đảo ngược
-    rocksalt: { A: 0.07, basis: [[0, 0, 0, 'Na', 0.7], [0.5, 0.5, 0, 'Na', 0.7], [0.5, 0, 0, 'Cl', 1.1], [0, 0.5, 0, 'Cl', 1.1],
-      [0.5, 0, -0.5, 'Na', 0.7], [0, 0.5, -0.5, 'Na', 0.7], [0, 0, -0.5, 'Cl', 1.1], [0.5, 0.5, -0.5, 'Cl', 1.1]] },
+    // cỡ theo bán kính ion: Na⁺ 102 pm, Cl⁻ 181 pm (clo to gấp 1,8 lần)
+    rocksalt: { A: 0.07, basis: [[0, 0, 0, 'Na', 0.62], [0.5, 0.5, 0, 'Na', 0.62], [0.5, 0, 0, 'Cl', 1.1], [0, 0.5, 0, 'Cl', 1.1],
+      [0.5, 0, -0.5, 'Na', 0.62], [0, 0.5, -0.5, 'Na', 0.62], [0, 0, -0.5, 'Cl', 1.1], [0.5, 0.5, -0.5, 'Cl', 1.1]] },
     // kim cương: mỗi carbon nắm chặt bốn carbon quanh nó
     sc: { A: 0.1, basis: [[0, 0, 0]] },
     diamond: { A: 0.055, basis: [[0, 0, 0], [0.5, 0.5, 0], [0.25, 0.25, -0.25], [0.75, 0.75, -0.25], [0.5, 0, -0.5], [0, 0.5, -0.5], [0.75, 0.25, -0.75], [0.25, 0.75, -0.75]] }
@@ -1980,6 +2017,7 @@
     bg(ctx, v, '#0b0e22');
     var lat = curLat, D = 0.2 * v.M * s, mg = rotMag(), a = lat.A * D, i, j, k, b, sh = latShift();
     var ampD = (VIB / 0.2) * Tm(), jc = jit(Math.round(2 * sh[0]), Math.round(2 * sh[1]), 0, now);
+    if (curLatKey === 'rocksalt') setSizeKey(['Cl', 'Na'], true);
     // tinh thể có nhiều lớp sâu (kim cương) thì vẽ cả 4 lớp; loại hai lớp thì vẽ 3 ô sâu
     var depth = lat.basis.length > 4 ? 1 : 2;
     if (mg < 0.004) {
@@ -2254,11 +2292,12 @@
   }
 
   // ---------- thủy tinh: mạng silic–oxy lộn xộn, cũng rung tại chỗ ----------
-  var GD = 0.13, GA = { Si: 0.016, O: 0.012 };
+  // cỡ theo bán kính ion: Si⁴⁺ 26 pm, O²⁻ 135 pm — silic nhỏ xíu kẹp giữa các oxy to
+  var GD = 0.13, GA = { Si: 0.0145 * 26 / 135, O: 0.0145 };
   function glassOff(I, j) { return [(cellRand(I, j, 1) - 0.5) * 0.55, (cellRand(I, j, 2) - 0.5) * 0.55]; }
   function glassEl(I, j) { return ((I + j) % 2 + 2) % 2 === 0 ? 'Si' : 'O'; }
   function drawGlassNetwork(ctx, v, s, now) {
-    bg(ctx, v, '#0b0e22');
+    bg(ctx, v, '#0b0e22'); setSizeKey(['O', 'Si'], true);
     var D = GD * v.M * s, off = curElKey === 'O' ? 1 : 0, ampD = (VIB / GD) * Tm();
     var i0 = Math.floor(-v.cx / D) - 1, i1 = Math.ceil((v.W - v.cx) / D) + 1;
     var j0 = Math.floor(-v.cy / D) - 1, j1 = Math.ceil((v.H - v.cy) / D) + 1;
@@ -2296,7 +2335,7 @@
     return best;
   }
   function drawCeramicNetwork(ctx, v, s, now) {
-    bg(ctx, v, '#0b0e22');
+    bg(ctx, v, '#0b0e22'); setSizeKey(['O', 'Si'], true);
     var D = GD * v.M * s, off = curElKey === 'O' ? 1 : 0, ampD = (VIB / GD) * Tm();
     var i0 = Math.floor(-v.cx / D) - 1, i1 = Math.ceil((v.W - v.cx) / D) + 1;
     var j0 = Math.floor(-v.cy / D) - 1, j1 = Math.ceil((v.H - v.cy) / D) + 1;
@@ -2344,6 +2383,7 @@
     return { x: x, y: y, h1: [x + Math.cos(th + ICE.half) * r, y + Math.sin(th + ICE.half) * r], h2: [x + Math.cos(th - ICE.half) * r, y + Math.sin(th - ICE.half) * r], seed: [i, j, 12] };
   }
   function drawIce(ctx, v, s, now) {
+    setSizeKey(['O', 'H']);
     var g = ctx.createLinearGradient(0, 0, 0, v.H);
     g.addColorStop(0, '#0d1a36'); g.addColorStop(1, '#0a142a');
     ctx.fillStyle = g; ctx.fillRect(0, 0, v.W, v.H);
@@ -2435,7 +2475,7 @@
         if (k === 0 && sgn === 1) centerH = hi;
       }
     }
-    return { atoms: atoms, bonds: bonds, a: { C: 0.0175, H: 0.011 }, center: { C: idx[0], H: centerH } };
+    return { atoms: atoms, bonds: bonds, a: vdwA(['C', 'H']), center: { C: idx[0], H: centerH } };
   }
   // cellulose: vòng 5 carbon + 1 oxy, nối nhau bằng cầu oxy, có nhóm OH và H bám quanh
   function buildCellulose() {
@@ -2472,7 +2512,7 @@
       });
       if (k === 0) center.C = ring[4];
     }
-    return { atoms: atoms, bonds: bonds, a: { C: 0.0175, O: 0.016, H: 0.011 }, center: center };
+    return { atoms: atoms, bonds: bonds, a: vdwA(['C', 'O', 'H']), center: center };
   }
   // axit amin: khung N–C–C nối đuôi nhau zíc zắc; mỗi mắt có nhánh riêng
   function buildPeptide(atoms, bonds, center, y0, flip, k0, k1, cys, tag, main) {
@@ -2505,7 +2545,7 @@
       buildPeptide(atoms, bonds, center, 0.62, -1, -5, 5, true, 2, false);
       bonds.push([center.S1, center.S2]);
     }
-    return { atoms: atoms, bonds: bonds, a: { C: 0.0175, H: 0.011, O: 0.016, N: 0.0165, S: 0.021 }, center: center };
+    return { atoms: atoms, bonds: bonds, a: vdwA(['C', 'H', 'O', 'N', 'S']), center: center };
   }
   // hai "chữ cái" ADN ghép cặp: tay vịn đường–phốt-pho ở hai bên, vòng chữ ở giữa
   function buildNucleotide() {
@@ -2538,7 +2578,7 @@
       o3[sg] = O3;
       if (k === 0 && sg === 1) { center.C = sug[0]; center.N = ring[3]; center.O = sug[4]; }
     }
-    return { atoms: atoms, bonds: bonds, a: { C: 0.0175, H: 0.011, O: 0.016, N: 0.0165, P: 0.02 }, center: center };
+    return { atoms: atoms, bonds: bonds, a: vdwA(['C', 'H', 'O', 'N', 'P']), center: center };
   }
   function getStruct() {
     var key = curMat.structure === 'bio' ? curMat.unit : curMat.structure;
@@ -2547,7 +2587,9 @@
   }
   function drawStruct(ctx, v, s, now) {
     bg(ctx, v, '#0b0e22');
-    var S = getStruct(), R = rotator(), u = v.M * s, c = S.atoms[S.center[curElKey]], amp = VIB * Tm();
+    var S = getStruct();
+    if (Object.keys(S.a).length > 1) setSizeKey(Object.keys(S.a));
+    var R = rotator(), u = v.M * s, c = S.atoms[S.center[curElKey]], amp = VIB * Tm();
     var jc = jit(c.seed[0], c.seed[1], c.seed[2], now);
     var pr = S.atoms.map(function (at) {
       var jj = jit(at.seed[0], at.seed[1], at.seed[2], now);
@@ -2569,7 +2611,7 @@
   }
 
   // ---------- nước: phân tử sát nhau, chen lấn, xoay, liên kết hydro nối rồi đứt ----------
-  var LIQ = null, LQ = { L: 1.92, d: 0.24, rOH: 0.075, half: 0.912, aO: 0.0175, aH: 0.011 };
+  var LIQ = null, LQ = { L: 1.92, d: 0.24, rOH: 0.075, half: 0.912, aO: 0.0175, aH: 0.0175 * 120 / 152 };
   function liqInit() {
     var n = 8, ps = [];
     for (var j = 0; j < n; j++) for (var i = 0; i < n; i++)
@@ -2602,7 +2644,7 @@
     return [[p.x, p.y], [p.x + LQ.rOH * Math.cos(p.th + LQ.half), p.y + LQ.rOH * Math.sin(p.th + LQ.half)], [p.x + LQ.rOH * Math.cos(p.th - LQ.half), p.y + LQ.rOH * Math.sin(p.th - LQ.half)]];
   }
   function drawLiquid(ctx, v, s, now) {
-    if (!LIQ) liqInit();
+    if (!LIQ) liqInit(); setSizeKey(['O', 'H']);
     var g = ctx.createLinearGradient(0, 0, 0, v.H);
     g.addColorStop(0, '#0a1630'); g.addColorStop(1, '#081226');
     ctx.fillStyle = g; ctx.fillRect(0, 0, v.W, v.H);
@@ -2691,7 +2733,7 @@
     }
   }
   function drawGas(ctx, v, s, now) {
-    gasFor();
+    gasFor(); setSizeKey(curMat.structure === 'steam' ? ['O', 'H'] : ['Ar', 'N', 'O']);
     bg(ctx, v, '#060918');
     var u = v.M * s, L = GQ.L, ch = GAS[gasChosen()], cam = gasAtoms(ch)[gasCamIdx()];
     var x0 = cam[0] - v.cx / u, x1 = cam[0] + (v.W - v.cx) / u, y0 = cam[1] - v.cy / u, y1 = cam[1] + (v.H - v.cy) / u;
@@ -2712,7 +2754,7 @@
         ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx - tvx, sy - tvy); ctx.stroke();
       }
       atomsP.forEach(function (q) {
-        var sz = q[2] === 'Ar' ? 1.3 : q[2] === 'H' ? 0.65 : 1;
+        var sz = VDW[q[2]] / 155;
         drawSprite(ctx, v.cx + (q[0] + ox - cam[0]) * u, v.cy + (q[1] + oy - cam[1]) * u, GQ.a * u * sz, 1, 1, q[2]);
       });
     }
@@ -2720,10 +2762,12 @@
   // một phân tử khí phóng to: các nguyên tử nắm nhau, vừa bay vừa xoay
   function molGeom(p) {
     var A = gasAtoms(p), ci = gasCamIdx(), c = A[ci];
-    return A.map(function (q) { return { x: (q[0] - c[0]) * 8, y: (q[1] - c[1]) * 8, z: 0, el: q[2], a: GQ.a * 8 * (q[2] === 'H' ? 0.65 : q[2] === 'Ar' ? 1.3 : 1), isC: q === c }; });
+    return A.map(function (q) { return { x: (q[0] - c[0]) * 8, y: (q[1] - c[1]) * 8, z: 0, el: q[2], a: GQ.a * 8 * VDW[q[2]] / 155, isC: q === c }; });
   }
   function drawMolecule(ctx, v, s, now) {
     gasFor();
+    var gels = molGeom(GAS[gasChosen()]).map(function (a) { return a.el; }).filter(function (e, i, A) { return A.indexOf(e) === i; });
+    if (gels.length > 1) setSizeKey(gels);
     bg(ctx, v, '#070a1c');
     var R = rotator(), u = v.M * s, g = molGeom(GAS[gasChosen()]);
     var pr = g.map(function (at) { var q = R(at.x, at.y, at.z); return { x: v.cx + q[0] * u, y: v.cy + q[1] * u, z: q[2], a: at.a, el: at.el, isC: at.isC }; });
@@ -2832,6 +2876,8 @@
   function drawAtom(ctx, v, s, now) {
     bg(ctx, v, '#0b0e22');
     var M = v.M, S8 = 8 * M * s, sc = atomScene(now), a = sc.a * S8, cx = v.cx, cy = v.cy, i, R = rotator();
+    var aels = [curElKey]; sc.nb.forEach(function (n) { if (n.el && aels.indexOf(n.el) < 0) aels.push(n.el); });
+    if (aels.length > 1 && aels.every(function (e) { return VDW[e] || IONR[e]; })) setSizeKey(aels, ['ionic', 'glass', 'ceramic'].indexOf(curMat.structure) >= 0);
     var cyw = Math.cos(rot.yaw), syw = Math.sin(rot.yaw), cp = Math.cos(rot.pitch), sp = Math.sin(rot.pitch);
     var jc = sc.vib && sc.seed ? jit(sc.seed[0], sc.seed[1], sc.seed[2], now) : [0, 0, 0];
     var proj = sc.nb.map(function (n) {
@@ -3162,7 +3208,7 @@
         surfLevel(o, m, 'Mặt hạt muối phóng to: toàn những bậc thang vuông góc, như kim tự tháp bậc. Góc nào cũng vuông.',
           'Ảnh kính hiển vi bề mặt một hạt muối phóng to khoảng 30 lần: những bậc thang vuông góc xếp chồng như kim tự tháp bậc, mặt phẳng nhẵn, cạnh sắc, trong suốt hơi trắng. Kín toàn bộ khung hình. Ảnh vuông 1:1, không có chữ.'),
         L({ id: 'mang', kind: 'lattice', name: 'Natri và clo xếp hàng', frame: iF, draw: drawLattice, temp: true, d3: true, tilt: true,
-          cap: 'Muối không phải một nguyên tố mà là hai: natri (vàng, nhỏ) và clo (xanh lá, to) xen kẽ nhau như ô bàn cờ, lớp dưới đảo ngược. Vì bên trong xếp vuông nên hạt muối mới vuông. Kéo để xoay.',
+          cap: 'Muối không phải một nguyên tố mà là hai: natri (vàng, nhỏ) và clo (xanh lá, to) xen kẽ nhau như ô bàn cờ, lớp dưới đảo ngược. Vì bên trong xếp vuông nên hạt muối mới vuông. Điều lạ: lúc còn riêng lẻ, nguyên tử natri to hơn nguyên tử clo! Vào muối, natri nhường 1 electron nên co nhỏ lại, clo nhận thêm 1 electron nên phình to ra — giờ clo to gấp 1,8 lần natri. Kéo để xoay.',
           fixed: 'Tầng này luôn vẽ bằng code: đúng kiểu xếp của muối ăn, rung theo nhiệt độ, xoay 3D được.' })
       ] };
     }
@@ -3222,7 +3268,7 @@
           cap: 'Phóng tiếp mà… vẫn không thấy gì mới. Thủy tinh không có hạt tinh thể như kim loại. Nó liền một khối, như nước bị đông cứng giữa chừng.',
           fixed: 'Tầng này luôn vẽ bằng code: điểm hay của nó là không có gì để nhìn — thủy tinh không có hạt tinh thể.' }),
         L({ id: 'mang', kind: 'network', name: 'Mạng lộn xộn', frame: 1.2e-9, draw: drawGlassNetwork, temp: true,
-          cap: 'Silic (xanh dương) và oxy (hồng) nắm tay nhau thành mạng lưới — nhưng không xếp hàng, mỗi chỗ một kiểu. Electron ở đây bị nắm chặt, không "nuốt" được ánh sáng, lại chẳng có ranh giới hạt nào làm ánh sáng tán loạn — nên ánh sáng đi thẳng qua: thủy tinh trong suốt! Bản vẽ rút gọn: thủy tinh thật còn có natri và canxi.',
+          cap: 'Silic (chấm xanh dương nhỏ xíu) và oxy (hồng, to) nắm tay nhau thành mạng lưới — nhưng không xếp hàng, mỗi chỗ một kiểu. Silic nhường electron cho oxy nên co lại rất nhỏ, oxy nhận thêm electron nên to gấp khoảng 5 lần. Electron ở đây bị nắm chặt, không "nuốt" được ánh sáng, lại chẳng có ranh giới hạt nào làm ánh sáng tán loạn — nên ánh sáng đi thẳng qua: thủy tinh trong suốt! Bản vẽ rút gọn: thủy tinh thật còn có natri và canxi.',
           fixed: 'Tầng này luôn vẽ bằng code: mạng lưới lộn xộn đúng kiểu thủy tinh, nguyên tử rung theo nhiệt độ.' })
       ] };
     }
@@ -3404,6 +3450,7 @@
     if (z < 0) { i = 0; f = z; } else { i = Math.min(Math.floor(z), N - 1); f = z - i; }
     var s = Math.pow(Z, f);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.filter = 'none';
+    sizeKey = null;
     var hasNext = i < N - 1 && f > 0, sN = Math.pow(Z, f - 1), cur0 = LEVELS[i], nxt = hasNext ? LEVELS[i + 1] : null;
     if (hasNext && cur0.trans === 'fade') {
       var k = smooth(0.2, 0.85, f);
@@ -3450,6 +3497,7 @@
     var nl = nearestLevel();
     var cdz = nl === 0 ? Math.max(0, z - nl) : Math.abs(z - nl);
     if (((LEVELS[nl].kind === 'lattice' && isMetalNow()) || LEVELS[nl].kind === 'bond') && cdz < 0.35) drawCircuit(ctx, V, now, 1 - cdz / 0.35);
+    else if (sizeKey && !exc && Math.abs(z - nl) < 0.3) { ctx.globalAlpha = 1 - Math.abs(z - nl) / 0.3; drawSizeKey(ctx, V); ctx.globalAlpha = 1; }
   }
 
   // ---------- mạch điện nhỏ: pin – công tắc – bóng đèn; cực âm bên trái, cực dương bên phải ----------
