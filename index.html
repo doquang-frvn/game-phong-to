@@ -57,6 +57,48 @@
   .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .sheet-head h2 { margin: 0; font-family: var(--display); font-size: 1.25rem; }
   .sheet-head .btn { flex: 0 0 auto; }
+  .top-btns { display: flex; gap: 8px; flex: 0 0 auto; flex-wrap: wrap; justify-content: flex-end; }
+  .btn-pt { font-weight: 700; font-size: .95rem; padding: 12px 16px; }
+  .pt-card { width: min(1180px, 100%); }
+  .pt-grid { display: grid; grid-template-columns: repeat(18, minmax(0, 1fr)); gap: 3px; }
+  .pt-cell {
+    position: relative; aspect-ratio: 1; border: 0; border-radius: 4px; cursor: pointer;
+    font: inherit; font-size: clamp(8px, 1.5vw, 14px); font-weight: 700; color: #0e1428;
+    display: flex; align-items: center; justify-content: center; padding: 0;
+  }
+  .pt-cell small { position: absolute; top: 1px; left: 3px; font-size: .55em; font-weight: 600; opacity: .75; }
+  .pt-cell:focus-visible, .pt-cell.on { outline: 3px solid #fff; outline-offset: -1px; }
+  .pt-gap { grid-column: span 1; }
+  .pt-break { grid-column: 1 / -1; height: 6px; }
+  .pt-modes { display: flex; gap: 6px; flex-wrap: wrap; }
+  .pt-modes .chip[aria-pressed="true"] { background: var(--electron); color: #081022; border-color: var(--electron); }
+  .cap-row { display: flex; justify-content: flex-start; margin-top: -4px; }
+  .know-btn { font: inherit; font-weight: 700; font-size: .92rem; padding: 9px 16px; border-radius: 999px; cursor: pointer; color: var(--ink); background: rgba(143,212,255,.1); border: 1px solid rgba(143,212,255,.5); }
+  .know-btn:hover { border-color: var(--electron); background: rgba(143,212,255,.18); }
+  .know-btn .dots { display: inline-flex; gap: 4px; margin-left: 8px; vertical-align: middle; }
+  .know-btn .dots i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+  .know-card { width: min(760px, 100%); }
+  .know-sub { margin: -4px 0 0; color: var(--ink-dim); font-size: .9rem; }
+  .know-list { display: flex; flex-direction: column; gap: 10px; }
+  .know-item { border: 1px solid var(--rule); border-left: 5px solid var(--kc); border-radius: 12px; padding: 12px 14px; background: rgba(255,255,255,.03); }
+  .know-item .tag { display: inline-block; font-size: .74rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: #081022; background: var(--kc); border-radius: 999px; padding: 2px 10px; margin-bottom: 6px; }
+  .know-item p { margin: 0; line-height: 1.55; font-size: 1rem; }
+  .know-try { border-radius: 12px; padding: 10px 14px; background: rgba(242,166,90,.14); color: #ffd6ad; font-size: .95rem; line-height: 1.5; }
+  .pt-detail { border-top: 1px solid var(--rule); padding-top: 12px; display: flex; flex-direction: column; gap: 10px; }
+  .pt-name { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .pt-name .sym2 { font-family: var(--display); font-size: 2rem; line-height: 1; padding: 6px 12px; border-radius: 10px; color: #0e1428; }
+  .pt-name h3 { margin: 0; font-family: var(--display); font-size: 1.5rem; }
+  .pt-name .eyebrow { margin: 0; }
+  .pt-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .pt-chipline { display: flex; gap: 6px; flex-wrap: wrap; }
+  .pt-tag { border: 1px solid var(--rule); border-radius: 999px; padding: 5px 12px; font-size: .9rem; color: var(--ink-dim); }
+  .pt-tag b { color: var(--ink); }
+  .pt-fact { margin: 0; color: var(--ink); line-height: 1.55; }
+  .pt-sub { margin: 0; color: var(--ink-dim); line-height: 1.5; font-size: .95rem; }
+  .pt-size { display: flex; align-items: flex-end; gap: 14px; }
+  .pt-size figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: .8rem; color: var(--ink-dim); }
+  .pt-dot { border-radius: 50%; }
+  .btn-dive { background: var(--electron); border-color: var(--electron); color: #081022; font-weight: 700; align-self: flex-start; }
   .tabs { display: flex; gap: 6px; flex-wrap: wrap; border-bottom: 1px solid var(--rule); padding-bottom: 10px; }
   .tab { font: inherit; font-size: .95rem; font-weight: 600; color: var(--ink-dim); background: transparent; border: 1px solid var(--rule); border-radius: 999px; padding: 9px 16px; cursor: pointer; }
   .tab:hover { color: var(--ink); border-color: var(--electron); }
@@ -92,6 +134,12 @@
   .thermo-fill { width: 100%; height: 45%; background: linear-gradient(#ffb45a, #e4493f); transition: height .1s linear; }
   .thermo-bulb { width: 22px; height: 22px; border-radius: 50%; background: #e4493f; border: 1px solid rgba(255,255,255,.35); margin-top: -3px; }
   .hold:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .exc-btns { position: absolute; right: 12px; bottom: 80px; display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+  .exc { font: inherit; font-weight: 700; font-size: .92rem; padding: 10px 16px; border-radius: 999px; cursor: pointer; color: var(--ink);
+    background: rgba(16,20,46,.86); border: 1px solid rgba(143,212,255,.55); box-shadow: 0 3px 14px rgba(0,0,0,.35); }
+  .exc:hover { border-color: var(--electron); }
+  .exc[aria-pressed="true"] { background: var(--amber); color: #081022; border-color: var(--amber); }
+  .exc:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 
   .caption { margin: 0; min-height: 3em; font-family: var(--display); font-style: italic; font-weight: 500; font-size: clamp(1rem, 2.6vw, 1.15rem); line-height: 1.5; text-wrap: pretty; }
 
@@ -137,11 +185,43 @@
 <div class="wrap">
   <header class="top">
     <div>
-      <p class="eyebrow">Game Phóng To · bản 15</p>
+      <p class="eyebrow">Game Phóng To · bản 17</p>
       <h1 id="objTitle">Cái đinh thép</h1>
     </div>
-    <button class="btn btn-pick" id="btnPick" type="button" aria-haspopup="dialog">Đổi vật thể</button>
+    <div class="top-btns">
+      <button class="btn btn-pick" id="btnPick" type="button" aria-haspopup="dialog">Đổi vật thể</button>
+      <button class="btn btn-pt" id="btnPT" type="button" aria-haspopup="dialog">Bảng tuần hoàn</button>
+    </div>
   </header>
+
+  <div class="sheet" id="ptSheet" hidden>
+    <div class="sheet-card pt-card" role="dialog" aria-modal="true" aria-label="Bảng tuần hoàn">
+      <div class="sheet-head">
+        <h2 id="ptTitle">Bảng tuần hoàn — 118 nguyên tố</h2>
+        <button class="btn" id="btnPTClose" type="button">Đóng</button>
+      </div>
+      <div class="pt-modes" role="group" aria-label="Tô màu bảng theo">
+        <button class="chip" type="button" data-mode="nhom" aria-pressed="true">Nhóm chất</button>
+        <button class="chip" type="button" data-mode="nang" aria-pressed="false">Nặng – nhẹ</button>
+        <button class="chip" type="button" data-mode="to" aria-pressed="false">To – nhỏ</button>
+        <button class="chip" type="button" data-mode="the" aria-pressed="false">Rắn – lỏng – khí</button>
+      </div>
+      <p class="pt-sub" id="ptLegend">Chạm vào một ô để xem nguyên tố đó.</p>
+      <div class="pt-grid" id="ptGrid"></div>
+      <div class="pt-detail" id="ptDetail" hidden></div>
+    </div>
+  </div>
+
+  <div class="sheet" id="knowSheet" hidden>
+    <div class="sheet-card know-card" role="dialog" aria-modal="true" aria-labelledby="knowTitle">
+      <div class="sheet-head">
+        <h2 id="knowTitle">Biết thêm</h2>
+        <button class="btn" id="btnKnowClose" type="button">Đóng</button>
+      </div>
+      <p class="know-sub" id="knowSub"></p>
+      <div class="know-list" id="knowList"></div>
+    </div>
+  </div>
 
   <div class="sheet" id="sheet" hidden>
     <div class="sheet-card" role="dialog" aria-modal="true" aria-label="Chọn vật thể">
@@ -163,11 +243,16 @@
     </div>
     <div class="count" id="count" hidden>Số lần phát hiện electron: <b id="countN">0</b></div>
     <div class="thermo" id="thermo" hidden aria-hidden="true"><div class="thermo-tube"><div class="thermo-fill" id="thermoFill"></div></div><div class="thermo-bulb"></div></div>
+    <div class="exc-btns" id="excBox" hidden>
+      <button class="exc" id="btnUp" type="button" aria-pressed="false">✨ Cho năng lượng</button>
+      <button class="exc" id="btnIon" type="button" aria-pressed="false">💥 Bứt electron</button>
+    </div>
     <button class="hold" id="hold" type="button" hidden>Giữ để quay chậm</button>
-    <button class="hold curr" id="currBtn" type="button" hidden aria-pressed="false">⚡ Dòng điện</button>
+    <button class="hold curr" id="currBtn" type="button" hidden aria-pressed="false">⚡ Bật điện</button>
   </div>
 
   <p class="caption" id="cap"></p>
+  <div class="cap-row"><button class="know-btn" id="btnKnow" type="button">📚 Biết thêm<span class="dots" id="knowDots"></span></button></div>
 
   <div class="panel">
     <div class="track" id="elRow" hidden></div>
@@ -245,7 +330,8 @@
     orange: { c: ['255,235,215', '255,150,70', '215,90,20'], g: ['255,160,80', '235,120,40', '200,80,20'], chip: '#ff9646' },
     yellow: { c: ['255,255,220', '245,235,90', '200,180,20'], g: ['245,235,100', '225,210,60', '190,170,20'], chip: '#f5eb5a' }
   };
-  function palOf(el) { return el && ELEMENTS[el] ? ELEMENTS[el].pal : 'blue'; }
+  function elData(ek) { return (typeof ptDive !== 'undefined' && ptDive && ek === ptDive.sym) ? ptDive : ELEMENTS[ek]; }
+  function palOf(el) { var d = el && elData(el); return d ? d.pal : 'blue'; }
 
   // =====================================================================
   // NGĂN 2 — VẬT LIỆU
@@ -260,16 +346,23 @@
     // kim cương: mỗi carbon nắm chặt bốn carbon quanh nó
     diamond: { A: 0.055, basis: [[0, 0, 0], [0.5, 0.5, 0], [0.25, 0.25, -0.25], [0.75, 0.75, -0.25], [0.5, 0, -0.5], [0, 0.5, -0.5], [0.75, 0.25, -0.75], [0.25, 0.75, -0.75]] }
   };
+  // =====================================================================
+  // BẢNG TUẦN HOÀN — 118 nguyên tố. Số liệu lấy từ cơ sở dữ liệu mendeleev
+  // (khối lượng, khối lượng riêng g/cm³, bán kính nguyên tử pm theo Cordero 2008, dẫn nhiệt W/mK)
+  // =====================================================================
+  var PT = [{"z":1,"sym":"H","vn":"Hydro","n":0,"w":1.01,"d":8.2e-05,"r":31,"p":1,"g":1,"s":1,"tc":0.2,"ph":"gas","radio":0,"fact":"Nhẹ nhất trong mọi nguyên tố và nhiều nhất vũ trụ — Mặt Trời phần lớn là hydro. Hai hydro nắm tay một oxy thành nước.","wl":656,"wlNote":"Hydro nhả ánh sáng đỏ — sắc đỏ của những đám mây khí trong vũ trụ."},{"z":2,"sym":"He","vn":"Heli","n":2,"w":4.0,"d":0.000164,"r":28,"p":1,"g":18,"s":2,"tc":0.2,"ph":"gas","radio":0,"fact":"Nhẹ hơn không khí nên bóng bay heli bay vút lên. Không cháy, không nổ. Mặt Trời phát sáng nhờ \"nấu\" hydro thành heli.","wl":587,"wlNote":"Heli nhả ánh sáng vàng. Heli được tìm thấy trong ánh sáng Mặt Trời trước khi tìm thấy trên Trái Đất!"},{"z":3,"sym":"Li","vn":"Liti","n":4,"w":6.94,"d":0.534,"r":128,"p":2,"g":1,"s":3,"tc":84.8,"ph":"sol","radio":0,"fact":"Kim loại nhẹ nhất, nhẹ đến mức nổi được trên dầu. Có trong pin điện thoại và pin xe điện.","wl":671,"wlNote":"Liti nhả ánh sáng đỏ thẫm — màu đỏ của pháo hoa."},{"z":4,"sym":"Be","vn":"Beri","n":5,"w":9.01,"d":1.85,"r":96,"p":2,"g":2,"s":4,"tc":201.0,"ph":"sol","radio":0,"fact":"Kim loại nhẹ mà cứng, làm gương của kính viễn vọng không gian James Webb. Bụi của nó rất độc."},{"z":5,"sym":"B","vn":"Bo","n":6,"w":10.81,"d":2.34,"r":84,"p":2,"g":13,"s":5,"tc":27.4,"ph":"sol","radio":0,"fact":"Có trong kính chịu nhiệt (bát thủy tinh dùng được cho lò vi sóng). Cháy cho ngọn lửa màu xanh lá.","wl":548,"wlNote":"Bo nhả ánh sáng xanh lá."},{"z":6,"sym":"C","vn":"Carbon","n":6,"w":12.01,"d":2.2,"r":73,"p":2,"g":14,"s":1,"tc":1.6,"ph":"sol","radio":0,"fact":"Cùng là carbon: xếp kiểu này thành than chì mềm, xếp kiểu kia thành kim cương cứng nhất. Mọi sinh vật, kể cả con, đều xây từ carbon."},{"z":7,"sym":"N","vn":"Nitơ","n":7,"w":14.01,"d":0.001145,"r":71,"p":2,"g":15,"s":1,"tc":0.0,"ph":"gas","radio":0,"fact":"Chiếm gần 4/5 không khí. Nitơ lỏng lạnh tới −196 °C, dùng để giữ lạnh và làm kem \"bốc khói\"."},{"z":8,"sym":"O","vn":"Oxy","n":8,"w":16.0,"d":0.001308,"r":66,"p":2,"g":16,"s":1,"tc":0.0,"ph":"gas","radio":0,"fact":"Thứ con hít vào mỗi hơi thở, chiếm khoảng 1/5 không khí. Lửa cũng cần oxy mới cháy được.","wl":558,"wlNote":"Oxy trên cao nhả ánh sáng xanh lá — chính là màu xanh của cực quang."},{"z":9,"sym":"F","vn":"Flo","n":10,"w":19.0,"d":0.001553,"r":56,"p":2,"g":17,"s":6,"tc":0.0,"ph":"gas","radio":0,"fact":"Phản ứng mạnh nhất trong mọi nguyên tố, ăn mòn gần như mọi thứ. Một chút flo trong kem đánh răng giúp men răng cứng hơn."},{"z":10,"sym":"Ne","vn":"Neon","n":10,"w":20.18,"d":0.000825,"r":57,"p":2,"g":18,"s":2,"tc":null,"ph":"gas","radio":0,"fact":"Khí trơ phát ánh sáng đỏ cam rực rỡ trong ống đèn neon quảng cáo.","wl":640,"wlNote":"Neon nhả ánh sáng đỏ cam — màu của đèn neon quảng cáo."},{"z":11,"sym":"Na","vn":"Natri","n":12,"w":22.99,"d":0.97,"r":166,"p":3,"g":1,"s":3,"tc":142.0,"ph":"sol","radio":0,"fact":"Kim loại mềm, cắt được bằng dao, gặp nước thì sủi bọt dữ dội. Nắm tay với clo thành muối ăn. Đèn đường vàng cam là đèn natri.","wl":589,"wlNote":"Natri nhả ánh sáng vàng cam — màu của đèn đường natri. Rắc muối vào lửa cũng thấy lửa vàng lên!"},{"z":12,"sym":"Mg","vn":"Magie","n":12,"w":24.3,"d":1.74,"r":141,"p":3,"g":2,"s":4,"tc":156.0,"ph":"sol","radio":0,"fact":"Kim loại nhẹ, cháy với ánh sáng trắng chói lòa — làm pháo hoa trắng. Lá cây xanh được là nhờ có magie.","wl":518,"wlNote":"Magie nhả ánh sáng xanh lá, nhưng khi cháy nó sáng trắng chói vì quá nóng."},{"z":13,"sym":"Al","vn":"Nhôm","n":14,"w":26.98,"d":2.7,"r":121,"p":3,"g":13,"s":7,"tc":237.0,"ph":"sol","radio":0,"fact":"Nhẹ chỉ bằng 1/3 sắt, tự phủ một lớp áo mỏng nên không gỉ. Làm lon nước, giấy bạc, thân máy bay. Dẫn điện tốt thứ tư."},{"z":14,"sym":"Si","vn":"Silic","n":14,"w":28.09,"d":2.33,"r":111,"p":3,"g":14,"s":5,"tc":149.0,"ph":"sol","radio":0,"fact":"Cát chính là silic nắm tay oxy. Silic là \"bộ não\" của mọi con chip máy tính và điện thoại."},{"z":15,"sym":"P","vn":"Phốt-pho","n":16,"w":30.97,"d":1.823,"r":107,"p":3,"g":15,"s":1,"tc":null,"ph":"sol","radio":0,"fact":"Mặt quẹt của hộp diêm có phốt-pho đỏ. Xương, răng và ADN của con đều cần phốt-pho."},{"z":16,"sym":"S","vn":"Lưu huỳnh","n":16,"w":32.06,"d":2.07,"r":105,"p":3,"g":16,"s":1,"tc":0.3,"ph":"sol","radio":0,"fact":"Bột màu vàng, cháy có mùi hắc. Trứng thối có mùi khó chịu là vì khí chứa lưu huỳnh."},{"z":17,"sym":"Cl","vn":"Clo","n":18,"w":35.45,"d":0.002898,"r":102,"p":3,"g":17,"s":6,"tc":0.0,"ph":"gas","radio":0,"fact":"Khí màu vàng lục, rất độc. Một chút clo diệt vi khuẩn trong nước máy và bể bơi. Nắm tay natri thành muối ăn."},{"z":18,"sym":"Ar","vn":"Argon","n":22,"w":39.95,"d":0.001633,"r":106,"p":3,"g":18,"s":2,"tc":0.0,"ph":"gas","radio":0,"fact":"Khí trơ chiếm khoảng 1% không khí. Được bơm vào bóng đèn sợi đốt để sợi tóc không bị cháy.","wl":420,"wlNote":"Argon nhả ánh sáng tím xanh trong ống đèn khí."},{"z":19,"sym":"K","vn":"Kali","n":20,"w":39.1,"d":0.89,"r":202,"p":4,"g":1,"s":3,"tc":79.0,"ph":"sol","radio":0,"fact":"Kim loại mềm, gặp nước bốc cháy ngọn lửa màu tím. Chuối có nhiều kali.","wl":405,"wlNote":"Kali nhả ánh sáng tím — ngọn lửa kali màu tím hoa cà."},{"z":20,"sym":"Ca","vn":"Canxi","n":20,"w":40.08,"d":1.54,"r":176,"p":4,"g":2,"s":4,"tc":null,"ph":"sol","radio":0,"fact":"Xương và răng của con chứa rất nhiều canxi. Vỏ trứng và phấn viết bảng cũng có canxi.","wl":622,"wlNote":"Canxi nhả ánh sáng đỏ cam."},{"z":21,"sym":"Sc","vn":"Scandi","n":24,"w":44.96,"d":2.99,"r":170,"p":4,"g":3,"s":8,"tc":15.8,"ph":"sol","radio":0,"fact":"Trộn chút xíu vào nhôm để làm khung xe đạp, gậy bóng chày vừa nhẹ vừa chắc."},{"z":22,"sym":"Ti","vn":"Titan","n":26,"w":47.87,"d":4.506,"r":160,"p":4,"g":4,"s":8,"tc":21.9,"ph":"sol","radio":0,"fact":"Nhẹ, cứng, không gỉ. Làm máy bay, tên lửa và khớp xương nhân tạo vì cơ thể chấp nhận nó rất tốt."},{"z":23,"sym":"V","vn":"Vanadi","n":28,"w":50.94,"d":6.0,"r":153,"p":4,"g":5,"s":8,"tc":30.7,"ph":"sol","radio":0,"fact":"Thêm một chút vào thép để làm cờ lê, mỏ lết cực bền."},{"z":24,"sym":"Cr","vn":"Crom","n":28,"w":52.0,"d":7.15,"r":139,"p":4,"g":6,"s":8,"tc":93.9,"ph":"sol","radio":0,"fact":"Lớp mạ crom làm vòi nước sáng bóng như gương. Thép không gỉ có crom bên trong."},{"z":25,"sym":"Mn","vn":"Mangan","n":30,"w":54.94,"d":7.3,"r":150,"p":4,"g":7,"s":8,"tc":null,"ph":"sol","radio":0,"fact":"Có trong pin tiểu và giúp thép cứng hơn. Cơ thể cũng cần một chút mangan."},{"z":26,"sym":"Fe","vn":"Sắt","n":30,"w":55.84,"d":7.87,"r":142,"p":4,"g":8,"s":8,"tc":80.4,"ph":"sol","radio":0,"fact":"Kim loại được dùng nhiều nhất — làm thép xây nhà, đinh, xe. Máu đỏ là nhờ có sắt. Lõi Trái Đất phần lớn là sắt."},{"z":27,"sym":"Co","vn":"Coban","n":32,"w":58.93,"d":8.86,"r":138,"p":4,"g":9,"s":8,"tc":100.0,"ph":"sol","radio":0,"fact":"Tạo màu xanh coban tuyệt đẹp cho gốm sứ và thủy tinh. Có trong pin xe điện."},{"z":28,"sym":"Ni","vn":"Niken","n":30,"w":58.69,"d":8.9,"r":124,"p":4,"g":10,"s":8,"tc":90.9,"ph":"sol","radio":0,"fact":"Có trong đồng xu và thép không gỉ. Nam châm hút được niken."},{"z":29,"sym":"Cu","vn":"Đồng","n":34,"w":63.55,"d":8.96,"r":132,"p":4,"g":11,"s":8,"tc":401.0,"ph":"sol","radio":0,"fact":"Dẫn điện tốt thứ hai, chỉ sau bạc — vì thế ruột dây điện làm bằng đồng. Để lâu ngoài trời đồng hóa xanh như tượng Nữ thần Tự do.","wl":521,"wlNote":"Đồng nhả ánh sáng xanh lục — pháo hoa màu xanh lá, xanh dương có đồng."},{"z":30,"sym":"Zn","vn":"Kẽm","n":34,"w":65.38,"d":7.134,"r":122,"p":4,"g":12,"s":8,"tc":116.0,"ph":"sol","radio":0,"fact":"Mạ lên tôn, lên đinh để sắt khỏi gỉ. Cơ thể cần kẽm để vết thương mau lành."},{"z":31,"sym":"Ga","vn":"Gali","n":38,"w":69.72,"d":5.91,"r":122,"p":4,"g":13,"s":7,"tc":28.1,"ph":"sol","radio":0,"fact":"Kim loại tan chảy ngay trong lòng bàn tay (khoảng 30 °C). Có trong đèn LED."},{"z":32,"sym":"Ge","vn":"Gecmani","n":42,"w":72.63,"d":5.323,"r":120,"p":4,"g":14,"s":5,"tc":60.2,"ph":"sol","radio":0,"fact":"Chất bán dẫn — làm những chiếc transistor đầu tiên và kính nhìn ban đêm."},{"z":33,"sym":"As","vn":"Asen","n":42,"w":74.92,"d":5.75,"r":119,"p":4,"g":15,"s":5,"tc":null,"ph":"sol","radio":0,"fact":"Rất độc — chính là \"thạch tín\" trong truyện xưa. Ngày nay dùng một chút trong chip điện tử."},{"z":34,"sym":"Se","vn":"Selen","n":46,"w":78.97,"d":4.809,"r":120,"p":4,"g":16,"s":1,"tc":0.5,"ph":"sol","radio":0,"fact":"Cơ thể cần một chút xíu selen, nhưng nhiều thì độc. Từng dùng trong máy photocopy."},{"z":35,"sym":"Br","vn":"Brom","n":44,"w":79.9,"d":3.103,"r":120,"p":4,"g":17,"s":6,"tc":0.0,"ph":"liq","radio":0,"fact":"Một trong hai nguyên tố ở thể lỏng ở nhiệt độ phòng — chất lỏng nâu đỏ, mùi hắc, rất độc."},{"z":36,"sym":"Kr","vn":"Krypton","n":48,"w":83.8,"d":0.003425,"r":115,"p":4,"g":18,"s":2,"tc":0.0,"ph":"gas","radio":0,"fact":"Khí trơ hiếm, dùng trong đèn flash chụp ảnh. Còn \"kryptonite\" làm Siêu nhân yếu đi thì chỉ có trong truyện!","wl":557,"wlNote":"Krypton nhả ánh sáng gần như trắng."},{"z":37,"sym":"Rb","vn":"Rubiđi","n":48,"w":85.47,"d":1.53,"r":220,"p":5,"g":1,"s":3,"tc":58.2,"ph":"sol","radio":0,"fact":"Dùng trong đồng hồ nguyên tử cực chính xác trên vệ tinh định vị.","wl":420,"wlNote":"Rubiđi nhả ánh sáng tím đỏ."},{"z":38,"sym":"Sr","vn":"Stronti","n":50,"w":87.62,"d":2.64,"r":195,"p":5,"g":2,"s":4,"tc":null,"ph":"sol","radio":0,"fact":"Tạo màu đỏ rực cho pháo hoa.","wl":650,"wlNote":"Stronti nhả ánh sáng đỏ rực — màu đỏ của pháo hoa."},{"z":39,"sym":"Y","vn":"Ytri","n":50,"w":88.91,"d":4.47,"r":190,"p":5,"g":3,"s":8,"tc":null,"ph":"sol","radio":0,"fact":"Có trong đèn LED trắng. Được đặt tên theo làng Ytterby ở Thụy Điển."},{"z":40,"sym":"Zr","vn":"Zirconi","n":50,"w":91.22,"d":6.52,"r":175,"p":5,"g":4,"s":8,"tc":22.7,"ph":"sol","radio":0,"fact":"Đá \"zirconia\" lấp lánh giả kim cương làm từ zirconi. Cũng dùng trong nhà máy điện hạt nhân."},{"z":41,"sym":"Nb","vn":"Niobi","n":52,"w":92.91,"d":8.57,"r":164,"p":5,"g":5,"s":8,"tc":53.7,"ph":"sol","radio":0,"fact":"Làm nam châm siêu dẫn trong máy chụp cộng hưởng từ (MRI) ở bệnh viện."},{"z":42,"sym":"Mo","vn":"Molypden","n":56,"w":95.95,"d":10.2,"r":154,"p":5,"g":6,"s":8,"tc":null,"ph":"sol","radio":0,"fact":"Chịu nóng cực tốt, thêm vào thép làm dao cắt và động cơ tên lửa."},{"z":43,"sym":"Tc","vn":"Tecneti","n":54,"w":97.91,"d":11.0,"r":147,"p":5,"g":7,"s":8,"tc":50.6,"ph":"sol","radio":1,"fact":"Nguyên tố nhân tạo đầu tiên. Bác sĩ dùng một chút để chụp ảnh xương bên trong cơ thể."},{"z":44,"sym":"Ru","vn":"Rutheni","n":58,"w":101.07,"d":12.1,"r":146,"p":5,"g":8,"s":8,"tc":117.0,"ph":"sol","radio":0,"fact":"Kim loại hiếm, cứng; phủ lên tiếp điểm điện và ngòi bút để bền hơn."},{"z":45,"sym":"Rh","vn":"Rhodi","n":58,"w":102.91,"d":12.4,"r":142,"p":5,"g":9,"s":8,"tc":150.0,"ph":"sol","radio":0,"fact":"Một trong những kim loại đắt nhất. Phủ lên trang sức cho trắng sáng; có trong bộ lọc khí thải xe hơi."},{"z":46,"sym":"Pd","vn":"Paladi","n":60,"w":106.42,"d":12.0,"r":139,"p":5,"g":10,"s":8,"tc":71.8,"ph":"sol","radio":0,"fact":"Có trong bộ lọc khí thải xe hơi. Hút hydro vào người như miếng bọt biển hút nước."},{"z":47,"sym":"Ag","vn":"Bạc","n":60,"w":107.87,"d":10.5,"r":145,"p":5,"g":11,"s":8,"tc":429.0,"ph":"sol","radio":0,"fact":"Dẫn điện tốt nhất trong mọi kim loại và phản chiếu ánh sáng tốt nhất — gương ngày xưa được tráng bạc."},{"z":48,"sym":"Cd","vn":"Cađimi","n":66,"w":112.41,"d":8.69,"r":144,"p":5,"g":12,"s":8,"tc":96.9,"ph":"sol","radio":0,"fact":"Từng dùng trong pin sạc, nhưng rất độc nên ngày nay hạn chế dùng."},{"z":49,"sym":"In","vn":"Indi","n":66,"w":114.82,"d":7.31,"r":142,"p":5,"g":13,"s":7,"tc":81.8,"ph":"sol","radio":0,"fact":"Mềm đến mức để lại vết móng tay. Có trong màn hình cảm ứng của điện thoại.","wl":451,"wlNote":"Indi nhả ánh sáng chàm — tên \"indi\" lấy từ chính màu chàm (indigo) này."},{"z":50,"sym":"Sn","vn":"Thiếc","n":70,"w":118.71,"d":7.287,"r":139,"p":5,"g":14,"s":7,"tc":66.8,"ph":"sol","radio":0,"fact":"Dùng để hàn mạch điện và tráng lon đồ hộp. Uốn thanh thiếc nghe tiếng \"khóc\" lách tách."},{"z":51,"sym":"Sb","vn":"Antimon","n":70,"w":121.76,"d":6.68,"r":139,"p":5,"g":15,"s":5,"tc":24.4,"ph":"sol","radio":0,"fact":"Làm chất chống cháy cho đồ nhựa, vải. Người xưa dùng làm phấn kẻ mắt."},{"z":52,"sym":"Te","vn":"Telu","n":78,"w":127.6,"d":6.232,"r":138,"p":5,"g":16,"s":5,"tc":14.3,"ph":"sol","radio":0,"fact":"Có trong tấm pin mặt trời mỏng và đĩa DVD ghi lại được."},{"z":53,"sym":"I","vn":"Iốt","n":74,"w":126.9,"d":4.933,"r":139,"p":5,"g":17,"s":6,"tc":null,"ph":"sol","radio":0,"fact":"Tinh thể màu tím đen. Muối i-ốt giúp trẻ lớn khỏe; cồn i-ốt sát trùng vết thương."},{"z":54,"sym":"Xe","vn":"Xenon","n":78,"w":131.29,"d":0.005366,"r":140,"p":5,"g":18,"s":2,"tc":0.0,"ph":"gas","radio":0,"fact":"Khí trơ phát ánh sáng xanh trắng — đèn pha xe hơi. Còn làm động cơ đẩy cho tàu vũ trụ.","wl":467,"wlNote":"Xenon nhả ánh sáng xanh lam."},{"z":55,"sym":"Cs","vn":"Xesi","n":78,"w":132.91,"d":1.873,"r":244,"p":6,"g":1,"s":3,"tc":35.9,"ph":"sol","radio":0,"fact":"Kim loại tan chảy ở khoảng 28 °C, gặp nước nổ mạnh. Đồng hồ nguyên tử xesi định nghĩa chính xác một giây.","wl":455,"wlNote":"Xesi nhả ánh sáng xanh lam — tên xesi nghĩa là \"xanh da trời\"."},{"z":56,"sym":"Ba","vn":"Bari","n":82,"w":137.33,"d":3.62,"r":215,"p":6,"g":2,"s":4,"tc":null,"ph":"sol","radio":0,"fact":"Tạo màu xanh lá cho pháo hoa. Người ta uống \"cháo\" bari để bác sĩ chụp X-quang dạ dày.","wl":554,"wlNote":"Bari nhả ánh sáng xanh lá — màu xanh lá của pháo hoa."},{"z":57,"sym":"La","vn":"Lantan","n":82,"w":138.91,"d":6.15,"r":206,"p":6,"g":3,"s":9,"tc":13.4,"ph":"sol","radio":0,"fact":"Có trong ống kính máy ảnh tốt và pin xe hybrid."},{"z":58,"sym":"Ce","vn":"Xeri","n":82,"w":140.12,"d":6.77,"r":204,"p":6,"g":0,"s":9,"tc":11.3,"ph":"sol","radio":0,"fact":"Đá lửa của bật lửa có xeri — quẹt một cái là tóe tia lửa."},{"z":59,"sym":"Pr","vn":"Praseodymi","n":82,"w":140.91,"d":6.773,"r":202,"p":6,"g":0,"s":9,"tc":12.5,"ph":"sol","radio":0,"fact":"Làm kính bảo hộ cho thợ hàn và thợ thổi thủy tinh; có trong nam châm mạnh."},{"z":60,"sym":"Nd","vn":"Neodymi","n":82,"w":144.24,"d":7.01,"r":200,"p":6,"g":0,"s":9,"tc":null,"ph":"sol","radio":0,"fact":"Nam châm mạnh nhất thế giới làm từ neodymi — có trong tai nghe, loa, động cơ xe điện."},{"z":61,"sym":"Pm","vn":"Promethi","n":84,"w":144.91,"d":7.26,"r":199,"p":6,"g":0,"s":9,"tc":17.9,"ph":"sol","radio":1,"fact":"Phóng xạ, gần như không có trong tự nhiên. Từng dùng làm sơn dạ quang và pin tí hon."},{"z":62,"sym":"Sm","vn":"Samari","n":90,"w":150.36,"d":7.52,"r":198,"p":6,"g":0,"s":9,"tc":null,"ph":"sol","radio":0,"fact":"Làm nam châm chịu được nóng, dùng trong động cơ và tai nghe."},{"z":63,"sym":"Eu","vn":"Europi","n":90,"w":151.96,"d":5.24,"r":198,"p":6,"g":0,"s":9,"tc":13.9,"ph":"sol","radio":0,"fact":"Tạo màu đỏ trên màn hình. Tiền euro có mực europi phát sáng dưới đèn tia cực tím để chống làm giả."},{"z":64,"sym":"Gd","vn":"Gadolini","n":94,"w":157.25,"d":7.9,"r":196,"p":6,"g":0,"s":9,"tc":null,"ph":"sol","radio":0,"fact":"Bác sĩ tiêm thuốc có gadolini để ảnh chụp MRI rõ nét hơn."},{"z":65,"sym":"Tb","vn":"Terbi","n":94,"w":158.93,"d":8.23,"r":194,"p":6,"g":0,"s":9,"tc":11.1,"ph":"sol","radio":0,"fact":"Tạo màu xanh lá trên màn hình và đèn tiết kiệm điện."},{"z":66,"sym":"Dy","vn":"Dysprosi","n":98,"w":162.5,"d":8.55,"r":192,"p":6,"g":0,"s":9,"tc":10.7,"ph":"sol","radio":0,"fact":"Thêm vào nam châm neodymi để nam châm chịu được nóng trong động cơ xe điện."},{"z":67,"sym":"Ho","vn":"Holmi","n":98,"w":164.93,"d":8.8,"r":192,"p":6,"g":0,"s":9,"tc":null,"ph":"sol","radio":0,"fact":"Từ tính mạnh nhất trong mọi nguyên tố; dùng trong tia laser phẫu thuật."},{"z":68,"sym":"Er","vn":"Erbi","n":98,"w":167.26,"d":9.07,"r":189,"p":6,"g":0,"s":9,"tc":null,"ph":"sol","radio":0,"fact":"Tạo màu hồng cho thủy tinh và khuếch đại ánh sáng chạy trong cáp quang internet."},{"z":69,"sym":"Tm","vn":"Thuli","n":100,"w":168.93,"d":9.321,"r":190,"p":6,"g":0,"s":9,"tc":null,"ph":"sol","radio":0,"fact":"Một trong những đất hiếm hiếm nhất; dùng trong máy X-quang cầm tay."},{"z":70,"sym":"Yb","vn":"Ytterbi","n":104,"w":173.04,"d":6.9,"r":187,"p":6,"g":0,"s":9,"tc":null,"ph":"sol","radio":0,"fact":"Dùng trong đồng hồ nguyên tử thế hệ mới, chính xác hơn nữa."},{"z":71,"sym":"Lu","vn":"Luteti","n":104,"w":174.97,"d":9.84,"r":187,"p":6,"g":0,"s":9,"tc":null,"ph":"sol","radio":0,"fact":"Đất hiếm nặng nhất; có trong máy chụp PET ở bệnh viện."},{"z":72,"sym":"Hf","vn":"Hafni","n":108,"w":178.49,"d":13.3,"r":175,"p":6,"g":4,"s":8,"tc":23.0,"ph":"sol","radio":0,"fact":"Hút neutron rất tốt — làm thanh điều khiển lò phản ứng hạt nhân. Có trong chip máy tính hiện đại."},{"z":73,"sym":"Ta","vn":"Tantal","n":108,"w":180.95,"d":16.4,"r":170,"p":6,"g":5,"s":8,"tc":57.5,"ph":"sol","radio":0,"fact":"Không gỉ, cơ thể chấp nhận tốt. Tụ điện tantal tí hon có trong gần như mọi chiếc điện thoại."},{"z":74,"sym":"W","vn":"Vonfram","n":110,"w":183.84,"d":19.3,"r":162,"p":6,"g":6,"s":8,"tc":173.0,"ph":"sol","radio":0,"fact":"Nóng chảy ở nhiệt độ cao nhất trong mọi kim loại (khoảng 3.400 °C) — làm sợi tóc bóng đèn."},{"z":75,"sym":"Re","vn":"Rheni","n":112,"w":186.21,"d":20.8,"r":151,"p":6,"g":7,"s":8,"tc":48.0,"ph":"sol","radio":0,"fact":"Một trong những kim loại hiếm nhất, chịu nóng cực tốt — có trong động cơ máy bay phản lực."},{"z":76,"sym":"Os","vn":"Osmi","n":116,"w":190.23,"d":22.59,"r":144,"p":6,"g":8,"s":8,"tc":null,"ph":"sol","radio":0,"fact":"Nguyên tố đặc nhất: một khối to bằng viên xúc xắc nặng hơn 22 gam!"},{"z":77,"sym":"Ir","vn":"Iridi","n":116,"w":192.22,"d":22.56,"r":141,"p":6,"g":9,"s":8,"tc":147.0,"ph":"sol","radio":0,"fact":"Đặc gần bằng osmi và cực khó gỉ. Lớp iridi trong đất là dấu vết thiên thạch đã làm khủng long tuyệt chủng."},{"z":78,"sym":"Pt","vn":"Bạch kim","n":117,"w":195.08,"d":21.5,"r":136,"p":6,"g":10,"s":8,"tc":71.6,"ph":"sol","radio":0,"fact":"Quý hơn vàng và không gỉ. Làm trang sức và bộ lọc khí thải xe hơi."},{"z":79,"sym":"Au","vn":"Vàng","n":118,"w":196.97,"d":19.3,"r":136,"p":6,"g":11,"s":8,"tc":318.0,"ph":"sol","radio":0,"fact":"Không bao giờ gỉ, sáng lấp lánh cả nghìn năm. Dẫn điện tốt thứ ba nên được phủ lên chân cắm trong máy tính, điện thoại. Dát mỏng được hơn tờ giấy cả nghìn lần."},{"z":80,"sym":"Hg","vn":"Thủy ngân","n":122,"w":200.59,"d":13.53,"r":132,"p":6,"g":12,"s":8,"tc":8.3,"ph":"liq","radio":0,"fact":"Kim loại duy nhất ở thể lỏng ở nhiệt độ phòng. Ngày xưa có trong nhiệt kế; hơi của nó rất độc — làm vỡ nhiệt kế phải báo người lớn ngay.","wl":436,"wlNote":"Thủy ngân nhả ánh sáng xanh lam — trong đèn huỳnh quang có một chút thủy ngân."},{"z":81,"sym":"Tl","vn":"Tali","n":124,"w":204.38,"d":11.8,"r":145,"p":6,"g":13,"s":7,"tc":46.1,"ph":"sol","radio":0,"fact":"Rất độc. Tên có nghĩa là \"cành non xanh\" vì nó phát ánh sáng xanh lá.","wl":535,"wlNote":"Tali nhả ánh sáng xanh lá — tên tali nghĩa là \"cành non xanh\"."},{"z":82,"sym":"Pb","vn":"Chì","n":126,"w":207.2,"d":11.3,"r":146,"p":6,"g":14,"s":7,"tc":35.3,"ph":"sol","radio":0,"fact":"Mềm, nặng, rất độc với trẻ em — tuyệt đối không ngậm đồ có chì. Tấm chì chặn được tia X nên người chụp X-quang mặc áo chì."},{"z":83,"sym":"Bi","vn":"Bitmut","n":126,"w":208.98,"d":9.79,"r":148,"p":6,"g":15,"s":7,"tc":7.9,"ph":"sol","radio":0,"fact":"Mọc thành tinh thể hình bậc thang óng ánh cầu vồng. Có trong một loại thuốc đau bụng màu hồng."},{"z":84,"sym":"Po","vn":"Poloni","n":125,"w":209.0,"d":9.2,"r":140,"p":6,"g":16,"s":5,"tc":null,"ph":"sol","radio":1,"fact":"Phóng xạ cực mạnh. Bà Marie Curie tìm ra và đặt tên theo quê hương Ba Lan."},{"z":85,"sym":"At","vn":"Astatin","n":125,"w":210.0,"d":null,"r":150,"p":6,"g":17,"s":6,"tc":null,"ph":"unk","radio":1,"fact":"Hiếm bậc nhất trong tự nhiên — chưa ai từng nhìn thấy một mẩu astatin đủ to bằng mắt."},{"z":86,"sym":"Rn","vn":"Radon","n":136,"w":222.0,"d":0.009074,"r":150,"p":6,"g":18,"s":2,"tc":0.0,"ph":"gas","radio":1,"fact":"Khí phóng xạ không màu, không mùi, có thể thoát ra từ lòng đất."},{"z":87,"sym":"Fr","vn":"Franxi","n":136,"w":223.0,"d":null,"r":260,"p":7,"g":1,"s":3,"tc":null,"ph":"unk","radio":1,"fact":"Cực hiếm và tự biến mất chỉ sau vài chục phút. Chưa ai nhìn thấy một mẩu franxi."},{"z":88,"sym":"Ra","vn":"Radi","n":138,"w":226.0,"d":5.0,"r":221,"p":7,"g":2,"s":4,"tc":null,"ph":"sol","radio":1,"fact":"Từng được sơn lên kim đồng hồ cho phát sáng trong bóng tối — trước khi người ta biết nó rất nguy hiểm."},{"z":89,"sym":"Ac","vn":"Actini","n":138,"w":227.0,"d":10.0,"r":215,"p":7,"g":3,"s":10,"tc":null,"ph":"sol","radio":1,"fact":"Phóng xạ mạnh, phát ánh sáng xanh mờ trong bóng tối."},{"z":90,"sym":"Th","vn":"Thori","n":142,"w":232.04,"d":11.7,"r":206,"p":7,"g":0,"s":10,"tc":null,"ph":"sol","radio":1,"fact":"Kim loại phóng xạ, có thể làm nhiên liệu hạt nhân trong tương lai. Tên đặt theo thần sấm Thor."},{"z":91,"sym":"Pa","vn":"Protactini","n":140,"w":231.04,"d":15.4,"r":200,"p":7,"g":0,"s":10,"tc":null,"ph":"sol","radio":1,"fact":"Một trong những nguyên tố hiếm và đắt nhất, chủ yếu dùng để nghiên cứu."},{"z":92,"sym":"U","vn":"Urani","n":146,"w":238.03,"d":19.1,"r":196,"p":7,"g":0,"s":10,"tc":27.5,"ph":"sol","radio":1,"fact":"Nhiên liệu của nhà máy điện hạt nhân: một viên nhỏ bằng đầu ngón tay cho năng lượng bằng cả tấn than."},{"z":93,"sym":"Np","vn":"Neptuni","n":144,"w":237.0,"d":20.2,"r":190,"p":7,"g":0,"s":10,"tc":null,"ph":"sol","radio":1,"fact":"Nguyên tố nhân tạo đầu tiên nặng hơn urani, đặt theo tên sao Hải Vương."},{"z":94,"sym":"Pu","vn":"Plutoni","n":150,"w":244.0,"d":19.7,"r":187,"p":7,"g":0,"s":10,"tc":null,"ph":"sol","radio":1,"fact":"Làm \"pin hạt nhân\" cho tàu vũ trụ bay thật xa Mặt Trời, như tàu Voyager."},{"z":95,"sym":"Am","vn":"Americi","n":148,"w":243.0,"d":12.0,"r":180,"p":7,"g":0,"s":10,"tc":null,"ph":"sol","radio":1,"fact":"Một chút xíu americi nằm trong máy báo khói ở nhiều nhà."},{"z":96,"sym":"Cm","vn":"Curi","n":151,"w":247.0,"d":13.51,"r":169,"p":7,"g":0,"s":10,"tc":null,"ph":"sol","radio":1,"fact":"Đặt theo tên ông bà Curie. Robot thăm dò sao Hỏa dùng một chút curi để \"soi\" xem đất đá làm từ gì."},{"z":97,"sym":"Bk","vn":"Berkeli","n":150,"w":247.0,"d":14.78,"r":null,"p":7,"g":0,"s":10,"tc":null,"ph":"sol","radio":1,"fact":"Chỉ tạo ra được trong phòng thí nghiệm; đặt theo tên thành phố Berkeley (Mỹ)."},{"z":98,"sym":"Cf","vn":"Californi","n":153,"w":251.0,"d":15.1,"r":null,"p":7,"g":0,"s":10,"tc":null,"ph":"sol","radio":1,"fact":"Phát ra rất nhiều neutron — dùng để khởi động lò phản ứng và dò tìm dầu mỏ."},{"z":99,"sym":"Es","vn":"Einsteini","n":153,"w":252.0,"d":null,"r":null,"p":7,"g":0,"s":10,"tc":null,"ph":"unk","radio":1,"fact":"Tìm thấy trong tro của vụ thử bom hydro đầu tiên. Đặt theo tên Albert Einstein."},{"z":100,"sym":"Fm","vn":"Fermi","n":157,"w":257.0,"d":null,"r":null,"p":7,"g":0,"s":10,"tc":null,"ph":"unk","radio":1,"fact":"Cũng tìm thấy trong tro bom hydro; đặt theo tên nhà vật lý Enrico Fermi."},{"z":101,"sym":"Md","vn":"Mendelevi","n":157,"w":258.0,"d":null,"r":null,"p":7,"g":0,"s":10,"tc":null,"ph":"unk","radio":1,"fact":"Đặt theo tên ông Mendeleev — người sáng tạo ra chính bảng tuần hoàn này!"},{"z":102,"sym":"No","vn":"Nobeli","n":157,"w":259.0,"d":null,"r":null,"p":7,"g":0,"s":10,"tc":null,"ph":"unk","radio":1,"fact":"Đặt theo tên Alfred Nobel, người lập ra giải Nobel."},{"z":103,"sym":"Lr","vn":"Lawrenci","n":163,"w":262.0,"d":null,"r":null,"p":7,"g":0,"s":10,"tc":null,"ph":"unk","radio":1,"fact":"Đặt theo tên Ernest Lawrence, người chế tạo máy gia tốc hạt cyclotron."},{"z":104,"sym":"Rf","vn":"Rutherfordi","n":163,"w":267.0,"d":null,"r":null,"p":7,"g":4,"s":8,"tc":null,"ph":"unk","radio":1,"fact":"Đặt theo tên Rutherford — người tìm ra hạt nhân nguyên tử.","cond":"unk"},{"z":105,"sym":"Db","vn":"Dubni","n":163,"w":268.0,"d":null,"r":null,"p":7,"g":5,"s":8,"tc":null,"ph":"unk","radio":1,"fact":"Tạo ra ở thành phố Dubna (Nga); mỗi lần chỉ được vài nguyên tử.","cond":"unk"},{"z":106,"sym":"Sg","vn":"Seaborgi","n":163,"w":271.0,"d":null,"r":null,"p":7,"g":6,"s":8,"tc":null,"ph":"unk","radio":1,"fact":"Đặt theo Glenn Seaborg — người tìm ra nhiều nguyên tố nhất — ngay khi ông còn sống.","cond":"unk"},{"z":107,"sym":"Bh","vn":"Bohri","n":163,"w":274.0,"d":null,"r":null,"p":7,"g":7,"s":8,"tc":null,"ph":"unk","radio":1,"fact":"Đặt theo Niels Bohr, người nghĩ ra ý tưởng electron nằm theo từng bậc năng lượng.","cond":"unk"},{"z":108,"sym":"Hs","vn":"Hassi","n":161,"w":269.0,"d":null,"r":null,"p":7,"g":8,"s":8,"tc":null,"ph":"unk","radio":1,"fact":"Đặt theo bang Hesse (Đức), nơi nó được tạo ra.","cond":"unk"},{"z":109,"sym":"Mt","vn":"Meitneri","n":168,"w":276.0,"d":null,"r":null,"p":7,"g":9,"s":8,"tc":null,"ph":"unk","radio":1,"fact":"Đặt theo bà Lise Meitner, người giải thích được hạt nhân tách đôi.","cond":"unk"},{"z":110,"sym":"Ds","vn":"Darmstadti","n":172,"w":281.0,"d":null,"r":null,"p":7,"g":10,"s":8,"tc":null,"ph":"unk","radio":1,"fact":"Tạo ra ở thành phố Darmstadt (Đức); chỉ tồn tại vài giây.","cond":"unk"},{"z":111,"sym":"Rg","vn":"Roentgeni","n":171,"w":281.0,"d":null,"r":null,"p":7,"g":11,"s":8,"tc":null,"ph":"unk","radio":1,"fact":"Đặt theo Röntgen — người tìm ra tia X.","cond":"unk"},{"z":112,"sym":"Cn","vn":"Copernixi","n":174,"w":285.0,"d":null,"r":null,"p":7,"g":12,"s":8,"tc":null,"ph":"unk","radio":1,"fact":"Đặt theo Copernicus — người nói Trái Đất quay quanh Mặt Trời.","cond":"unk"},{"z":113,"sym":"Nh","vn":"Nihoni","n":173,"w":286.0,"d":null,"r":null,"p":7,"g":13,"s":7,"tc":null,"ph":"unk","radio":1,"fact":"Nguyên tố đầu tiên do Nhật Bản tìm ra; \"Nihon\" nghĩa là Nhật Bản.","cond":"unk"},{"z":114,"sym":"Fl","vn":"Flerovi","n":176,"w":289.0,"d":null,"r":null,"p":7,"g":14,"s":7,"tc":null,"ph":"unk","radio":1,"fact":"Mỗi lần tạo ra chỉ được vài nguyên tử, biến mất sau vài giây.","cond":"unk"},{"z":115,"sym":"Mc","vn":"Moscovi","n":175,"w":288.0,"d":null,"r":null,"p":7,"g":15,"s":7,"tc":null,"ph":"unk","radio":1,"fact":"Đặt theo vùng Moskva (Nga). Chỉ tạo ra được vài nguyên tử, tồn tại chưa tới một giây.","cond":"unk"},{"z":116,"sym":"Lv","vn":"Livermori","n":177,"w":293.0,"d":null,"r":null,"p":7,"g":16,"s":7,"tc":null,"ph":"unk","radio":1,"fact":"Đặt theo phòng thí nghiệm Livermore (Mỹ). Tồn tại chưa tới một giây.","cond":"unk"},{"z":117,"sym":"Ts","vn":"Tennessin","n":177,"w":294.0,"d":null,"r":null,"p":7,"g":17,"s":6,"tc":null,"ph":"unk","radio":1,"fact":"Đặt theo bang Tennessee (Mỹ) — một trong những nguyên tố mới nhất.","cond":"unk"},{"z":118,"sym":"Og","vn":"Oganesson","n":176,"w":294.0,"d":null,"r":null,"p":7,"g":18,"s":2,"tc":null,"ph":"unk","radio":1,"fact":"Nguyên tố nặng nhất từng tạo ra — ô cuối cùng của bảng. Đặt theo nhà khoa học Oganessian ngay khi ông còn sống.","cond":"unk"}];
   var BIO_TEMP = ['Lạnh cóng: các nguyên tử gần như lặng im.',
     'Các nguyên tử trong phân tử không bao giờ đứng yên — kể cả trong người con ngay lúc này, chúng vẫn đang rung.',
-    'Nóng lên: rung mạnh hơn hẳn. Nóng quá thì chuỗi protein bung ra, biến dạng — giống lúc trứng chín.'];
+    'Nóng lên: rung mạnh hơn hẳn. Nóng quá thì phân tử bung ra, biến dạng — giống lúc trứng chín.'];
   var MATERIALS = {
     thep: { structure: 'metal', phase: 'solid', name: 'Thép', lower: 'thép', lattice: 'bcc', a: 2.87, el: 'Fe', base: [142, 147, 158], hv: 14, colorWord: 'xám bạc', sym: 'Fe', symColor: '#b9bfcc',
       extra: 'Thép còn có một chút carbon len giữa các nguyên tử sắt, ở đây chưa vẽ.' },
     dong: { structure: 'metal', phase: 'solid', name: 'Đồng', lower: 'đồng', lattice: 'fcc', a: 3.61, el: 'Cu', base: [196, 116, 74], hv: 30, colorWord: 'màu đồng cam hồng', sym: 'Cu', symColor: '#e0915f' },
     vang: { structure: 'metal', phase: 'solid', name: 'Vàng', lower: 'vàng', lattice: 'fcc', a: 4.08, el: 'Au', base: [222, 180, 82], hv: 24, colorWord: 'vàng óng', sym: 'Au', symColor: '#f0c95a' },
-    chi:  { structure: 'metal', phase: 'solid', name: 'Chì', lower: 'chì', lattice: 'fcc', a: 4.95, el: 'Pb', base: [116, 122, 134], hv: 12, colorWord: 'xám chì xỉn, hơi ánh xanh', sym: 'Pb', symColor: '#98a0b2' },
-    nhom: { structure: 'metal', phase: 'solid', name: 'Nhôm', lower: 'nhôm', lattice: 'fcc', a: 4.05, el: 'Al', base: [186, 192, 202], hv: 10, colorWord: 'bạc sáng', sym: 'Al', symColor: '#d3d9e3' },
+    chi:  { structure: 'metal', phase: 'solid', name: 'Chì', lower: 'chì', lattice: 'fcc', a: 4.95, el: 'Pb', base: [116, 122, 134], hv: 12, colorWord: 'xám chì xỉn, hơi ánh xanh', sym: 'Pb', symColor: '#98a0b2',
+      extra: 'Vì sao chì nặng thế? Mỗi nguyên tử chì có tới 208 hạt trong hạt nhân — nặng gần gấp 4 lần một nguyên tử sắt.' },
+    nhom: { structure: 'metal', phase: 'solid', name: 'Nhôm', lower: 'nhôm', lattice: 'fcc', a: 4.05, el: 'Al', base: [186, 192, 202], hv: 10, colorWord: 'bạc sáng', sym: 'Al', symColor: '#d3d9e3',
+      extra: 'Vì sao nhôm nhẹ? Mỗi nguyên tử nhôm chỉ có 27 hạt trong hạt nhân — nhẹ bằng một nửa nguyên tử sắt.' },
     thuytinh: { structure: 'glass', phase: 'solid', name: 'Thủy tinh', lower: 'thủy tinh', el: 'Si', els: ['Si', 'O'], base: [120, 150, 185], sym: 'SiO₂', symColor: '#9fd3ff', sub: 'Silic + oxy' },
     hdpe: { structure: 'polymer', phase: 'solid', name: 'Nhựa HDPE', lower: 'nhựa HDPE', el: 'C', els: ['C', 'H'], base: [214, 218, 224], sym: 'CH₂', symColor: '#e9edf2', sub: 'Carbon + hydro' },
     go:   { structure: 'wood', phase: 'solid', name: 'Gỗ', lower: 'gỗ', el: 'C', els: ['C', 'O', 'H'], base: [204, 160, 104], sym: 'C₆', symColor: '#e2b06e', sub: 'Carbon + oxy + hydro' },
@@ -278,7 +371,7 @@
     da:   { structure: 'ice', phase: 'solid', name: 'Nước đá', lower: 'nước đá', el: 'O', els: ['O', 'H'], base: [170, 205, 235], sym: 'H₂O', symColor: '#bfe3ff', sub: 'Nước ở thể rắn',
       tempText: ['Lạnh sâu: phân tử chỉ còn rung rất nhẹ, đá cứng ngắc.', 'Đá là nước mà phân tử đã xếp hàng sáu cạnh, chỉ còn rung tại chỗ. Xếp hàng thì thưa hơn lúc chen lấn, nên đá nhẹ hơn nước và nổi được.', 'Ấm lên quá 0 độ: rung mạnh, hàng lối vỡ ra, đá tan thành nước.'] },
     hoinuoc: { structure: 'steam', phase: 'gas', name: 'Hơi nước', lower: 'hơi nước', el: 'O', els: ['O', 'H'], base: [40, 50, 80], sym: 'H₂O', symColor: '#dde9f5', sub: 'Nước ở thể khí',
-      tempText: ['Lạnh đi: bay chậm lại, chạm nhau là dính thành giọt — đó là sương.', 'Hơi nước vẫn là H₂O, nhưng các phân tử đã bứt khỏi nhau, bay rời rạc như không khí.', 'Nóng hơn: bay nhanh hơn nữa, đâm nhau mạnh hơn.'] },
+      tempText: ['Lạnh đi: bay chậm lại, chạm nhau là dính thành giọt li ti — chính những giọt ấy là làn "khói" trắng con nhìn thấy.', 'Hơi nước vẫn là H₂O, nhưng các phân tử đã bứt khỏi nhau, bay rời rạc như không khí.', 'Nóng hơn: bay nhanh hơn nữa, đâm nhau mạnh hơn.'] },
     su:   { structure: 'ceramic', phase: 'solid', name: 'Sứ', lower: 'sứ', el: 'Si', els: ['Si', 'O'], base: [236, 236, 230], sym: 'SiO₂', symColor: '#f1efe6', sub: 'Silic + oxy (+ nhôm)' },
     muoi: { structure: 'ionic', phase: 'solid', name: 'Muối ăn', lower: 'muối', lattice: 'rocksalt', a: 5.64, el: 'Na', els: ['Na', 'Cl'], elShift: { Cl: [0.5, 0] }, base: [240, 240, 245], sym: 'NaCl', symColor: '#ffd98a', sub: 'Natri + clo' },
     than: { structure: 'graphite', phase: 'solid', name: 'Than chì', lower: 'than chì', el: 'C', els: ['C'], base: [40, 42, 48], hv: 6, colorWord: 'đen ánh bạc', sym: 'C', symColor: '#6b6f78', sub: 'Carbon xếp tấm' },
@@ -306,7 +399,7 @@
     landa: bioMat('Da', '#f0b9a0', 'Protein bện ba', ['C', 'H', 'O', 'N'], 'amino', [226, 170, 150],
       ['Bề mặt da dưới kính hiển vi điện tử: những vảy da mỏng dẹt chồng lên nhau như lá khô. Da bong vảy mỗi ngày mà con không biết!',
         'Ảnh kính hiển vi điện tử bề mặt da người: những vảy da mỏng dẹt chồng lên nhau như lá khô, có rãnh vân da chạy chéo. Tông xám tô màu hồng nhạt.'],
-      ['Lưới sợi dưới da', 3e-5, 'Bên dưới lớp vảy là một tấm lưới sợi đan chéo nhau — sợi collagen. Nhờ tấm lưới này da kéo căng được rồi bật lại.',
+      ['Lưới sợi dưới da', 3e-5, 'Sâu bên dưới lớp vảy là một tấm lưới sợi đan chéo nhau — sợi collagen. Nhờ tấm lưới này da rất dai, kéo mạnh cũng khó rách.',
         'Ảnh kính hiển vi điện tử mạng sợi collagen trong da: rất nhiều sợi dài đan chéo nhau như lưới mềm, mỗi sợi có vằn ngang mờ. Tông xám tô màu kem nhạt.'],
       [lvCollagen()]),
     tebao: bioMat('Bào', '#9fb6ff', 'Tế bào và ADN', ['C', 'H', 'O', 'N', 'P'], 'nucleotide', [170, 190, 235],
@@ -330,7 +423,7 @@
         'Ảnh kính hiển vi điện tử một con mạt bụi nhà: thân tròn mập hơi trong, 8 chân có lông, không có mắt, bám giữa các sợi vải. Tô màu kem vàng nhạt trên nền đen.'],
       null, [lvCells('con mạt'), lvNuc(), lvDna()]),
     gaunuoc: bioMat('Gấu', '#d8c7a0', 'Sinh vật lì nhất', ['C', 'H', 'O', 'N', 'P'], 'nucleotide', [210, 190, 160],
-      ['Gấu nước: dài chưa tới 1 milimét, 8 chân mập có móng. Nó chịu được đóng băng, nước sôi, thậm chí bay ra ngoài vũ trụ rồi sống lại!',
+      ['Gấu nước: dài chưa tới 1 milimét, 8 chân mập có móng. Khi khô quắt lại thành một cục nhỏ như ngủ đông, nó chịu được đóng băng, khô hạn nhiều năm, thậm chí bay ra ngoài vũ trụ rồi vẫn sống lại!',
         'Ảnh kính hiển vi điện tử một con gấu nước: thân mập chia đốt, 8 chân ngắn mập có móng vuốt nhỏ, miệng tròn. Tô màu kem nhạt trên nền đen.'],
       null, [lvCells('gấu nước'), lvNuc(), lvDna()]),
     trunggiay: bioMat('Trùng', '#9be3c4', 'Một tế bào biết bơi', ['C', 'H', 'O', 'N', 'P'], 'nucleotide', [170, 220, 200],
@@ -348,7 +441,7 @@
     virus: bioMat('Virus', '#b7a6ff', 'Không phải tế bào', ['C', 'H', 'O', 'N'], 'amino', [150, 140, 200],
       ['Một giọt bắn đã khô dưới kính hiển vi điện tử: vài hạt tròn tí hon nằm rải rác — đó là virus.',
         'Ảnh kính hiển vi điện tử bề mặt một giọt bắn đã khô: nền xốp có vài hạt virus tròn nhỏ nằm rải rác. Tô màu xanh tím nhẹ trên nền tối.'],
-      ['Một hạt virus', 4e-7, 'Phóng vào một hạt: virus cúm hình cầu, mặt ngoài phủ đầy gai. Nó nhỏ hơn vi khuẩn khoảng 100 lần.',
+      ['Một hạt virus', 4e-7, 'Phóng vào một hạt: virus cúm hình cầu, mặt ngoài phủ đầy gai. Nó nhỏ hơn vi khuẩn khoảng 10 đến 20 lần.',
         'Ảnh kính hiển vi điện tử cận cảnh một hạt virus cúm: hình cầu, mặt ngoài phủ dày gai protein ngắn. Tô màu xanh tím và cam nhẹ trên nền đen.'],
       [lvCapsid()])
   };
@@ -379,7 +472,7 @@
   }
   function lvChain() {
     return { id: 'chuoi', kind: 'strands', name: 'Chuỗi protein', frame: 6e-9, draw: drawProteinChain, d3: true, lod: true,
-      cap: 'Phóng vào một sợi mảnh: protein là một chuỗi hạt rất dài, mỗi hạt là một axit amin, mỗi màu một loại. Chuỗi tự cuộn thành lò xo nhỏ. Kéo để xoay.',
+      cap: 'Sợi mảnh là một chuỗi những viên protein. Phóng vào một viên: mỗi protein là một chuỗi hạt rất dài, mỗi hạt là một axit amin, mỗi màu một loại. Có đoạn chuỗi tự cuộn thành lò xo nhỏ. Kéo để xoay.',
       fixed: 'Tầng này vẽ bằng code: chuỗi axit amin cuộn xoắn.' };
   }
   function lvFat() {
@@ -404,7 +497,7 @@
     return { id: 'protein-trung', kind: 'egg', name: 'Protein trong nước', frame: 3e-8, draw: drawEgg, temp: true, lod: true,
       cap: 'Lòng trắng là nước có hòa rất nhiều protein. Mỗi protein là một chuỗi hạt cuộn tròn như cuộn len nhỏ, trôi lơ lửng.',
       tempText: ['Lạnh: protein vẫn cuộn tròn, trôi chậm.',
-        'Protein cuộn tròn trôi giữa nước, ánh sáng lọt qua khe — nên lòng trắng sống trong veo. Thử bấm "Nóng" xem!',
+        'Protein cuộn tròn trôi giữa nước, ánh sáng lọt qua khe — nên lòng trắng sống trong veo. Thử kéo nhiệt độ lên nóng xem!',
         'Nóng! Protein bung cuộn, duỗi ra rồi quấn vào nhau thành lưới (nét trắng), chặn ánh sáng lại — lòng trắng hóa trắng đục. Đó là lúc trứng chín.'],
       fixed: 'Tầng này vẽ bằng code: protein cuộn tròn, gặp nóng thì duỗi ra và dính vào nhau.' };
   }
@@ -415,14 +508,14 @@
   }
   function lvCapsid() {
     return { id: 'vo-virus', kind: 'capsid', name: 'Vỏ virus', frame: 1.5e-7, draw: drawCapsid, d3: true, lod: true,
-      cap: 'Virus không phải tế bào. Nó chỉ là một vỏ ghép từ các viên protein (xanh), bọc một sợi chỉ dẫn RNA (cam, bên trong), có gai để bám vào tế bào. Một mình nó không làm gì được — phải chui vào tế bào mới nhân lên. Kéo để xoay.',
+      cap: 'Virus không phải tế bào. Nó chỉ có một lớp vỏ lót những viên protein (xanh), cắm đầy gai để bám vào tế bào, bọc bộ chỉ dẫn RNA (cam, bên trong) — virus cúm có 8 đoạn RNA riêng rẽ. Một mình nó không làm gì được — phải chui vào tế bào mới nhân lên. Kéo để xoay.',
       fixed: 'Tầng này vẽ bằng code: vỏ protein, gai và sợi RNA bên trong.' };
   }
   var UNITS = {
     amino: { name: 'Một axit amin', cap: 'Mỗi hạt trong chuỗi protein là một axit amin: một nhóm nhỏ nguyên tử carbon (xanh dương), hydro (xanh lá), oxy (hồng) và nitơ (tím). Có 20 loại; xếp theo thứ tự khác nhau là ra protein khác nhau. Kéo để xoay.' },
     aminoS: { name: 'Axit amin có lưu huỳnh', cap: 'Tóc có rất nhiều axit amin chứa lưu huỳnh (vàng). Hai lưu huỳnh ở hai chuỗi nắm chặt nhau như cái khóa — vì thế tóc dai, và tóc cháy có mùi khét rất riêng. Kéo để xoay.' },
     nucleotide: { name: 'Một chữ cái ADN', cap: 'Mỗi nửa bậc thang ADN là một "chữ cái": một nhóm phốt-pho (cam), một vòng đường và một vòng chữ, làm từ carbon, oxy, nitơ, hydro. Cả ADN chỉ dùng 4 loại chữ cái: A, T, G, X. Kéo để xoay.' },
-    tail: { name: 'Đuôi mỡ', cap: 'Đuôi phân tử mỡ là một chuỗi carbon (xanh dương) kèm hydro (xanh lá) — giống hệt chuỗi trong chai nhựa HDPE, chỉ ngắn hơn! Toàn carbon và hydro nên mỡ không tan trong nước. Kéo để xoay.' }
+    tail: { name: 'Đuôi mỡ', cap: 'Đuôi phân tử mỡ là một chuỗi carbon (xanh dương) kèm hydro (xanh lá) — rất giống chuỗi trong chai nhựa HDPE, chỉ ngắn hơn nhiều! Toàn carbon và hydro nên mỡ không tan trong nước. Kéo để xoay.' }
   };
 
   // =====================================================================
@@ -463,8 +556,8 @@
     { id: 'cuc-da', name: 'Cục đá lạnh', title: 'Cục đá lạnh', short: 'cục đá', mat: 'da', frame: 0.05, draw: drawIceCube,
       cap: 'Một viên đá lạnh. Vẫn là nước thôi, nhưng lạnh quá nên cứng lại. Phóng to vào xem các phân tử nước đang làm gì.',
       pObj: 'Ảnh chụp cận cảnh một viên đá lạnh hình khối vuông trong suốt, hơi mờ sương, có vài bọt khí nhỏ bên trong, đặt trên nền vải xanh thẫm, ánh sáng mềm. Viên đá nằm chính giữa khung hình. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ.' },
-    { id: 'hoi-nuoc', name: 'Hơi nước', title: 'Hơi nước bốc lên', short: 'làn hơi', mat: 'hoinuoc', frame: 0.2, draw: drawSteam, focus: [0.5, 0.3],
-      cap: 'Làn hơi bốc lên từ cốc trà nóng. Cũng là nước, nhưng nóng quá nên bay lên thành khí. Mình lao thẳng vào làn hơi.',
+    { id: 'hoi-nuoc', name: 'Hơi nước', title: 'Hơi nước bốc lên', short: 'làn hơi', mat: 'hoinuoc', frame: 0.2, draw: drawSteam, focus: [0.5, 0.47],
+      cap: 'Làn khói trắng bốc lên từ cốc trà nóng. Bí mật: phần trắng con nhìn thấy là những giọt nước li ti vừa nguội lại. Hơi nước thật thì vô hình — nó bay ngay trên mặt trà, xen giữa các giọt. Mình lao vào đó.',
       pObj: 'Ảnh chụp một cốc trà thủy tinh nóng trên nền vải xanh thẫm, làn hơi nước trắng mỏng bốc lên uốn lượn phía trên miệng cốc, ánh sáng ngược mềm. Làn hơi ở nửa trên chính giữa khung hình. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ.' },
     { id: 'bat-su', name: 'Bát sứ', title: 'Chiếc bát sứ', short: 'cái bát', surfWhat: 'men bát sứ', mat: 'su', frame: 0.14, draw: drawBowl,
       cap: 'Một cái bát sứ. Làm từ đất sét nung trong lò nóng hơn nghìn độ. Cứng, bóng, mà rơi là vỡ tan. Phóng to vào xem vì sao.',
@@ -472,11 +565,11 @@
     { id: 'hat-muoi', name: 'Hạt muối', title: 'Hạt muối ăn', short: 'hạt muối', mat: 'muoi', frame: 0.004, draw: drawSaltGrain,
       cap: 'Một hạt muối ăn. Nhìn kỹ xem: nó hình khối vuông! Không ai gọt đâu, tự nó mọc ra vuông như thế. Phóng to vào xem vì sao.',
       pObj: 'Ảnh chụp siêu cận cảnh hạt muối ăn trên nền vải xanh thẫm: các hạt hình khối lập phương trong suốt hơi trắng, cạnh sắc, một hạt to nằm chính giữa khung hình. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ.' },
-    { id: 'cuc-than', name: 'Cục than', title: 'Cục than chì', short: 'cục than', surfWhat: 'cục than', mat: 'than', frame: 0.07, draw: drawCoal,
+    { id: 'cuc-than', name: 'Than chì', title: 'Cục than chì', short: 'cục than', surfWhat: 'cục than', mat: 'than', frame: 0.07, draw: drawCoal,
       cap: 'Một cục than chì, thứ làm ruột bút chì. Đen, mềm, quệt lên giấy là để lại vết. Phóng to vào xem vì sao nó mềm thế.',
       pObj: 'Ảnh chụp cận cảnh một cục than đen nhánh, bề mặt vỡ có mặt phẳng bóng ánh kim xen mặt xù xì, đặt trên nền vải xanh thẫm, ánh sáng mềm. Cục than nằm chính giữa khung hình. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ.' },
     { id: 'kim-cuong', name: 'Kim cương', title: 'Viên kim cương', short: 'viên kim cương', mat: 'kimcuong', frame: 0.02, draw: drawDiamond,
-      cap: 'Một viên kim cương. Cứng nhất trong mọi vật chất tự nhiên. Và đây là bí mật: nó làm từ đúng thứ với cục than. Phóng to vào xem khác nhau ở đâu.',
+      cap: 'Một viên kim cương. Cứng nhất trong mọi vật chất tự nhiên. Và đây là bí mật: nó làm từ đúng thứ với ruột bút chì — than chì. Phóng to vào xem khác nhau ở đâu.',
       pObj: 'Ảnh chụp cận cảnh một viên kim cương cắt tròn trong suốt, các mặt cắt lấp lánh tia sáng nhiều màu, đặt trên nền vải xanh thẫm, ánh sáng mềm. Viên kim cương nằm chính giữa khung hình. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ.' },
 
     // ----- MODULE SINH HỌC -----
@@ -496,7 +589,7 @@
       pObj: 'Ảnh vật thể: một quả trứng gà vừa đập vào bát sứ trắng, lòng đỏ tròn vàng cam, lòng trắng trong suốt hơi sánh bao quanh. Phần lòng trắng trong suốt nằm chính giữa khung hình. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ.',
       pSurf: 'Ảnh cận cảnh lòng trắng trứng sống: trong suốt, sánh, có bọt khí nhỏ và vệt sánh đặc hơn, ánh sáng xuyên qua. Phủ kín khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.' },
     { id: 'soi-toc', name: 'Sợi tóc', title: 'Sợi tóc', short: 'sợi tóc', mat: 'toc', frame: 0.06, draw: drawHair, surfName: 'Vảy tóc', sf: 3e-4, hd: tissue('hairx', 0.5),
-      cap: 'Một lọn tóc. Mỗi sợi mảnh chưa bằng một phần mười milimét, vậy mà một sợi treo được cả quả táo. Phóng vào một sợi xem vì sao nó dai thế.',
+      cap: 'Một lọn tóc. Mỗi sợi chỉ dày khoảng một phần mười milimét, vậy mà một sợi treo được cả quả trứng gà. Phóng vào một sợi xem vì sao nó dai thế.',
       pObj: 'Ảnh vật thể: một lọn tóc đen óng của người Việt, buộc gọn, nằm uốn nhẹ trên nền vải nhung xanh thẫm. Lọn tóc nằm chính giữa. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ.',
       pSurf: 'Ảnh kính hiển vi điện tử một sợi tóc người nằm chéo khung hình: bề mặt phủ những vảy mỏng chồng lên nhau như ngói lợp nhà, mép vảy hơi vểnh. Tông xám tô màu nâu nhạt. Sợi tóc phủ gần kín khung. Ảnh vuông 1:1, sắc nét, không có chữ.',
       pHat: 'Ảnh kính hiển vi điện tử mặt cắt ngang một sợi tóc người: vòng vảy mỏng ở ngoài cùng, bên trong là bó sợi dày đặc xếp song song nhìn từ đầu cắt. Tông xám tô màu nâu nhạt. Mặt cắt chiếm gần kín khung. Ảnh vuông 1:1, sắc nét, không có chữ.' },
@@ -569,7 +662,7 @@
       pHat: 'Ảnh kính hiển vi điện tử mảng bám răng: dày đặc vi khuẩn hình que và chuỗi hạt tròn chồng lên nhau thành lớp, dính trong màng nhầy. Tô màu vàng và tím nhạt trên nền tối. Kín khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.' },
     // ----- TỜ GIẤY -----
     { id: 'to-giay', name: 'Tờ giấy', title: 'Tờ giấy', short: 'tờ giấy', mat: 'giay', frame: 0.3, draw: drawPaperObj,
-      cap: 'Một tờ giấy trắng. Mỏng tang, nhẹ bẫng — mà xé ngang thì khó rách theo đường thẳng. Phóng to xem giấy làm từ gì.',
+      cap: 'Một tờ giấy trắng. Mỏng tang, nhẹ bẫng — vậy mà cầm hai đầu kéo căng thì khó đứt. Phóng to xem giấy làm từ gì.',
       pObj: 'Ảnh chụp một tờ giấy trắng hơi cong nhẹ đặt trên nền vải nhung xanh thẫm, ánh sáng xiên làm lộ bề mặt hơi nhám. Tờ giấy nằm chính giữa khung hình. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ.',
       pSurf: 'Ảnh kính hiển vi điện tử bề mặt tờ giấy: những sợi gỗ dẹt như ruy băng đan rối và ép bẹp lên nhau thành thảm. Tông xám tô trắng ngà. Kín toàn bộ khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.' }
   ];
@@ -767,8 +860,8 @@
   function getSurf(mk) { return cache.surf[mk] || (cache.surf[mk] = makeSurfaceTile(512, MATERIALS[mk].base)); }
   function getGrain(mk) { return cache.grain[mk] || (cache.grain[mk] = makeGrainTile(384, MATERIALS[mk].base, MATERIALS[mk].hv || 16)); }
   function getLatTile(lk) { var k = lk + ':' + curElKey; defaultEl = curElKey; return cache.lat[k] || (cache.lat[k] = makeLatticeTile(1024, LATTICES[lk])); }
-  function getNuc(ek) { var e = ELEMENTS[ek]; return cache.nuc[ek] || (cache.nuc[ek] = makeNucleus(e.Z, e.N)); }
-  function nucR(ek) { var e = ELEMENTS[ek]; return Math.max(0.09, 0.26 * Math.cbrt((e.Z + e.N) / 56)); }
+  function getNuc(ek) { var e = elData(ek), k = ek + e.N; return cache.nuc[k] || (cache.nuc[k] = makeNucleus(e.Z, e.N)); }
+  function nucR(ek) { var e = elData(ek); return Math.max(0.09, 0.26 * Math.cbrt((e.Z + e.N) / 56)); }
 
   // trạng thái
   var cur, curMat, curEl, curElKey, curLatKey, curLat, LEVELS, N = 7, ATOM = 4;
@@ -1832,16 +1925,19 @@
   function isMetalNow() { return curMat.structure === 'metal' && curLatKey !== 'diamond'; }
   function idR3(x, y, z) { return [x, y, z]; }
   function drawEgas(ctx, v, D, Rfn, fade, now) {
-    if (!EGAS.length) { var r0 = mulberry32(5); for (var k = 0; k < 85; k++) EGAS.push({ x: (r0() - 0.5) * 12, y: (r0() - 0.5) * 12, a: r0() * 6.283 }); }
+    if (!EGAS.length) { var r0 = mulberry32(5); for (var k = 0; k < 150; k++) EGAS.push({ x: (r0() - 0.5) * 12, y: (r0() - 0.5) * 12, a: r0() * 6.283 }); }
     var al = 0.95 * fade;
     if (al < 0.03) return;
     var dt = clamp(now - egLast, 0, 0.05); egLast = now;
-    var sp = 1.15 * Math.sqrt(Tm()), drift = currentOn ? 1.6 : 0;
+    // electron tự do luôn chạy rất nhanh, kể cả khi lạnh; nóng lên chỉ làm chúng va vấp (đổi hướng) nhiều hơn
+    var T = Tm(), sp = 1.5;
+    drift += ((currentOn ? 1 : 0) - drift) * Math.min(1, dt * 4);
+    var dv = drift * 0.6 / (0.55 + 0.45 * T);
     ctx.fillStyle = '#9fe8ff';
     for (var i = 0; i < EGAS.length; i++) {
       var e = EGAS[i];
-      if (Math.random() < dt * 2.5) e.a = Math.random() * 6.283;
-      e.x += (Math.cos(e.a) * sp + drift) * dt; e.y += Math.sin(e.a) * sp * dt;
+      if (Math.random() < dt * (0.8 + 3.2 * T)) e.a = Math.random() * 6.283;
+      e.x += (Math.cos(e.a) * sp + dv) * dt; e.y += Math.sin(e.a) * sp * dt;
       if (e.x > 6.1) e.x -= 12.2; if (e.x < -6.1) e.x += 12.2;
       if (e.y > 6.1) e.y -= 12.2; if (e.y < -6.1) e.y += 12.2;
       var p = Rfn(e.x * D, e.y * D, -0.18 * D), X = v.cx + p[0], Y = v.cy + p[1];
@@ -2491,9 +2587,11 @@
     var n = Math.floor(spawnAcc); spawnAcc -= n;
     if (n > 600) n = 600;
     var life = rate < 4 ? 6 : rate < 60 ? 2.4 : 1.4, size = rate < 4 ? 5 : rate < 60 ? 2.8 : 1.7;
+    var xs = excSpawn(now);
     for (i = 0; i < n; i++) {
-      var p = sampleCloud3(Math.random);
-      pts.push({ x: p[0], y: p[1], z: p[2], b: now, life: life, sz: size, c: cloudBucket(Math.hypot(p[0], p[1], p[2])) });
+      var p, isEx = 0;
+      if (xs && Math.random() < xs.f) { if (xs.k === 'drop') continue; p = sampleP(); isEx = 1; } else p = sampleCloud3(Math.random);
+      pts.push({ x: p[0], y: p[1], z: p[2], b: now, life: life, sz: size, ex: isEx, c: cloudBucket(Math.hypot(p[0], p[1], p[2])) });
       if (rate < 4) { pings.push({ x: p[0], y: p[1], z: p[2], b: now }); tick(true); }
     }
     totalSeen += n;
@@ -2522,16 +2620,18 @@
     var pal = palOf(curElKey), P = PALS[pal], CL = P.c.map(function (c) { return 'rgb(' + c + ')'; });
     cloudGlow(ctx, cx, cy, a, Math.min(1, pts.length / 3000), pal);
     ctx.globalCompositeOperation = 'lighter';
-    var lastC = -1;
+    var lastC = -1, exHigh = excIsHigh(now);
     for (i = 0; i < pts.length; i++) {
       var p = pts[i], age = now - p.b, al = 1 - age / p.life;
-      if (al <= 0) continue;
+      if (al <= 0 || (p.ex && !exHigh)) continue;
       var x1 = p.x * cyw + p.z * syw, z1 = -p.x * syw + p.z * cyw, y2 = p.y * cp - z1 * sp, z2 = p.y * sp + z1 * cp;
       al *= 0.74 + 0.26 * clamp(z2 / 2.5, -1, 1);
       var x = cx + x1 * a, y = cy + y2 * a;
       if (x < -6 || x > v.W + 6 || y < -6 || y > v.H + 6) continue;
-      if (p.c !== lastC) { lastC = p.c; ctx.fillStyle = CL[p.c]; }
+      var pc = p.ex ? 3 : p.c;
+      if (pc !== lastC) { lastC = pc; ctx.fillStyle = pc === 3 ? 'rgb(255,214,140)' : CL[pc]; }
       if (p.sz > 2) { ctx.globalAlpha = Math.min(1, al * 1.1); ctx.beginPath(); ctx.arc(x, y, p.sz * (age < 0.15 ? 1.6 - age * 4 : 1), 0, 6.2832); ctx.fill(); }
+      else if (pc === 3) { ctx.globalAlpha = Math.min(1, al * 1.2); ctx.fillRect(x - 1.3, y - 1.3, 2.6, 2.6); }
       else { ctx.globalAlpha = al * 0.62; ctx.fillRect(x - p.sz / 2, y - p.sz / 2, p.sz, p.sz); }
     }
     ctx.globalAlpha = 1;
@@ -2545,7 +2645,148 @@
     drawNb(true);
     var rn = Math.max(1.3, nucR(curElKey) * M * s / 512);
     ctx.fillStyle = '#f2a65a'; ctx.beginPath(); ctx.arc(cx, cy, rn, 0, 6.2832); ctx.fill();
+    if (exc) drawExcFx(ctx, v, now, a, cx, cy);
   }
+
+  // ---------- electron nhảy bậc / bứt ra: hấp thụ và phát ánh sáng ----------
+  var exc = null, EXC_DUR = { up: 6.6, ion: 9.8 };
+  function excT(now) { if (!exc) return -1; var t = now - exc.t0; if (t > EXC_DUR[exc.mode]) { endExc(); return -1; } return t; }
+  function excPT() { var e = elData(curElKey), zz = e ? e.Z : 1; for (var i = 0; i < PT.length; i++) if (PT[i].z === zz) return PT[i]; return PT[0]; }
+  function excIsHigh(now) { var t = excT(now); return exc && exc.mode === 'up' && t > 0.8 && t < 3.4; }
+  function excSpawn(now) {
+    var t = excT(now); if (t < 0) return null;
+    var one = excPT().z === 1;
+    if (exc.mode === 'up') return t > 0.8 && t < 3.4 ? { k: 'p', f: one ? 1 : 0.35 } : null;
+    return t > 1.0 && t < 6.6 ? { k: 'drop', f: one ? 1 : 0.15 } : null;
+  }
+  // đám mây khi electron ở tầng cao hơn (hình hai thùy kiểu 2p); hydro: đúng tỉ lệ 2p so với 1s
+  function sampleP() {
+    var kk = excPT().z === 1 ? 1 : 0.5;
+    var rad = 0, k, ux, uy, uz;
+    for (k = 0; k < 5; k++) rad -= Math.log(1 - Math.random());
+    do { var u = 2 * Math.random() - 1, th = 6.2832 * Math.random(), q = Math.sqrt(1 - u * u); ux = u; uy = q * Math.cos(th); uz = q * Math.sin(th); } while (Math.random() > ux * ux);
+    return [rad * ux * kk, rad * uy * kk, rad * uz * kk];
+  }
+  function excColor() { var e = excPT(); return e.wl ? wl2rgb(e.wl) : 'rgb(240,236,255)'; }
+  function photonWave(c, x0, y0, ang, d, col, amp, len, al) {
+    var ca = Math.cos(ang), sa = Math.sin(ang), k;
+    c.save(); c.globalAlpha = al; c.strokeStyle = col; c.lineWidth = 3; c.shadowColor = col; c.shadowBlur = 14; c.beginPath();
+    for (k = -len; k <= len; k += 3) {
+      var env = Math.exp(-(k * k) / (len * len * 0.3)), w = Math.sin(k * 0.32) * amp * env, px = x0 + ca * (d + k) - sa * w, py = y0 + sa * (d + k) + ca * w;
+      if (k === -len) c.moveTo(px, py); else c.lineTo(px, py);
+    }
+    c.stroke(); c.restore();
+  }
+  function ease(u) { u = clamp(u, 0, 1); return u * u * (3 - 2 * u); }
+  function drawExcFx(c, v, now, a, cx, cy) {
+    var t = excT(now); if (t < 0) return;
+    var col = excColor(), W = v.W, H = v.H, far = Math.hypot(W, H) * 0.6, e = excPT();
+    var inCol = exc.mode === 'up' ? col : 'rgb(205,170,255)';
+    // năng lượng chiếu vào từ bên trái
+    if (t < 0.85) photonWave(c, cx, cy, Math.PI, (1 - t / 0.85) * (cx + 80), inCol, exc.mode === 'up' ? 10 : 16, 60, 1);
+    if (t > 0.75 && t < 1.3) { var f = (t - 0.75) / 0.55; c.strokeStyle = 'rgba(255,255,255,' + 0.6 * (1 - f) + ')'; c.lineWidth = 3; c.beginPath(); c.arc(cx, cy, 10 + f * 70, 0, 6.2832); c.stroke(); }
+    c.font = '600 13px system-ui, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+    var tEmit = exc.mode === 'up' ? 3.4 : 6.7;
+    if (exc.mode === 'up' && t > 1 && t < 3.4) { c.fillStyle = 'rgba(255,255,255,0.8)'; c.fillText(e.z === 1 ? 'electron đang ở tầng 3' : 'electron đang ở bậc cao (chấm vàng)', cx, Math.min(H - 30, cy + Math.min(H * 0.38, a * 6))); }
+    if (exc.mode === 'ion') {
+      var ang = 2.5, d = -1;
+      if (t > 0.8 && t < 2.6) d = 20 + Math.pow((t - 0.8) / 1.8, 1.6) * far;
+      if (t > 5.6 && t < 6.7) d = 20 + (1 - ease((t - 5.6) / 1.1)) * far;
+      if (d > 0) {
+        var ex = cx + Math.cos(ang) * d, ey = cy + Math.sin(ang) * d;
+        var tr = c.createLinearGradient(cx + Math.cos(ang) * (d - 80), cy + Math.sin(ang) * (d - 80), ex, ey);
+        tr.addColorStop(0, 'rgba(143,212,255,0)'); tr.addColorStop(1, 'rgba(143,212,255,0.7)');
+        c.strokeStyle = tr; c.lineWidth = 4; c.beginPath(); c.moveTo(cx + Math.cos(ang) * Math.max(0, d - 80), cy + Math.sin(ang) * Math.max(0, d - 80)); c.lineTo(ex, ey); c.stroke();
+        c.fillStyle = '#dff3ff'; c.shadowColor = '#8fd4ff'; c.shadowBlur = 16; c.beginPath(); c.arc(ex, ey, 7, 0, 6.2832); c.fill(); c.shadowBlur = 0;
+        c.fillStyle = '#dff3ff'; c.fillText('electron', ex, ey - 18);
+      }
+      if (t > 1.6 && t < 6.7) {
+        var bxx = cx - Math.min(a * 2.4, W * 0.3), byy = cy - Math.min(a * 2.4, H * 0.24), pu = 0.85 + 0.15 * Math.sin(now * 5);
+        c.fillStyle = 'rgba(220,60,50,0.92)'; c.beginPath(); c.arc(bxx, byy, 17 * pu, 0, 6.2832); c.fill();
+        c.fillStyle = '#fff'; c.font = '800 24px system-ui, sans-serif'; c.fillText('+', bxx, byy + 1);
+        c.font = '600 13px system-ui, sans-serif'; c.fillText(e.z === 1 ? 'chỉ còn 1 proton trần' : 'ion dương: thiếu 1 electron', bxx, byy + 30);
+      }
+    }
+    // rơi về: nhả ra một hạt ánh sáng đúng màu của nguyên tố
+    if (t > tEmit && t < tEmit + 3) {
+      var u = (t - tEmit) / 3, ff = Math.min(1, (t - tEmit) / 0.6);
+      if (ff < 1) { c.strokeStyle = col; c.globalAlpha = 0.7 * (1 - ff); c.lineWidth = 4; c.beginPath(); c.arc(cx, cy, 12 + ff * 90, 0, 6.2832); c.stroke(); c.globalAlpha = 1; }
+      var dd = 30 + u * far, pa = 0.3;
+      photonWave(c, cx, cy, pa, dd, col, 11, 60, u > 0.85 ? (1 - u) / 0.15 : 1);
+      c.fillStyle = col; c.font = '700 13px system-ui, sans-serif';
+      c.fillText(e.wl ? 'ánh sáng' : 'ánh sáng nhiều màu', cx + Math.cos(pa) * dd, cy + Math.sin(pa) * dd - 26);
+    }
+    if (exc.mode === 'up' && e.z === 1 && t > 4.5 && t < 6.6) {
+      var u2 = (t - 4.5) / 2.1, d2 = 30 + u2 * far, pa2 = 2.2;
+      c.setLineDash([5, 5]); photonWave(c, cx, cy, pa2, d2, 'rgb(170,140,255)', 9, 50, 0.6 * (1 - u2)); c.setLineDash([]);
+      c.fillStyle = 'rgba(190,170,255,' + 0.9 * (1 - u2) + ')'; c.font = '600 12px system-ui, sans-serif';
+      c.fillText('tia cực tím — mắt không thấy', cx + Math.cos(pa2) * d2, cy + Math.sin(pa2) * d2 + 26);
+    }
+    drawLadder(c, v, t, col);
+  }
+  // sơ đồ bậc thang năng lượng ở góc
+  function drawLadder(c, v, t, col) {
+    var bw = 184, bh = 120, bx = v.W - bw - 12, by = v.W < 560 ? 112 : 60, ion = exc.mode === 'ion';
+    c.fillStyle = 'rgba(8,10,26,0.78)'; c.strokeStyle = 'rgba(255,255,255,0.2)'; c.lineWidth = 1;
+    c.beginPath(); if (c.roundRect) c.roundRect(bx, by, bw, bh, 10); else c.rect(bx, by, bw, bh); c.fill(); c.stroke();
+    c.textBaseline = 'middle'; c.textAlign = 'left'; c.font = '700 12px system-ui, sans-serif'; c.fillStyle = 'rgba(230,236,255,0.92)';
+    c.fillText('Bậc thang năng lượng', bx + 10, by + 15);
+    var isH = excPT().z === 1, x0 = bx + (isH ? 62 : 88), x1 = x0 + 66, yE = by + 36, y3 = by + 58, y2 = by + 78, y1 = by + bh - 14;
+    c.strokeStyle = 'rgba(230,236,255,0.75)'; c.lineWidth = 2;
+    [y1, y2, y3].forEach(function (yy) { c.beginPath(); c.moveTo(x0, yy); c.lineTo(x1, yy); c.stroke(); });
+    c.setLineDash([4, 4]); c.beginPath(); c.moveTo(x0, yE); c.lineTo(x1, yE); c.stroke(); c.setLineDash([]);
+    c.font = '600 11px system-ui, sans-serif'; c.fillStyle = 'rgba(220,228,255,0.85)'; c.textAlign = 'right';
+    c.fillText('bay mất', x0 - 6, yE);
+    if (isH) { c.fillText('tầng 3', x0 - 6, y3); c.fillText('tầng 2', x0 - 6, y2); c.fillText('tầng 1', x0 - 6, y1); }
+    else { c.fillText('bậc cao hơn', x0 - 6, y3); c.fillText('bậc cao', x0 - 6, y2); c.fillText('chỗ quen', x0 - 6, y1); }
+    var ey = y1, show = true, ex = (x0 + x1) / 2;
+    function lerp(p, q, u) { return p + (q - p) * ease(u); }
+    if (!ion && isH) {
+      if (t > 0.7) ey = lerp(y1, y3, (t - 0.7) / 0.25);
+      if (t > 3.4) ey = lerp(y3, y2, (t - 3.4) / 0.2);
+      if (t > 4.5) ey = lerp(y2, y1, (t - 4.5) / 0.2);
+    } else if (!ion) {
+      if (t > 0.7) ey = lerp(y1, y2, (t - 0.7) / 0.2);
+      if (t > 3.4) ey = lerp(y2, y1, (t - 3.4) / 0.2);
+    } else {
+      if (t > 0.7) ey = lerp(y1, by - 6, (t - 0.7) / 0.7);
+      if (t > 1.4) show = false;
+      if (t > 5.6) { show = true; ey = lerp(by - 6, y3, (t - 5.6) / 1.0); }
+      if (t > 6.7) ey = lerp(y3, y1, (t - 6.7) / 0.25);
+      if (t > 1.4 && t < 5.6) {
+        c.strokeStyle = 'rgba(255,170,160,0.9)'; c.lineWidth = 1.5; c.setLineDash([3, 3]); c.beginPath(); c.arc(ex, y1, 6, 0, 6.2832); c.stroke(); c.setLineDash([]);
+        c.textAlign = 'center'; c.font = '700 11px system-ui, sans-serif'; c.fillStyle = 'rgba(255,170,160,0.95)'; c.fillText('trống → ion +', ex, y1 - 10);
+      }
+    }
+    if (show && ey > by + 2) { c.fillStyle = '#dff3ff'; c.shadowColor = '#8fd4ff'; c.shadowBlur = 10; c.beginPath(); c.arc(ex, ey, 6, 0, 6.2832); c.fill(); c.shadowBlur = 0; }
+    var te = ion ? 6.7 : 3.4;
+    if (t > te && t < te + 1.6) photonWave(c, ex + 10, isH && !ion ? y2 - 4 : y1 - 4, -0.35, 6 + (t - te) * 26, col, 4, 12, 1 - (t - te) / 1.6);
+    if (isH && !ion && t > 4.5 && t < 6.1) { c.setLineDash([3, 3]); photonWave(c, ex + 10, y1 - 4, -0.35, 6 + (t - 4.5) * 26, 'rgb(170,140,255)', 3, 12, 0.7 * (1 - (t - 4.5) / 1.6)); c.setLineDash([]); }
+    if (t < 0.8) photonWave(c, ex + 6, y1, 0, 6 + (1 - t / 0.8) * 34, ion ? 'rgb(205,170,255)' : col, 4, 12, 1);
+  }
+  function excCaption(now) {
+    var t = excT(now); if (t < 0) return null;
+    var e = excPT(), nm = e.vn.toLowerCase();
+    var colorLine = (e.wl ? e.wlNote : 'Nguyên tử ' + nm + ' nhả ra nhiều màu cùng lúc, có cả những tia mắt người không thấy được.') +
+      ' Màu ánh sáng là "chữ ký" riêng của mỗi nguyên tố' + (e.wl && /pháo hoa/.test(e.wlNote) ? '.' : ': pháo hoa đỏ nhờ stronti, xanh lá nhờ bari, vàng nhờ natri.');
+    if (exc.mode === 'up') {
+      if (t < 0.8) return '✨ Chiếu năng lượng vào — có thể là ánh sáng, hơi nóng của lửa hay tia lửa điện. Electron nuốt trọn phần năng lượng ấy…';
+      if (t < 3.4) return (e.z === 1 ? 'Electron của hydro nhảy lên tầng 3, xa hạt nhân hơn hẳn — cả đám mây phình to ra thành hai thùy (chấm vàng).' : 'Một electron ngoài cùng nhảy lên bậc cao hơn, xa hạt nhân hơn — phần mây ngoài phình ra thành hai thùy (chấm vàng).') + ' Electron chỉ nhận năng lượng từng phần vừa đúng một bậc, như bước lên cầu thang: không đứng lưng chừng giữa hai bậc được.';
+      if (e.z === 1) return 'Rơi xuống tầng 2: electron nhả ra một hạt ánh sáng (photon) màu đỏ — chính là sắc đỏ của những đám mây khí trong vũ trụ. Rồi rơi tiếp về tầng 1, lần này nhả ra tia cực tím: mắt người không thấy được. Màu ánh sáng là "chữ ký" riêng của mỗi nguyên tố: pháo hoa đỏ nhờ stronti, xanh lá nhờ bari, vàng nhờ natri. (Thật ra electron chỉ ở tầng cao chừng một phần trăm triệu giây — ở đây làm chậm lại cho dễ xem.)';
+      return 'Rơi về chỗ cũ! Electron nhả lại đúng phần năng lượng ấy thành một hạt ánh sáng (photon). ' + colorLine + ' (Thật ra electron chỉ ở tầng cao chừng một phần trăm triệu giây — ở đây làm chậm lại cho dễ xem.)';
+    }
+    var ease2 = e.z === 1 ? ' Hydro chỉ có đúng 1 electron: mất nó là chỉ còn trơ lại một hạt proton!'
+      : e.s === 3 ? ' Với ' + nm + ' việc này rất dễ: electron ngoài cùng của kim loại kiềm bám rất lỏng — vì thế chúng phản ứng rất mạnh, thường phải cất trong dầu.'
+      : e.s === 2 ? ' Với khí hiếm như ' + nm + ' việc này khó nhất: electron bám cực chặt — vì thế khí hiếm gần như không phản ứng với chất nào.'
+      : (e.s === 4 || e.s >= 7) ? ' Kim loại khá dễ mất electron ngoài cùng — cũng vì thế mà trong kim loại có electron tự do, dẫn điện được.'
+      : (e.s === 1 || e.s === 6) ? ' Phi kim giữ electron khá chặt, lại còn thích giành thêm electron của chất khác.' : '';
+    if (t < 0.8) return '💥 Lần này cho thật nhiều năng lượng — nhiều hơn mức electron giữ được…';
+    if (t < 2.6) return 'Electron bứt hẳn ra khỏi nguyên tử, bay đi mất!' + ease2;
+    if (t < 5.6) return 'Nguyên tử thiếu một electron nên điện dương của hạt nhân trội hơn: nó thành ion dương (dấu +). Tia sét và những ngọn lửa cực nóng đều bứt electron như thế; trong lòng Mặt Trời, hầu hết nguyên tử đều bị bứt mất electron.';
+    return 'Ion hút một electron khác lại gần. Electron rơi vào tầng cao rồi tụt dần xuống, mỗi lần tụt nhả ra một hạt ánh sáng. ' + colorLine;
+  }
+  function startExc(mode) { exc = { mode: mode, t0: performance.now() / 1000 }; btnUp.setAttribute('aria-pressed', mode === 'up' ? 'true' : 'false'); btnIon.setAttribute('aria-pressed', mode === 'ion' ? 'true' : 'false'); lastCap = ''; }
+  function endExc() { exc = null; if (typeof btnUp !== 'undefined' && btnUp) { btnUp.setAttribute('aria-pressed', 'false'); btnIon.setAttribute('aria-pressed', 'false'); } }
 
   var blips = [];
   function drawEmpty(ctx, v, s, now) {
@@ -2601,9 +2842,9 @@
     solid: ['Lạnh gần độ không tuyệt đối: nguyên tử gần như lặng im — nhưng vẫn rung rất nhẹ, không bao giờ đứng yên hẳn.',
       'Nguyên tử không đứng yên đâu: chúng luôn rung tại chỗ. Thử đổi nhiệt độ xem.',
       'Nóng lên: rung mạnh hơn hẳn. Nóng nữa thì nguyên tử bứt khỏi chỗ của mình và chất rắn chảy ra.'],
-    liquid: ['Lạnh cóng: phân tử chen lấn chậm hẳn lại. (Dưới 0 độ, nước thật sẽ xếp hàng thành đá — phần đó chưa vẽ.)',
+    liquid: ['Lạnh cóng: phân tử chen lấn chậm hẳn lại. (Dưới 0 độ nước sẽ xếp hàng thành đá — xem Cục đá lạnh.)',
       'Phân tử nước nằm sát nhau nhưng không đứng yên: chúng chen lấn, xoay tròn, trượt qua nhau. Nét đứt là những cái "nắm tay" nối rồi buông liên tục — vì thế nước chảy được.',
-      'Nóng lên: chen lấn dữ dội hơn. Tới 100 độ, phân tử bứt khỏi nhau bay thành hơi.'],
+      'Nóng lên: chen lấn dữ dội hơn, càng nhiều phân tử bứt khỏi mặt nước bay thành hơi. Tới 100 độ thì nước sôi sùng sục.'],
     gas: ['Lạnh cóng: phân tử bay chậm lại hẳn, bóng sẽ xẹp bớt.',
       'Phân tử khí bay thẳng vèo vèo — nhanh hơn cả máy bay — tới khi đâm vào nhau thì bật ra đổi hướng.',
       'Nóng lên: bay nhanh hơn, đâm vào vỏ bóng mạnh hơn — bóng căng phồng thêm.']
@@ -2636,10 +2877,10 @@
       return { fAtom: 1.6e-10, levels: [
         objLevel(o),
         L({ id: 'be-mat', kind: 'fibers', name: 'Rừng sợi giấy', frame: 2e-4, img: true, draw: drawPaperNet, view: 'micro', lod: true,
-          cap: 'Bề mặt giấy là một thảm sợi gỗ dẹt như ruy băng, đan rối rồi ép bẹp vào nhau. Vì sợi chạy đủ mọi hướng nên xé giấy khó đi theo đường thẳng!',
+          cap: 'Bề mặt giấy là một thảm sợi gỗ dẹt như ruy băng, đan rối rồi ép bẹp vào nhau. Sợi đan đủ mọi hướng, móc vào nhau chằng chịt — nên tờ giấy mỏng mà vẫn khó đứt.',
           prompt: o.pSurf }),
         L({ id: 'mang', kind: 'chain', name: 'Sợi cellulose', frame: 1.3e-9, draw: drawStruct, temp: true, d3: true, lod: true,
-          cap: 'Giấy chính là gỗ nghiền nhỏ rồi ép lại! Mỗi sợi giấy là bó chuỗi cellulose: vòng carbon (xanh dương) và oxy (hồng) nối thành chuỗi rất dài, hydro (xanh lá) bám quanh. Kéo để xoay.',
+          cap: 'Giấy làm từ gỗ: người ta tách gỗ thành từng sợi, khuấy với nước rồi ép mỏng và phơi khô! Mỗi sợi giấy là bó chuỗi cellulose: vòng carbon (xanh dương) và oxy (hồng) nối thành chuỗi rất dài, hydro (xanh lá) bám quanh. Kéo để xoay.',
           fixed: 'Tầng này luôn vẽ bằng code: chuỗi cellulose rút gọn, rung theo nhiệt độ, xoay 3D được.' })
       ] };
     }
@@ -2657,7 +2898,7 @@
       var dF = m.a * 1e-10 * 5;
       return { fAtom: dF / 8, levels: [
         objLevel(o),
-        surfLevel(o, m, 'Một mặt cắt của viên kim cương: phẳng lì, trong suốt, gần như không có vết xước nào — vì chẳng có gì đủ cứng để cào nó.',
+        surfLevel(o, m, 'Một mặt cắt của viên kim cương: phẳng lì, trong suốt, gần như không có vết xước nào — vì chỉ có kim cương mới cào xước được kim cương.',
           'Ảnh macro bề mặt một mặt cắt kim cương phóng to khoảng 30 lần: phẳng tuyệt đối, trong suốt, chỉ có một hai vết xước cực mảnh và ánh sáng tán sắc nhẹ ở mép. Kín toàn bộ khung hình. Ảnh vuông 1:1, không có chữ.'),
         L({ id: 'hat', kind: 'glassbody', name: 'Nhìn sâu hơn', frame: 2e-4, draw: drawGlassBody, view: 'micro',
           cap: 'Liền một khối trong suốt, không có hạt tinh thể ghép lại như kim loại. Cả viên kim cương là một tinh thể duy nhất.',
@@ -2671,7 +2912,7 @@
       var latFrame = m.a * 1e-10 * 5;
       var latCap = m.lattice === 'bcc'
         ? 'Bên trong mỗi hạt, các nguyên tử ' + e.lower + ' xếp hàng thẳng tắp. Kéo để xoay: mỗi ô là một khối lập phương, có một nguyên tử nằm ngay chính giữa.' + (m.extra ? ' ' + m.extra : '')
-        : 'Bên trong mỗi hạt, các nguyên tử ' + e.lower + ' xếp hàng thẳng tắp. Kéo để xoay: mỗi ô là một khối lập phương, có một nguyên tử nằm giữa mỗi mặt.';
+        : 'Bên trong mỗi hạt, các nguyên tử ' + e.lower + ' xếp hàng thẳng tắp. Kéo để xoay: mỗi ô là một khối lập phương, có một nguyên tử nằm giữa mỗi mặt.' + (m.extra ? ' ' + m.extra : '');
       return { fAtom: latFrame / 8, levels: [
         objLevel(o),
         surfLevel(o, m, 'Bề mặt ' + o.short + ' trông nhẵn, phóng to lên mới thấy đầy vết xước và hố nhỏ.',
@@ -2710,7 +2951,7 @@
     if (st === 'graphite') {
       return { fAtom: 1.6e-10, levels: [
         objLevel(o),
-        surfLevel(o, m, 'Mặt cục than phóng to: những lớp mỏng xếp chồng như trang sách, chỗ bong ra thì bóng ánh bạc.',
+        surfLevel(o, m, 'Mặt cục than chì phóng to: những lớp mỏng xếp chồng như trang sách, chỗ bong ra thì bóng ánh bạc.',
           'Ảnh macro bề mặt cục than chì phóng to khoảng 30 lần: các lớp mỏng xếp chồng như trang sách bị gãy, mặt bóng ánh bạc đen, có vụn than nhỏ. Kín toàn bộ khung hình. Ảnh vuông 1:1, không có chữ.'),
         L({ id: 'hat', kind: 'layers', name: 'Tấm xếp chồng', frame: 2e-4, img: true, draw: drawLayersTile, view: 'micro',
           cap: 'Than chì là hàng triệu tấm mỏng xếp chồng lên nhau, hơi lệch nhau. Các tấm trượt đi dễ dàng — quệt bút chì lên giấy chính là để lại vài tấm trên đó.',
@@ -2726,7 +2967,7 @@
         surfLevel(o, m, 'Mặt viên đá: trong suốt, có vết nứt mảnh và bọt khí bị kẹt khi nước đông lại.',
           'Ảnh macro bề mặt viên đá lạnh: lớp băng trong suốt có những vết nứt mảnh như mạng nhện, bọt khí li ti bị kẹt bên trong, hơi sương mờ, ánh sáng xanh lam lạnh. Kín toàn bộ khung hình. Ảnh vuông 1:1, không có chữ.', drawGlassBody, 'camera'),
         L({ id: 'mang', kind: 'liquid', name: 'Phân tử nước xếp hàng', frame: 1.3e-9, draw: drawIce, temp: true,
-          cap: 'Vẫn là những phân tử H₂O y như trong giọt nước — oxy (hồng) nắm hai hydro (xanh lá). Nhưng giờ chúng nắm tay nhau (nét đứt) thành hàng sáu cạnh và đứng yên một chỗ.',
+          cap: 'Vẫn là những phân tử H₂O y như trong giọt nước — oxy (hồng) nắm hai hydro (xanh lá). Nhưng giờ chúng nắm tay nhau (nét đứt) thành hàng sáu cạnh, mỗi phân tử chỉ còn rung tại chỗ.',
           fixed: 'Tầng này luôn vẽ bằng code: phân tử nước xếp hàng sáu cạnh, rung theo nhiệt độ.' })
       ] };
     }
@@ -2734,7 +2975,7 @@
       return { fAtom: 1.6e-10, levels: [
         objLevel(o),
         L({ id: 'khi', kind: 'gas', name: 'Trong làn hơi', frame: 1.1e-8, draw: drawGas, temp: true,
-          cap: 'Trong làn hơi gần như trống rỗng: chỉ có các phân tử H₂O bay rời rạc, mỗi phân tử một oxy (hồng) và hai hydro (xanh lá). Cùng phân tử với giọt nước và viên đá — chỉ khác là bay tự do. Khung hình đang bay theo một phân tử.',
+          cap: 'Đây là hơi nước thật — vô hình vì gần như trống rỗng: chỉ có các phân tử H₂O bay rời rạc, cách xa nhau, mỗi phân tử một oxy (hồng) và hai hydro (xanh lá). Cùng phân tử với giọt nước và viên đá — chỉ khác là bay tự do. Khung hình đang bay theo một phân tử.',
           fixed: 'Tầng này luôn vẽ bằng code: phân tử nước bay và va chạm theo thời gian thật.' }),
         L({ id: 'phan-tu', kind: 'molecule', name: 'Một phân tử', frame: 1.3e-9, draw: drawMolecule, d3: true,
           cap: 'Một phân tử nước đang bay: oxy ở giữa, hai hydro gập thành hình chữ V. Kéo để xoay.',
@@ -2750,7 +2991,7 @@
           cap: 'Phóng tiếp mà… vẫn không thấy gì mới. Thủy tinh không có hạt tinh thể như kim loại. Nó liền một khối, như nước bị đông cứng giữa chừng.',
           fixed: 'Tầng này luôn vẽ bằng code: điểm hay của nó là không có gì để nhìn — thủy tinh không có hạt tinh thể.' }),
         L({ id: 'mang', kind: 'network', name: 'Mạng lộn xộn', frame: 1.2e-9, draw: drawGlassNetwork, temp: true,
-          cap: 'Silic (xanh dương) và oxy (hồng) nắm tay nhau thành mạng lưới — nhưng không xếp hàng, mỗi chỗ một kiểu. Bản vẽ rút gọn: thủy tinh thật còn có natri và canxi.',
+          cap: 'Silic (xanh dương) và oxy (hồng) nắm tay nhau thành mạng lưới — nhưng không xếp hàng, mỗi chỗ một kiểu. Electron ở đây bị nắm chặt, không "nuốt" được ánh sáng, lại chẳng có ranh giới hạt nào làm ánh sáng tán loạn — nên ánh sáng đi thẳng qua: thủy tinh trong suốt! Bản vẽ rút gọn: thủy tinh thật còn có natri và canxi.',
           fixed: 'Tầng này luôn vẽ bằng code: mạng lưới lộn xộn đúng kiểu thủy tinh, nguyên tử rung theo nhiệt độ.' })
       ] };
     }
@@ -2760,7 +3001,7 @@
         surfLevel(o, m, 'Bề mặt ' + o.short + ' trắng đục, phóng to thấy những vệt chảy mềm — dấu vết lúc nhựa nóng chảy được đổ khuôn.',
           'Ảnh kính hiển vi của bề mặt nhựa HDPE trắng đục, phóng to khoảng 30 lần: vệt chảy mềm, gợn sóng nhẹ và vài vết xước mảnh. Kín toàn bộ khung hình. Ảnh vuông 1:1, không có chữ.'),
         L({ id: 'hat', kind: 'fibers', name: 'Bông tinh thể', frame: 5e-5, img: true, draw: drawFibers, view: 'micro',
-          cap: 'Soi nhựa dưới kính hiển vi có ánh sáng đặc biệt: hiện ra những "bông hoa" tròn nhiều màu! Mỗi bông là vô số sợi phân tử dài gấp nếp, xếp tỏa ra từ tâm. Chỗ xếp ngay ngắn làm nhựa cứng, khe giữa các bông là chỗ sợi rối lộn xộn làm nhựa dẻo.',
+          cap: 'Soi nhựa dưới kính hiển vi có ánh sáng đặc biệt: hiện ra những "bông hoa" tròn nhiều màu! Mỗi bông là vô số sợi phân tử dài gấp nếp, xếp tỏa ra từ tâm. Trong mỗi bông, chỗ sợi xếp ngay ngắn làm nhựa cứng, chỗ sợi rối lộn xộn xen giữa làm nhựa dẻo.',
           prompt: 'Ảnh kính hiển vi ánh sáng phân cực của nhựa HDPE: những tinh thể hình cầu tỏa tia như bông hoa xếp sát nhau, nhiều màu xanh tím vàng, mỗi bông có hình chữ thập tối ở giữa. Kín toàn bộ khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.' }),
         L({ id: 'mang', kind: 'chain', name: 'Chuỗi phân tử', frame: 1.3e-9, draw: drawStruct, temp: true, d3: true, tilt: true,
           cap: 'Một sợi chính là một chuỗi carbon (xanh dương) nối đuôi nhau zíc zắc, mỗi carbon cầm hai hydro (xanh lá). Chuỗi thật dài hàng vạn mắt xích. Kéo để xoay.',
@@ -2809,7 +3050,9 @@
     'dien-thoai': { 'vat-the': [0.4, 0.45], 'be-mat': [0.5, 0.55], hat: [0.377, 0.535] },
     'chiec-rang': { 'vat-the': [0.47, 0.37], 'be-mat': [0.62, 0.22], hat: [0.33, 0.36] }
   };
+  var ptDive = null;
   function buildLevels() {
+    if (ptDive) return atomLevels(ptDive, ptDive.frame);
     var h = headFor(cur, curMat, curEl), lv = h.levels.concat(atomLevels(curEl, h.fAtom)), f = FOCI[cur.id];
     if (f) lv.forEach(function (l) { if (f[l.id]) l.focus = f[l.id]; });
     return lv;
@@ -2958,6 +3201,63 @@
       var dk = 0.5 * Math.sin(Math.PI * smooth(0.25, 0.95, f));
       if (dk > 0.02) { ctx.fillStyle = 'rgba(3,5,14,' + dk + ')'; ctx.fillRect(0, 0, V.W, V.H); }
     }
+    // mạch điện: chỉ ở tầng mạng tinh thể kim loại
+    var nl = nearestLevel();
+    if (LEVELS[nl].kind === 'lattice' && isMetalNow() && Math.abs(z - nl) < 0.35) drawCircuit(ctx, V, now, 1 - Math.abs(z - nl) / 0.35);
+  }
+
+  // ---------- mạch điện nhỏ: pin – công tắc – bóng đèn; cực âm bên trái, cực dương bên phải ----------
+  var drift = 0, wasOn = false;
+  function drawCircuit(c, v, now, al) {
+    var on = drift, W = v.W, H = v.H;
+    c.save(); c.globalAlpha = al;
+    // hai cực ở hai mép khung: chỉ hiện khi có điện
+    if (on > 0.02) {
+      var gL = c.createLinearGradient(0, 0, 46, 0); gL.addColorStop(0, 'rgba(80,150,255,' + 0.55 * on + ')'); gL.addColorStop(1, 'rgba(80,150,255,0)');
+      c.fillStyle = gL; c.fillRect(0, 0, 46, H);
+      var gR = c.createLinearGradient(W, 0, W - 46, 0); gR.addColorStop(0, 'rgba(255,90,80,' + 0.55 * on + ')'); gR.addColorStop(1, 'rgba(255,90,80,0)');
+      c.fillStyle = gR; c.fillRect(W - 46, 0, 46, H);
+      c.textAlign = 'center'; c.textBaseline = 'middle';
+      var ly0 = H * 0.24;
+      c.fillStyle = 'rgba(40,90,200,' + 0.9 * on + ')'; c.beginPath(); c.arc(26, ly0, 19, 0, 6.2832); c.fill();
+      c.fillStyle = 'rgba(200,50,45,' + 0.9 * on + ')'; c.beginPath(); c.arc(W - 26, ly0, 19, 0, 6.2832); c.fill();
+      c.font = '800 28px system-ui, sans-serif'; c.fillStyle = 'rgba(255,255,255,' + on + ')';
+      c.fillText('−', 26, ly0 + 1); c.fillText('+', W - 26, ly0 + 1);
+      c.font = '600 12px system-ui, sans-serif';
+      c.fillText('cực âm', 30, ly0 + 32); c.fillText('cực dương', W - 38, ly0 + 32);
+      // mũi tên trôi của electron
+      c.strokeStyle = 'rgba(160,232,255,' + 0.75 * on + ')'; c.fillStyle = c.strokeStyle; c.lineWidth = 3;
+      var ay = H - 84, ph = (now * 60) % 40;
+      c.setLineDash([12, 8]); c.lineDashOffset = -ph;
+      c.beginPath(); c.moveTo(70, ay); c.lineTo(W - 90, ay); c.stroke(); c.setLineDash([]);
+      c.beginPath(); c.moveTo(W - 74, ay); c.lineTo(W - 92, ay - 9); c.lineTo(W - 92, ay + 9); c.closePath(); c.fill();
+      c.font = '600 13px system-ui, sans-serif'; c.fillText('electron trôi từ cực − sang cực +', W / 2, ay - 14);
+    }
+    // sơ đồ mạch nhỏ ở góc trên phải
+    var bx = W - 190, by = W < 560 ? 112 : 60, bw = 176, bh = 96;
+    c.fillStyle = 'rgba(8,12,30,0.78)'; c.strokeStyle = 'rgba(255,255,255,0.25)'; c.lineWidth = 1;
+    c.beginPath(); c.roundRect(bx, by, bw, bh, 10); c.fill(); c.stroke();
+    var wire = 'rgba(230,236,255,0.85)', x0 = bx + 18, x1 = bx + bw - 30, yT = by + 22, yB = by + bh - 30;
+    c.strokeStyle = wire; c.lineWidth = 2;
+    // dây vòng
+    c.beginPath(); c.moveTo(x0, yB); c.lineTo(x0, yT); c.lineTo(bx + 52, yT); c.stroke();
+    c.beginPath(); c.moveTo(bx + 82, yT); c.lineTo(x1, yT); c.lineTo(x1, yB); c.lineTo(bx + 84, yB); c.stroke();
+    c.beginPath(); c.moveTo(bx + 56, yB); c.lineTo(x0, yB); c.stroke();
+    // pin (đáy): vạch dài là +, vạch ngắn là −
+    c.lineWidth = 3; c.beginPath(); c.moveTo(bx + 62, yB - 10); c.lineTo(bx + 62, yB + 10); c.stroke();
+    c.lineWidth = 5; c.beginPath(); c.moveTo(bx + 76, yB - 5); c.lineTo(bx + 76, yB + 5); c.stroke();
+    // công tắc (trên): đóng khi có điện
+    c.lineWidth = 2.5; c.beginPath(); c.arc(bx + 52, yT, 2.5, 0, 6.2832); c.arc(bx + 82, yT, 2.5, 0, 6.2832); c.fill();
+    var ang = currentOn ? 0 : -0.55;
+    c.beginPath(); c.moveTo(bx + 52, yT); c.lineTo(bx + 52 + 30 * Math.cos(ang), yT + 30 * Math.sin(ang)); c.stroke();
+    // bóng đèn (bên phải)
+    var lx = x1, ly = (yT + yB) / 2;
+    if (on > 0.05) { var gl = c.createRadialGradient(lx, ly, 2, lx, ly, 26); gl.addColorStop(0, 'rgba(255,236,150,' + 0.9 * on + ')'); gl.addColorStop(1, 'rgba(255,220,120,0)'); c.fillStyle = gl; c.beginPath(); c.arc(lx, ly, 26, 0, 6.2832); c.fill(); }
+    c.fillStyle = on > 0.05 ? 'rgb(255,' + Math.round(200 + 50 * on) + ',' + Math.round(110 + 60 * on) + ')' : '#3a4058';
+    c.strokeStyle = wire; c.lineWidth = 1.5; c.beginPath(); c.arc(lx, ly, 9, 0, 6.2832); c.fill(); c.stroke();
+    c.font = '600 11px system-ui, sans-serif'; c.textAlign = 'center'; c.fillStyle = 'rgba(220,228,255,0.85)';
+    c.fillText('công tắc', bx + 67, yT - 12); c.fillText('pin', bx + 69, yB + 20); c.fillText(on > 0.5 ? 'đèn sáng' : 'đèn', lx, ly + 24);
+    c.restore();
   }
 
   // =====================================================================
@@ -2988,12 +3288,223 @@
   var lvlEl = document.getElementById('lvlName'), magEl = document.getElementById('mag'), capEl = document.getElementById('cap');
   var holdBtn = document.getElementById('hold'), countBox = document.getElementById('count'), countN = document.getElementById('countN');
   var currBtn = document.getElementById('currBtn');
+  var excBox = document.getElementById('excBox'), btnUp = document.getElementById('btnUp'), btnIon = document.getElementById('btnIon');
+  btnUp.addEventListener('click', function () { stopAuto(); startExc('up'); });
+  btnIon.addEventListener('click', function () { stopAuto(); startExc('ion'); });
   currBtn.addEventListener('click', function () {
     currentOn = !currentOn;
+    if (!currentOn) wasOn = true;
     currBtn.setAttribute('aria-pressed', currentOn ? 'true' : 'false');
-    currBtn.textContent = currentOn ? '⚡ Đang có điện' : '⚡ Dòng điện';
+    currBtn.textContent = currentOn ? '⏻ Tắt điện' : '⚡ Bật điện';
     lastCap = '';
   });
+
+  // =====================================================================
+  // BIẾT THÊM — kiến thức Vật lý · Hóa học · Sinh học cho từng tầng
+  // =====================================================================
+  var SUBJ = { vl: ['Vật lý', '#8fd4ff'], hh: ['Hóa học', '#9fe3b9'], sh: ['Sinh học', '#f2a9c4'] };
+  var ROPE = ['vl', 'Sợi to bện từ sợi nhỏ, sợi nhỏ lại bện từ sợi nhỏ hơn nữa — giống dây thừng. Bện nhiều tầng giúp sợi vừa chắc vừa dẻo, khó đứt.'];
+  var PROTEIN = ['hh', 'Protein là chuỗi dài nối từ 20 loại "mắt xích" gọi là amino axit. Thứ tự các mắt xích quyết định chuỗi cuộn lại thành hình gì, và hình dạng quyết định nó làm việc gì.'];
+  var TEMP_K = ['vl', 'Nhiệt độ thật ra chính là mức rung lắc của các hạt: rung càng mạnh là càng nóng. Không gì lạnh hơn được −273,15 °C — lúc đó hạt rung yếu nhất có thể, nhưng vẫn không đứng yên hẳn.'];
+  var SOAP = ['hh', 'Xà phòng có một đầu thích nước, một đầu thích dầu mỡ. Nó bám vào lớp dầu có vi khuẩn trên da, rồi bị nước kéo trôi đi — vì thế rửa tay bằng xà phòng sạch hơn hẳn chỉ rửa nước.'];
+  var BACT = ['sh', 'Vi khuẩn chia đôi rất nhanh: gặp chỗ ấm, ẩm, có chút thức ăn, nhiều loại cứ khoảng 20 phút lại chia đôi một lần — từ 1 con, chưa tới 7 giờ đã thành hơn 1 triệu con.'];
+  function knowFor(Lv) {
+    var st = curMat.structure, k = Lv.kind, A = [], tryIt = '';
+    var dirty = !!(cur && cur.hatCap), water = st === 'water' || st === 'steam' || st === 'ice';
+    function add(x) { A.push(x); }
+    if (k === 'object') {
+      add(['vl', 'Mắt người chỉ thấy được vật to cỡ 1/10 mm trở lên — bằng bề dày sợi tóc. Nhỏ hơn thế phải nhờ kính lúp, kính hiển vi, rồi kính hiển vi điện tử. Trò chơi này đưa em phóng to tới hàng nghìn tỉ lần.']);
+      add(['hh', 'Mọi thứ quanh em — cái đinh, giọt nước, cả cơ thể em — đều ghép từ khoảng 90 loại nguyên tử có sẵn trong tự nhiên. Giống như chỉ vài chục loại mảnh Lego mà xếp ra vô số đồ vật. Bấm "Bảng tuần hoàn" để xem hết các loại.']);
+      if (st === 'bio' || dirty) add(['sh', 'Mọi sinh vật, từ con vi khuẩn tới con voi, đều làm từ tế bào. Riêng virus thì không — phóng to vào virus để xem vì sao.']);
+    } else if (k === 'surface') {
+      add(['vl', 'Mặt nhìn nhẵn bóng, phóng to lên vẫn gồ ghề như đồi núi. Hai mặt cọ vào nhau thì các "đồi núi" vướng vào nhau — đó là lực ma sát. Nhờ ma sát mà em cầm được cái cốc và đi không bị trượt.']);
+      if (curMat === MATERIALS.thep) add(['hh', 'Gỉ sắt bắt đầu từ bề mặt: oxy và hơi nước trong không khí chỉ chạm được lớp ngoài cùng, rồi ăn dần vào trong. Sơn hay mạ kẽm cho đinh là để che bề mặt khỏi không khí.']);
+      else add(['hh', 'Bề mặt là nơi vật chạm vào không khí, nước và các chất khác — nên phản ứng hóa học thường bắt đầu ở đây. Vì thế đường bột tan nhanh hơn đường cục, củi chẻ nhỏ cháy nhanh hơn: diện tích bề mặt lớn hơn.']);
+      if (dirty) { add(['sh', 'Vi khuẩn thích chỗ ấm, ẩm, có chút thức ăn: kẽ móng tay, miếng rửa bát, màn hình điện thoại, kẽ răng. Rửa sạch bằng xà phòng và để khô là cách đơn giản nhất để chúng không sinh sôi.']); }
+    } else if (k === 'tissue') {
+      if (dirty) { add(BACT); add(SOAP); add(['sh', 'Phần lớn vi khuẩn vô hại, nhiều loại còn có ích — như vi khuẩn trong ruột em hay trong sữa chua. Chỉ một số ít gây bệnh, nhưng ta không nhìn bằng mắt mà biết được, nên cứ rửa tay trước khi ăn.']); }
+      else { add(['sh', 'Nhiều tế bào giống nhau ghép lại thành mô (mô cơ, mô da, mô mỡ…). Nhiều mô ghép lại thành cơ quan như tim, dạ dày, da.']); add(['vl', 'Phần lớn tế bào chỉ cỡ 1/100 mm, nên phải dùng kính hiển vi mới thấy.']); }
+    } else if (k === 'grains') {
+      if (st === 'ceramic') {
+        add(['vl', 'Gốm sứ là vô số hạt tinh thể nhỏ dính vào nhau bằng một lớp thủy tinh, nhờ được nung ở hơn 1.000 °C.']);
+        add(['hh', 'Gốm cứng, chịu nóng, không gỉ, nhưng giòn: gõ mạnh thì vỡ chứ không móp như kim loại, vì nguyên tử trong gốm không trượt lên nhau được.']);
+      } else {
+        add(['vl', 'Kim loại không phải một khối liền: nó ghép từ vô số "hạt" tinh thể nhỏ. Trong mỗi hạt, nguyên tử xếp thẳng hàng; ở đường ranh giới giữa các hạt thì hàng lối bị lệch. Hạt càng nhỏ mịn, kim loại thường càng cứng.']);
+        add(['hh', 'Thợ rèn nung đỏ thép rồi nhúng ngay vào nước — gọi là "tôi" thép — để sắp xếp lại các nguyên tử bên trong. Thép cứng hẳn lên mà không cần thêm chất gì.']);
+      }
+    } else if (k === 'glassbody') {
+      if (curLatKey === 'diamond' && st === 'metal') {
+        add(['vl', 'Kim cương trong suốt vì electron trong nó bị giữ rất chặt: ánh sáng nhìn thấy không đủ sức làm chúng nhảy bậc nên đi xuyên qua. Nó lấp lánh vì bẻ cong ánh sáng rất mạnh, tách ra đủ màu cầu vồng.']);
+        add(['hh', 'Kim cương là carbon tinh khiết — cùng chất với than chì ruột bút chì. Đốt trong lò thật nóng, kim cương cháy hết thành khí CO₂.']);
+      } else {
+        add(['vl', 'Thủy tinh trong suốt vì electron trong nó bị giữ rất chặt: ánh sáng nhìn thấy không đủ năng lượng làm chúng nhảy bậc, nên không bị "nuốt" mà đi xuyên qua. (Thử nút ✨ Cho năng lượng ở tầng Một nguyên tử để xem nhảy bậc là gì.)']);
+        add(['hh', 'Thủy tinh làm từ cát (silic đioxit) nấu cùng một ít sô-đa và đá vôi ở khoảng 1.500 °C, rồi để nguội nhanh.']);
+      }
+    } else if (k === 'lattice') {
+      if (isMetalNow()) {
+        add(['vl', 'Trong kim loại, mỗi nguyên tử góp chung một vài electron ngoài cùng thành "biển electron" trôi tự do (đốm xanh). Chính biển electron này dẫn điện, dẫn nhiệt, và hắt ánh sáng trở lại — vì thế kim loại sáng bóng.']);
+        add(['hh', 'Biển electron như lớp keo mềm: các lớp nguyên tử trượt lên nhau mà không gãy, nên kim loại uốn, dát mỏng, kéo sợi được. Vàng dát mỏng tới mức ánh sáng xuyên qua được.']);
+        tryIt = 'Thử xem: bấm ⚡ Bật điện để thấy electron trôi về một phía, rồi kéo nhiệt độ lên cao xem chúng va vấp nhiều hơn thế nào.';
+      } else if (curLatKey === 'diamond') {
+        add(['vl', 'Kim cương không có electron tự do nên không dẫn điện. Nhưng các nguyên tử carbon nối nhau thành khung cứng nhất tự nhiên, rung truyền tay nhau cực nhanh — nên kim cương dẫn nhiệt còn tốt hơn cả đồng.']);
+        add(['hh', 'Kim cương và than chì đều chỉ là carbon, khác nhau ở cách xếp. Kim cương hình thành sâu khoảng 150 km trong lòng đất, nơi vừa rất nóng vừa bị ép cực mạnh.']);
+      } else if (st === 'ionic') {
+        add(['hh', 'Muối ăn là natri clorua: mỗi natri cho clo một electron, thành ion dương Na⁺ và ion âm Cl⁻ hút chặt nhau, xếp thành khối lập phương — vì thế hạt muối hay có góc vuông.']);
+        add(['vl', 'Muối rắn không dẫn điện vì ion bị giữ chặt tại chỗ. Nhưng hòa muối vào nước, ion bơi tự do — nước muối dẫn điện được!']);
+        add(['sh', 'Cơ thể cần một chút muối: tín hiệu thần kinh chính là dòng ion natri và kali chạy qua màng tế bào. Nhưng ăn mặn quá thì hại tim và thận.']);
+      }
+      add(TEMP_K);
+    } else if (k === 'network') {
+      if (st === 'ceramic') {
+        add(['vl', 'Trong gốm có những "đảo" tinh thể xếp hàng nằm giữa biển thủy tinh lộn xộn. Đảo cứng làm gốm chắc, biển thủy tinh dán chúng lại với nhau.']);
+        add(['hh', 'Đất sét khi nung mất nước và các hạt chảy dính vào nhau. Biến đổi này không quay lại được: gốm ngâm nước bao lâu cũng không thành đất sét nữa.']);
+      } else {
+        add(['vl', 'Ở đây nguyên tử silic và oxy nối thành mạng lộn xộn, không xếp hàng như tinh thể — giống chất lỏng bị "đông cứng" lại. Vì thế thủy tinh vỡ thành mảnh cong sắc lẹm chứ không tách theo mặt phẳng.']);
+        add(['hh', 'Thủy tinh hầu như không phản ứng với thức ăn, nước hay axit nhẹ — nên được dùng làm lọ đựng, ống nghiệm trong phòng thí nghiệm.']);
+      }
+      add(TEMP_K);
+    } else if (k === 'chain') {
+      if (st === 'graphite') {
+        add(['vl', 'Trong mỗi tấm, carbon nắm tay nhau rất chặt; nhưng các tấm chỉ dính hờ vào nhau nên trượt dễ. Viết bút chì chính là các tấm than chì trượt ra, bám lên giấy.']);
+        add(['hh', 'Mỗi carbon chỉ dùng 3 "tay" để nắm, tay thứ tư thả một electron chạy tự do trên tấm — vì thế than chì dẫn điện được, khác hẳn kim cương.']);
+        add(['vl', 'Bóc ra đúng một tấm carbon dày một nguyên tử, ta có graphene — vật liệu mỏng nhất thế giới mà lại rất bền.']);
+      } else if (st === 'polymer') {
+        add(['hh', 'Nhựa là polymer: chuỗi rất dài ghép từ hàng nghìn mắt xích giống nhau. Nhựa HDPE chỉ gồm carbon và hydro, làm từ dầu mỏ.']);
+        add(['vl', 'Các chuỗi dài rối vào nhau như mì sợi, nên nhựa vừa dẻo vừa dai: bóp thì chuỗi trượt và duỗi ra chứ không gãy.']);
+        add(['sh', 'Nhựa phân hủy rất chậm, có khi hàng trăm năm, vì vi khuẩn trong tự nhiên gần như chưa "biết ăn" những chuỗi này. Nên cần phân loại rác để tái chế.']);
+      } else if (st === 'paper' || st === 'wood') {
+        add(['hh', 'Cellulose là chuỗi dài nối từ hàng nghìn phân tử đường glucose. Cây làm ra nó từ đường mà lá quang hợp được nhờ ánh nắng.']);
+        add(['vl', 'Các chuỗi cellulose nằm song song, nắm tay nhau bằng vô số liên kết hydro nhỏ — vì thế sợi rất dai khi kéo. Giấy ướt thì nhũn vì nước chen vào cắt đứt những cái nắm tay đó.']);
+        add(['sh', 'Người không tiêu hóa được cellulose, nhưng bò và mối thì được, nhờ vi khuẩn sống trong bụng chúng. Với em, cellulose trong rau là chất xơ giúp ruột làm việc tốt.']);
+      } else { add(PROTEIN); add(['sh', 'Cơ thể làm ra protein theo "công thức" ghi trong ADN, bằng nguyên liệu từ thức ăn em ăn — thịt, cá, trứng, đậu.']); }
+      if (Lv.temp) add(TEMP_K);
+    } else if (k === 'fibers') {
+      if (st === 'paper') {
+        add(['vl', 'Giấy là một rừng sợi cellulose đan rối rồi ép mỏng. Giữa các sợi có rất nhiều khe hở nhỏ — nước và mực bò vào các khe đó, nên giấy thấm.']);
+        add(['hh', 'Giấy làm từ gỗ: gỗ được nghiền và nấu để tách lấy sợi, rồi trải mỏng, ép, sấy khô. Tái chế giấy cũ giúp bớt phải chặt cây mới.']);
+      } else {
+        add(['vl', 'Khi nhựa nguội đi, nhiều chuỗi tự xếp song song thành những "bông" tinh thể nhỏ; phần còn lại vẫn rối. Phần xếp hàng làm nhựa cứng cáp, phần rối làm nhựa dẻo.']);
+        add(['hh', 'Vì có phần xếp hàng, chai HDPE đục mờ chứ không trong như chai nước suối (làm bằng nhựa PET).']);
+      }
+    } else if (k === 'layers') {
+      add(['vl', 'Than chì gồm vô số tấm carbon xếp chồng như một tập giấy. Các tấm trượt lên nhau rất dễ, nên than chì mềm và trơn, còn dùng làm chất bôi trơn.']);
+      add(['hh', 'Ruột bút chì không có chì đâu! Nó là than chì trộn đất sét. Càng nhiều đất sét bút càng cứng (loại H), càng nhiều than chì nét càng đậm (loại B).']);
+    } else if (k === 'liquid') {
+      if (st === 'ice') {
+        add(['vl', 'Khi đóng băng, phân tử nước xếp thành những vòng sáu cạnh rộng rãi, chừa nhiều khoảng trống — nên đá nhẹ hơn nước và nổi lên. Hiếm có chất nào như vậy!']);
+        add(['hh', 'Bông tuyết có 6 cánh cũng vì cái khung sáu cạnh này.']);
+        add(['sh', 'Nhờ đá nổi, mùa đông hồ nước chỉ đóng băng ở mặt trên. Lớp băng như tấm chăn, giữ cho cá bên dưới vẫn sống được.']);
+      } else {
+        add(['vl', 'Phân tử nước nằm sát nhau nhưng trượt qua nhau được — nên nước có thể tích cố định, còn hình dạng thì theo cái bình đựng nó.']);
+        add(['hh', 'Nước hòa tan được rất nhiều chất: đầu oxy của phân tử nước hơi âm, đầu hydro hơi dương, nên chúng kéo tách được từng hạt muối, hạt đường ra.']);
+        add(['sh', 'Cơ thể em hơn một nửa là nước, khoảng 60%. Máu chở chất dinh dưỡng đi khắp người cũng nhờ nước, và mọi phản ứng sống trong tế bào đều diễn ra trong nước.']);
+      }
+      add(TEMP_K);
+    } else if (k === 'gas') {
+      add(['vl', 'Phân tử khí bay tự do, cách nhau xa gấp khoảng 10 lần kích thước của chúng — nên khí nén lại được, như khi em bơm bóng.']);
+      if (st === 'steam') {
+        add(['hh', 'Hơi nước thật thì trong suốt, không nhìn thấy. Làn "khói" trắng bốc lên từ nồi là vô số giọt nước li ti đã nguội lại.']);
+        add(['vl', 'Ở bờ biển nước sôi ở 100 °C. Lên núi cao, không khí loãng hơn nên nước sôi ở nhiệt độ thấp hơn — trên đỉnh Everest chỉ khoảng 70 °C.']);
+      } else {
+        add(['hh', 'Không khí là hỗn hợp: khoảng 78% là nitơ, 21% là oxy, gần 1% là argon, còn lại là khí CO₂ và hơi nước.']);
+        add(['sh', 'Hít vào, phổi lấy oxy đưa vào máu; thở ra, em nhả khí CO₂ — thứ khí mà cây xanh lại dùng để quang hợp và nhả ra oxy.']);
+      }
+    } else if (k === 'molecule') {
+      if (water) {
+        add(['hh', 'Phân tử nước H₂O: 1 nguyên tử oxy nắm tay 2 nguyên tử hydro, thành hình chữ V với góc khoảng 104,5 độ. "Nắm tay" ở đây là dùng chung electron.']);
+        add(['vl', 'Oxy kéo electron mạnh hơn hydro, nên đầu oxy hơi âm, hai đầu hydro hơi dương. Nhờ vậy các phân tử nước hút nhau — làm giọt nước tròn xoe và con nhện nước đứng được trên mặt ao.']);
+      } else {
+        add(['hh', 'Phân tử nitơ N₂ là 2 nguyên tử nitơ nắm tay nhau bằng 3 liên kết — rất chặt, nên nitơ gần như không phản ứng. Oxy O₂ chỉ nắm 2 tay, dễ phản ứng hơn — vì thế lửa cần oxy.']);
+        add(['vl', 'Liên kết giữa các nguyên tử thật ra là lực điện: hạt nhân dương hút electron âm. Có thể nói cả môn hóa học là chuyện electron di chuyển.']);
+      }
+    } else if (k === 'atom') {
+      var e = excPT();
+      add(['vl', 'Nguyên tử gần như trống rỗng: nếu hạt nhân to bằng hạt đậu đặt giữa sân bóng đá, thì electron lởn vởn tận ngoài khán đài. Electron cũng không chạy vòng tròn như hành tinh — ta chỉ biết chỗ nào hay gặp nó, gộp lại thành "đám mây electron".']);
+      add(['hh', 'Số proton quyết định nguyên tử là nguyên tố gì: 1 proton là hydro, 6 là carbon, 26 là sắt, 79 là vàng. Còn các electron ngoài cùng quyết định nó phản ứng với chất khác thế nào.']);
+      add(['hh', 'Riêng ' + e.vn.toLowerCase() + ': ' + e.fact]);
+      tryIt = 'Thử xem: bấm ✨ Cho năng lượng để thấy electron nhảy bậc rồi nhả ra ánh sáng, hoặc 💥 Bứt electron để biến nguyên tử thành ion.';
+    } else if (k === 'empty') {
+      add(['vl', 'Hạt nhân nhỏ hơn cả nguyên tử hàng chục nghìn lần, nhưng nặng gần bằng cả nguyên tử (hơn 99,9%). Nếu ép hết khoảng trống trong mọi nguyên tử của toàn bộ loài người, phần còn lại chỉ to cỡ một viên đường!']);
+      add(['vl', 'Khi hai vật "chạm" nhau, thật ra là các đám mây electron đẩy nhau — hạt nhân chẳng bao giờ chạm vào nhau. Bàn tay em đặt lên mặt bàn cũng vậy!']);
+    } else if (k === 'nucleus') {
+      add(['vl', 'Proton đều mang điện dương nên đẩy nhau. Thứ giữ chúng dính chặt là "lực hạt nhân mạnh" — lực mạnh nhất trong tự nhiên, nhưng chỉ tác dụng ở khoảng cách cực ngắn. Neutron giúp giữ thêm, như chất keo.']);
+      add(['hh', 'Hạt nhân có quá nhiều neutron hoặc proton thì không bền: sớm muộn nó tự vỡ ra và phóng ra tia phóng xạ — như urani trong nhà máy điện hạt nhân.']);
+      add(['vl', 'Mặt Trời làm điều ngược lại: ép các hạt nhân hydro lại thành heli và tỏa ra năng lượng khổng lồ — chính là ánh nắng em thấy mỗi ngày.']);
+    } else if (k === 'cells') {
+      if (st === 'wood') {
+        add(['sh', 'Gỗ là tế bào chết của cây, chỉ còn lại vách cứng bằng cellulose. Khi cây còn sống, những ống rỗng này là đường dẫn nước từ rễ lên tận lá.']);
+        add(['vl', 'Bên trong các ống rỗng là không khí — vì thế gỗ nhẹ, nổi trên nước và cách nhiệt tốt. Cán nồi hay làm bằng gỗ là vậy.']);
+        add(['hh', 'Gỗ cháy được vì cellulose gồm carbon, hydro, oxy: khi cháy chúng kết hợp với oxy trong không khí thành khí CO₂ và hơi nước, tỏa ra nhiệt.']);
+      } else {
+        add(['sh', 'Tế bào là đơn vị nhỏ nhất của sự sống. Cơ thể người có khoảng 30 nghìn tỉ tế bào, thuộc hơn 200 loại: tế bào da, cơ, máu, thần kinh…']);
+        add(['hh', 'Màng tế bào làm từ chất béo, mỏng chỉ khoảng 5 phần tỉ mét. Nước và oxy lọt qua được; nhiều chất khác phải đi qua những "cánh cổng" protein riêng.']);
+        add(['vl', 'Phần lớn tế bào chỉ cỡ 1/100 mm. Tế bào trứng của người thuộc loại to nhất, cỡ 0,1 mm — vừa đủ để mắt thấy như một chấm nhỏ.']);
+      }
+    } else if (k === 'chromatin') {
+      add(['sh', 'Mỗi tế bào chứa khoảng 2 mét ADN, cuộn quanh những "ống chỉ" protein rồi gấp gọn trong cái nhân chỉ vài phần nghìn milimét — như nhét sợi chỉ dài 40 km vào một quả bóng tennis.']);
+      add(['hh', 'ADN mang điện âm, còn các "ống chỉ" protein (histone) mang điện dương — chúng hút nhau nên cuộn chặt được.']);
+      add(['sh', 'Trước khi tế bào chia đôi, ADN cuộn chặt hơn nữa thành nhiễm sắc thể. Người có 46 nhiễm sắc thể: 23 chiếc từ bố, 23 chiếc từ mẹ.']);
+    } else if (k === 'dna') {
+      add(['sh', 'ADN là chiếc thang xoắn; mỗi bậc thang là một cặp "chữ cái": A đi với T, G đi với X. Thứ tự các chữ cái là công thức làm ra mọi protein trong cơ thể. ADN của người dài khoảng 3 tỉ cặp chữ.']);
+      add(['hh', 'Hai sợi giữ nhau bằng liên kết hydro yếu — đủ chắc để giữ, đủ lỏng để mở ra như khóa kéo khi tế bào cần đọc hay sao chép.']);
+      add(['vl', 'Mỗi vòng xoắn dài khoảng 3,4 phần tỉ mét và có khoảng 10 bậc thang.']);
+    } else if (k === 'sarcomere') {
+      add(['sh', 'Cơ co được nhờ hai loại sợi protein: sợi mảnh actin và sợi dày myosin. Myosin có những "cánh tay" nhỏ, kéo actin trượt vào giữa — sợi không ngắn lại, chỉ trượt chồng lên nhau.']);
+      add(['hh', 'Năng lượng cho mỗi cú kéo đến từ phân tử ATP — "cục pin" của tế bào, làm ra từ thức ăn em ăn và oxy em thở.']);
+      add(['vl', 'Mỗi cú kéo cực nhỏ, nhưng hàng tỉ cú kéo cùng lúc cộng lại thành lực đủ để em nhảy, chạy, nhấc cả cơ thể.']);
+    } else if (k === 'strands') {
+      if (Lv.id === 'keratin') {
+        add(['hh', 'Tóc và móng làm từ protein keratin. Giữa các chuỗi keratin có nhiều "cầu nối" chứa lưu huỳnh — vì thế tóc cháy có mùi khét rất đặc trưng.']);
+        add(['sh', 'Tóc mọc khoảng 1 cm mỗi tháng. Phần tóc lộ ra ngoài đã chết, nên cắt tóc không thấy đau.']);
+        add(ROPE);
+      } else if (Lv.id === 'collagen') {
+        add(['sh', 'Collagen là protein nhiều nhất trong cơ thể: có trong da, gân, xương, sụn. Ba chuỗi bện vào nhau như bím tóc nên rất dai.']);
+        add(['hh', 'Cơ thể cần vitamin C để làm ra collagen chắc khỏe — thiếu vitamin C lâu ngày thì lợi chảy máu, vết thương lâu lành.']);
+        add(ROPE);
+      } else { add(PROTEIN); add(['sh', 'Cơ thể làm ra protein theo "công thức" ghi trong ADN, bằng nguyên liệu từ thức ăn em ăn — thịt, cá, trứng, đậu.']); }
+    } else if (k === 'fat') {
+      add(['sh', 'Mỡ là kho dự trữ năng lượng: 1 gam mỡ cho khoảng 9 kcal, gấp đôi 1 gam đường hay đạm (khoảng 4 kcal). Lớp mỡ dưới da còn giữ ấm cơ thể như một chiếc áo.']);
+      add(['hh', 'Phân tử mỡ có ba "đuôi" dài gắn vào một "đầu" glycerol. Mỡ không tan trong nước — vì thế váng mỡ nổi trên mặt bát canh.']);
+      add(['vl', 'Mỡ nhẹ hơn nước nên nổi lên. Đuôi thẳng thì xếp khít nhau, mỡ đông đặc (mỡ lợn); đuôi bị gấp khúc thì khó xếp, thành dầu lỏng (dầu ăn).']);
+      add(TEMP_K);
+    } else if (k === 'egg') {
+      add(['hh', 'Lòng trắng trứng có protein albumin cuộn tròn trong nước. Nhiệt làm chúng duỗi ra và rối vào nhau — lòng trắng đổi từ trong sang trắng đục. Đây là biến đổi hóa học: trứng chín không sống lại được.']);
+      add(['vl', 'Lòng trắng bắt đầu đông ở khoảng 62–65 °C, lòng đỏ thì cần nóng hơn một chút — vì thế mới có món trứng lòng đào.']);
+      add(['sh', 'Nấu chín làm protein duỗi ra, giúp ruột dễ tiêu hóa hơn, và diệt luôn vi khuẩn có thể có trong trứng sống.']);
+      tryIt = 'Thử xem: kéo nhiệt độ lên cao để luộc trứng, rồi hạ xuống — protein có cuộn lại được không?';
+    } else if (k === 'bacteria') {
+      add(['sh', 'Vi khuẩn chỉ có một tế bào và không có nhân: ADN của nó nằm thành một vòng tròn trôi trong tế bào.']);
+      add(BACT); add(SOAP);
+    } else if (k === 'capsid') {
+      add(['sh', 'Virus không phải tế bào và không tự sống được: nó phải chui vào tế bào khác, "mượn máy" của tế bào để sao ra virus mới. Vì thế thuốc kháng sinh không diệt được virus.']);
+      add(['hh', 'Vỏ ngoài của virus cúm là một lớp màng chất béo. Xà phòng phá được lớp màng này — rửa tay bằng xà phòng diệt virus cúm rất hiệu quả.']);
+      add(['vl', 'Virus nhỏ tới mức kính hiển vi thường không thấy được; phải dùng kính hiển vi điện tử, bắn chùm electron thay cho ánh sáng.']);
+    }
+    if (Lv.hold === 'muscle') tryIt = 'Thử xem: giữ nút "Giữ để co cơ" để thấy sợi myosin kéo actin trượt vào.';
+    else if (Lv.temp && !tryIt && k !== 'atom') tryIt = 'Thử xem: kéo thanh nhiệt độ lên xuống và để ý các hạt rung, chạy nhanh hay chậm.';
+    return { items: A, tryIt: tryIt };
+  }
+  var knowSheet = document.getElementById('knowSheet'), knowList = document.getElementById('knowList'), btnKnow = document.getElementById('btnKnow');
+  function knowDotsFor(idx) {
+    var K = knowFor(LEVELS[idx]), seen = {};
+    K.items.forEach(function (x) { seen[x[0]] = 1; });
+    btnKnow.parentNode.hidden = !K.items.length;
+    document.getElementById('knowDots').innerHTML = ['vl', 'hh', 'sh'].filter(function (q) { return seen[q]; }).map(function (q) { return '<i title="' + SUBJ[q][0] + '" style="background:' + SUBJ[q][1] + '"></i>'; }).join('');
+  }
+  function openKnow() {
+    var Lv = LEVELS[nearestLevel()], K = knowFor(Lv);
+    document.getElementById('knowTitle').textContent = 'Biết thêm: ' + Lv.name;
+    document.getElementById('knowSub').textContent = (cur && cur.title ? cur.title + ' — ' : '') + 'những điều thú vị ẩn trong hình em đang xem.';
+    var order = { vl: 0, hh: 1, sh: 2 };
+    knowList.innerHTML = K.items.map(function (x, i) { return [x, i]; }).sort(function (a, b) { return order[a[0][0]] - order[b[0][0]] || a[1] - b[1]; }).map(function (q) {
+      var x = q[0]; return '<div class="know-item" style="--kc:' + SUBJ[x[0]][1] + '"><span class="tag">' + SUBJ[x[0]][0] + '</span><p>' + x[1] + '</p></div>';
+    }).join('') + (K.tryIt ? '<div class="know-try">' + K.tryIt + '</div>' : '');
+    knowSheet.hidden = false;
+    document.getElementById('btnKnowClose').focus();
+  }
+  btnKnow.addEventListener('click', function () { stopAuto(); openKnow(); });
+  document.getElementById('btnKnowClose').addEventListener('click', function () { knowSheet.hidden = true; btnKnow.focus(); });
+  knowSheet.addEventListener('click', function (e) { if (e.target === knowSheet) knowSheet.hidden = true; });
   var zr = document.getElementById('zr'), track = document.getElementById('track'), hintEl = document.getElementById('hint');
   var titleEl = document.getElementById('objTitle');
   var elRow = document.getElementById('elRow'), tempRow = document.getElementById('tempRow');
@@ -3001,18 +3512,24 @@
 
   function captionFor(idx) {
     var Lv = LEVELS[idx];
-    if (Lv.kind === 'atom') { if (slow) return Lv.capSlow; if (sinceRelease < 3.5) return Lv.capRelease; }
+    if (Lv.kind === 'atom') { var xc = excCaption(performance.now() / 1000); if (xc) return xc; if (slow) return Lv.capSlow; if (sinceRelease < 3.5) return Lv.capRelease; }
     if (Lv.hold === 'muscle' && musC > 0.5) return Lv.capHold;
     var cap = Lv.cap;
-    if (Lv.kind === 'egg' && eggCook > 0.6 && tempIdx < 2) return cap + ' Để nguội rồi mà vẫn trắng đục: protein đã duỗi ra rối vào nhau thì không cuộn lại được nữa. Trứng chín không "sống" lại được! Bấm lại nút Lòng trắng trứng ở trên để lấy quả trứng mới.';
+    if (Lv.kind === 'egg' && eggCook > 0.6 && tempIdx < 2) return cap + ' Để nguội rồi mà vẫn trắng đục: protein đã duỗi ra rối vào nhau thì không cuộn lại được nữa. Trứng chín không "sống" lại được! Muốn trứng mới thì bấm Đổi vật thể, chọn lại Lòng trắng trứng.';
     if (Lv.temp) cap += ' ' + (Lv.tempText || curMat.tempText || TEMP_TEXT[curMat.phase])[tempIdx];
     if (Lv.kind === 'lattice') {
       if (isMetalNow()) {
         cap += currentOn
-          ? ' ⚡ Dòng điện đang chạy: đám electron vẫn chạy loạn, nhưng cả đám trôi dần về một phía — dòng trôi ấy chính là dòng điện. Tắt nút là chúng lại chạy loạn như cũ.'
+          ? ' ⚡ Có điện: pin đẩy electron từ cực âm (−) sang cực dương (+). Đám electron vẫn chạy loạn, nhưng cả đám trôi dần về một phía — dòng trôi ấy chính là dòng điện. Trôi rất chậm, còn chậm hơn kiến bò, nhưng cả sợi dây cùng trôi một lúc nên bật công tắc là đèn sáng ngay.'
+            + (tempIdx === 2 ? ' Dây nóng thì electron va vấp nhiều, trôi khó hơn — kim loại nóng dẫn điện kém đi.' : '')
+          : wasOn ? ' Tắt điện rồi: không còn pin đẩy, electron lại chạy loạn đều mọi phía — chạy nhiều nhưng không trôi về đâu cả, nên không có dòng điện, đèn tắt.'
           : (tempIdx === 2
-            ? ' Những đốm xanh là electron tự do: nóng lên chúng phóng nhanh hơn, cõng năng lượng chạy đi khắp nơi — vì thế kim loại dẫn nhiệt rất tốt, chạm vào thấy nóng ngay.'
-            : ' Những đốm xanh chạy loạn là electron tự do — không thuộc về nguyên tử nào. Nhờ chúng kim loại dẫn điện, dẫn nhiệt tốt. Bấm nút ⚡ xem dòng điện chạy!');
+            ? ' Đốm xanh là electron tự do. Nóng lên, nguyên tử rung mạnh nên electron va vấp, đổi hướng liên tục — vì thế kim loại càng nóng càng dẫn điện kém đi.'
+            : tempIdx === 0
+              ? ' Đốm xanh là electron tự do: lạnh cóng mà chúng vẫn chạy vèo vèo, lại ít va vấp hơn — kim loại lạnh dẫn điện tốt hơn.'
+              : ' Đốm xanh chạy loạn là electron tự do, không thuộc nguyên tử nào. Chúng chạy cực nhanh, mang điện và nhiệt đi khắp nơi — vì thế kim loại dẫn điện, dẫn nhiệt rất tốt. Bấm nút ⚡ Bật điện xem nhé!');
+      } else if (curLatKey === 'diamond') {
+        if (tempIdx === 2) cap += ' Kim cương không có electron tự do nên không dẫn điện. Nhưng khung carbon cứng đến mức rung truyền tay nhau cực nhanh — kim cương dẫn nhiệt còn tốt hơn cả đồng!';
       } else if (tempIdx === 2) {
         cap += ' Ở đây không có electron tự do — electron nào cũng bị giữ chặt — nên điện không chạy qua được, nhiệt chỉ lan chậm bằng cách rung truyền tay nhau.';
       }
@@ -3043,10 +3560,12 @@
       holdMode = atMus ? 'muscle' : 'slow';
       holdBtn.textContent = atMus ? 'Giữ để co cơ' : 'Giữ để quay chậm';
       holdBtn.hidden = !(atAtom || atMus); countBox.hidden = !atAtom;
+      excBox.hidden = !atAtom; if (!atAtom) endExc();
       hintEl.hidden = !Lv.d3;
       tempRow.hidden = !Lv.temp;
       thermoEl.hidden = !Lv.temp;
       currBtn.hidden = !(Lv.kind === 'lattice' && isMetalNow());
+      knowDotsFor(nearest);
     }
     var cap = captionFor(nearest);
     if (cap !== lastCap) { lastCap = cap; capEl.textContent = cap; if (speakOn) speak(cap); }
@@ -3093,6 +3612,149 @@
       });
     });
   });
+  // ---------- bảng tuần hoàn ----------
+  var ptSheet = document.getElementById('ptSheet'), ptGrid = document.getElementById('ptGrid'), ptDetail = document.getElementById('ptDetail');
+  var SERIES_COL = { 1: '#9fe3b9', 2: '#c9b6f2', 3: '#f2b25c', 4: '#f2d05c', 5: '#a9d98a', 6: '#f2e45c', 7: '#9fc4e8', 8: '#8fb4de', 9: '#f2a9c4', 10: '#f2b99f' };
+  var SERIES_VN = { 1: 'phi kim', 2: 'khí trơ', 3: 'kim loại kiềm', 4: 'kim loại kiềm thổ', 5: 'á kim', 6: 'halogen', 7: 'kim loại thường', 8: 'kim loại chuyển tiếp', 9: 'họ lantan (đất hiếm)', 10: 'họ actini' };
+  function ptPal(sv) { return { 1: 'mint', 2: 'violet', 3: 'amber', 4: 'orange', 5: 'green', 6: 'yellow', 9: 'pink', 10: 'orange' }[sv] || 'blue'; }
+  function ptPos(e) {
+    if (e.z >= 57 && e.z <= 71) return [9, e.z - 57 + 3];
+    if (e.z >= 89 && e.z <= 103) return [10, e.z - 89 + 3];
+    return [e.p, e.z === 1 ? 1 : e.z === 2 ? 18 : e.g];
+  }
+  var ptCells = [];
+  PT.forEach(function (e) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'pt-cell'; b.style.background = SERIES_COL[e.s];
+    var pos = ptPos(e);
+    b.style.gridRow = pos[0] + (pos[0] > 8 ? 1 : 0); b.style.gridColumn = pos[1];
+    b.innerHTML = '<small>' + e.z + '</small>' + e.sym;
+    b.setAttribute('aria-label', e.vn);
+    b.addEventListener('click', function () { showPtDetail(e.z); });
+    ptGrid.appendChild(b); ptCells[e.z] = b;
+  });
+  var ptMode = 'nhom';
+  function heat(t) { t = clamp(t, 0, 1); return 'hsl(' + Math.round(220 - 220 * t) + ',75%,' + Math.round(72 - 14 * t) + '%)'; }
+  function ptColor(e) {
+    if (ptMode === 'nang') {
+      if (e.d == null) return '#5a6076';
+      return heat(Math.log10(e.d / 0.00008) / Math.log10(22.6 / 0.00008));
+    }
+    if (ptMode === 'to') return e.r == null ? '#5a6076' : heat((e.r - 28) / (260 - 28));
+    if (ptMode === 'the') return e.ph === 'gas' ? '#c9b6f2' : e.ph === 'liq' ? '#7fd0f2' : e.ph === 'unk' ? '#5a6076' : '#e8d9b0';
+    return SERIES_COL[e.s];
+  }
+  var LEGEND = {
+    nhom: 'Mỗi màu là một nhóm chất có tính chất giống nhau. Chạm vào một ô để xem nguyên tố đó.',
+    nang: 'Xanh là nhẹ, đỏ là nặng (một khối to bằng viên xúc xắc). Nhẹ nhất là khí hydro, nặng nhất là osmi. Ô xám: chưa ai cân được.',
+    to: 'Xanh là nguyên tử nhỏ, đỏ là nguyên tử to. Càng xuống dưới càng to (thêm lớp electron), càng sang phải càng nhỏ lại (hạt nhân hút mạnh hơn). To nhất là xesi, franxi; nhỏ nhất là heli. Ô xám: chưa đo được.',
+    the: 'Ở nhiệt độ phòng: tím là chất khí, xanh là chất lỏng (chỉ có brom và thủy ngân!), vàng nhạt là chất rắn. Ô xám: chưa biết.'
+  };
+  function paintPT() {
+    PT.forEach(function (e) { ptCells[e.z].style.background = ptColor(e); });
+    document.getElementById('ptLegend').textContent = LEGEND[ptMode];
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.pt-modes .chip'), function (b, i, all) {
+    b.addEventListener('click', function () {
+      ptMode = b.getAttribute('data-mode');
+      Array.prototype.forEach.call(all, function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      paintPT();
+    });
+  });
+  function wl2rgb(w) {
+    var r = 0, g = 0, b = 0;
+    if (w < 440) { r = (440 - w) / 60; b = 1; } else if (w < 490) { g = (w - 440) / 50; b = 1; }
+    else if (w < 510) { g = 1; b = (510 - w) / 20; } else if (w < 580) { r = (w - 510) / 70; g = 1; }
+    else if (w < 645) { r = 1; g = (645 - w) / 65; } else r = 1;
+    return 'rgb(' + Math.round(255 * Math.min(1, r + 0.1)) + ',' + Math.round(255 * Math.min(1, g + 0.1)) + ',' + Math.round(255 * Math.min(1, b + 0.1)) + ')';
+  }
+  function massLine(e) {
+    if (e.d == null) return 'Chưa ai gom đủ nguyên tố này để cân thử: mỗi lần chỉ tạo ra được vài nguyên tử, hoặc nó tự biến mất quá nhanh.';
+    if (e.ph === 'gas') {
+      var gl = e.d * 1000, air = 1.2;
+      return 'Là chất khí: một chai 1 lít chứa khoảng ' + vn(gl < 1 ? gl.toFixed(2) : gl.toFixed(1)) + ' g — ' +
+        (gl < air * 0.9 ? 'nhẹ hơn không khí ' + vn((air / gl).toFixed(1)) + ' lần, bay lên được!' :
+          gl > air * 1.1 ? 'nặng hơn không khí ' + vn((gl / air).toFixed(1)) + ' lần, chìm xuống thấp.' : 'nặng gần bằng không khí.');
+    }
+    var k = e.d / 1;
+    return 'Một khối to bằng viên xúc xắc (1 cm³) nặng ' + vn(e.d < 1 ? e.d.toFixed(2) : e.d.toFixed(1)) + ' g — ' +
+      (k < 0.98 ? 'nhẹ hơn nước, thả vào nước là nổi!' : 'nặng gấp ' + vn(k.toFixed(1)) + ' lần nước.');
+  }
+  function vn(x) { return String(x).replace(/\.0$/, '').replace('.', ','); }
+  function whyLine(e) {
+    if (e.d == null) return '';
+    if (e.ph === 'gas') return 'Vì sao? Phân tử khí bay tự do, cách xa nhau — nên chất khí nào cũng nhẹ hơn chất rắn rất nhiều.';
+    if (e.z === 26) return 'Nặng hay nhẹ tùy hai thứ: mỗi nguyên tử nặng bao nhiêu, và một khối chứa được bao nhiêu nguyên tử. Sắt là "thước đo" để so các chất khác.';
+    var mw = e.w / 55.85, cnt = (e.d / e.w) / (7.874 / 55.85);
+    var a = mw >= 1.15 ? 'nặng gấp ' + vn(mw.toFixed(1)) + ' lần' : mw <= 0.87 ? 'chỉ nặng bằng ' + vn(mw.toFixed(2)) + ' lần' : 'nặng xấp xỉ';
+    var b = cnt >= 1.15 ? 'nhiều hơn (' + vn(cnt.toFixed(1)) + ' lần)' : cnt <= 0.87 ? 'ít hơn (chỉ ' + vn(cnt.toFixed(2)) + ' lần)' : 'gần bằng';
+    return 'Vì sao? So với sắt: mỗi nguyên tử ' + e.vn.toLowerCase() + ' ' + a + ' nguyên tử sắt, còn số nguyên tử trong một khối cùng cỡ thì ' + b + '.';
+  }
+  function condLine(e) {
+    if (e.cond === 'unk') return 'Dẫn điện: chưa ai biết — nguyên tố này chỉ tồn tại vài giây, từng vài nguyên tử một.';
+    if (e.z === 6) return 'Dẫn điện: tùy cách xếp — than chì dẫn được, kim cương thì không!';
+    if (e.s === 5) return 'Dẫn điện: kém — gọi là chất bán dẫn, thứ làm nên chip máy tính.';
+    if (e.s === 1 || e.s === 2 || e.s === 6) return 'Dẫn điện: không — electron bị giữ chặt.';
+    var rank = { 47: ' tốt nhất trong mọi kim loại', 29: ' chỉ thua bạc', 79: ' thứ ba, sau bạc và đồng', 13: ' thứ tư' }[e.z] || '';
+    return 'Dẫn điện: tốt' + rank + ' — có biển electron tự do.';
+  }
+  function showPtDetail(zq) {
+    var e = PT[zq - 1];
+    for (var i = 1; i <= 118; i++) if (ptCells[i]) ptCells[i].classList.toggle('on', i === zq);
+    var REF = { h: PT[0], fe: PT[25] };
+    var maxR = 260, px = function (r) { return Math.max(6, Math.round(r / maxR * 90)); };
+    var sizeHtml = e.r == null ? '<p class="pt-sub">Nguyên tố này quá hiếm, kích cỡ nguyên tử chưa đo chắc chắn được.</p>' :
+      '<div class="pt-size">' +
+      [['Hydro', REF.h.r, '#9fe3b9'], [e.vn, e.r, SERIES_COL[e.s]], ['Sắt', REF.fe.r, '#8fb4de']].map(function (q) {
+        return '<figure><span class="pt-dot" style="width:' + px(q[1]) + 'px;height:' + px(q[1]) + 'px;background:' + q[2] + '"></span><figcaption>' + q[0] + '</figcaption></figure>';
+      }).join('') +
+      '<p class="pt-sub">So kích cỡ nguyên tử, đúng tỉ lệ. Nguyên tử to chưa chắc đã nặng: ruột nó gần như trống rỗng, nặng là ở hạt nhân tí hon.</p></div>';
+    var ph = e.ph === 'gas' ? 'Chất khí' : e.ph === 'liq' ? 'Chất lỏng' : e.ph === 'unk' ? 'Chưa biết rắn, lỏng hay khí' : 'Chất rắn';
+    ptDetail.innerHTML =
+      '<div class="pt-name"><span class="sym2" style="background:' + SERIES_COL[e.s] + '">' + e.sym + '</span>' +
+      '<h3>' + e.vn + '</h3><p class="eyebrow">số ' + e.z + ' · ' + SERIES_VN[e.s] + '</p></div>' +
+      '<div class="pt-chipline">' +
+      '<span class="pt-tag"><b>' + ph + '</b>' + (e.ph === 'unk' ? '' : ' ở nhiệt độ phòng') + '</span>' +
+      '<span class="pt-tag">' + e.z + ' proton · ' + e.n + ' neutron · ' + e.z + ' electron</span>' +
+      (e.radio ? '<span class="pt-tag">☢️ <b>Phóng xạ</b>: hạt nhân không bền, tự vỡ dần</span>' : '') +
+      '</div>' +
+      '<p class="pt-fact"><b>' + massLine(e) + '</b> ' + whyLine(e) + '</p>' +
+      '<p class="pt-fact">' + condLine(e) + '</p>' +
+      sizeHtml +
+      '<p class="pt-fact">' + e.fact + '</p>' +
+      (e.wl ? '<p class="pt-fact">💡 Hơ nóng hay phóng điện qua nó, electron nhảy lên rồi rơi về, nhả ra ánh sáng màu <span class="pt-dot" style="display:inline-block;width:14px;height:14px;vertical-align:-2px;background:' + wl2rgb(e.wl) + '"></span>. ' + e.wlNote + '</p>' : '') +
+      '<button class="btn btn-dive" type="button" id="btnDive">Lặn vào nguyên tử ' + e.vn + ' »</button>';
+    ptDetail.hidden = false;
+    document.getElementById('btnDive').addEventListener('click', function () { diveElement(e.z); });
+    ptDetail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  function diveElement(zq) {
+    var e = PT[zq - 1], low = e.vn.charAt(0).toLowerCase() + e.vn.slice(1);
+    ptDive = {
+      sym: e.sym, name: e.vn, lower: low, Z: e.z, N: e.n, pal: ptPal(e.s),
+      frame: (e.r ? 2 * e.r : 500) * 1e-12,
+      isoNote: e.radio ? 'Nguyên tố này phóng xạ: hạt nhân của nó không bền, sớm muộn cũng tự vỡ ra.' : 'Đây là loại ' + low + ' hay gặp nhất.'
+    };
+    cur = { id: 'pt-' + e.sym, title: 'Nguyên tử ' + e.vn, short: 'nguyên tử ' + low };
+    curMat = { structure: 'ptatom', phase: 'solid', el: 'C' };
+    curEl = ptDive; curElKey = e.sym;
+    eggCook = 0; musC = 0; pts = []; pings = []; stopAuto();
+    currentOn = false; wasOn = false; drift = 0; currBtn.setAttribute('aria-pressed', 'false'); currBtn.textContent = '⚡ Bật điện'; endExc();
+    refreshLevels();
+    z = target = ZMIN;
+    rot.yaw = rot.pitch = rot.vy = rot.vp = 0;
+    titleEl.textContent = cur.title;
+    for (var p = 0; p < pickBtns.length; p++) if (pickBtns[p]) pickBtns[p].setAttribute('aria-pressed', 'false');
+    ptSheet.hidden = true;
+    buildElRow();
+    renderSlots();
+  }
+  var btnPT = document.getElementById('btnPT');
+  btnPT.addEventListener('click', function () { ptSheet.hidden = false; });
+  document.getElementById('btnPTClose').addEventListener('click', function () { ptSheet.hidden = true; });
+  ptSheet.addEventListener('click', function (e) { if (e.target === ptSheet) ptSheet.hidden = true; });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !ptSheet.hidden) ptSheet.hidden = true; if (e.key === 'Escape' && !knowSheet.hidden) knowSheet.hidden = true; });
+
   var sheetEl = document.getElementById('sheet'), btnPick = document.getElementById('btnPick');
   function openSheet() { sheetEl.hidden = false; var t = tabBtns[curTab()] || tabBtns[0]; if (t) t.focus(); }
   function closeSheet() { sheetEl.hidden = true; }
@@ -3171,9 +3833,10 @@
     setThermo();
   }
   function selectObject(idx) {
+    ptDive = null;
     cur = OBJECTS[idx]; curMat = MATERIALS[cur.mat];
     eggCook = 0; musC = 0;
-    currentOn = false; currBtn.setAttribute('aria-pressed', 'false'); currBtn.textContent = '⚡ Dòng điện';
+    currentOn = false; wasOn = false; drift = 0; currBtn.setAttribute('aria-pressed', 'false'); currBtn.textContent = '⚡ Bật điện'; endExc();
     curElKey = curMat.el; curEl = ELEMENTS[curElKey];
     curLatKey = curMat.lattice || 'bcc'; curLat = LATTICES[curLatKey];
     pts = []; pings = [];
@@ -3203,7 +3866,8 @@
 
   var ptrs = new Map(), pinchD = 0, dragY = 0, dragX = 0;
   stage.addEventListener('pointerdown', function (e) {
-    if (e.target === holdBtn) return;
+    // các nút nằm trên màn soi tự xử lý cú chạm của mình, màn soi không được giành
+    if (e.target === holdBtn || e.target === currBtn || (e.target.closest && e.target.closest('.exc-btns'))) return;
     stopAuto();
     try { stage.setPointerCapture(e.pointerId); } catch (err) {}
     ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
