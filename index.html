@@ -186,7 +186,7 @@
 <div class="wrap">
   <header class="top">
     <div>
-      <p class="eyebrow">Game Phóng To · bản 20</p>
+      <p class="eyebrow">Game Phóng To · bản 21</p>
       <h1 id="objTitle">Cái đinh thép</h1>
     </div>
     <div class="top-btns">
@@ -2130,22 +2130,25 @@
     if (semiNow()) return carrierCount() / 40 * 0.7;
     return 0;
   }
-  // hình dạng từng phân tử: [x, y, cỡ] và các liên kết [i, j, số cặp electron dùng chung]
+  // hình dạng từng phân tử trong không gian: [x, y, z] và các liên kết [i, j, số cặp electron dùng chung]
   var UNIT = {
-    mono: { a: [[0, 0, 1]], b: [], r: 0.075 },
-    di1: { a: [[-0.15, 0, 1], [0.15, 0, 1]], b: [[0, 1, 1]], r: 0.06 },
-    di2: { a: [[-0.14, 0, 1], [0.14, 0, 1]], b: [[0, 1, 2]], r: 0.06 },
-    di3: { a: [[-0.13, 0, 1], [0.13, 0, 1]], b: [[0, 1, 3]], r: 0.06 },
-    p4: { a: [[0, -0.2, 0.9], [0.173, 0.1, 0.9], [-0.173, 0.1, 0.9], [0, 0, 1.12]], b: [[0, 1, 1], [1, 2, 1], [2, 0, 1], [0, 3, 1], [1, 3, 1], [2, 3, 1]], r: 0.05 },
+    mono: { a: [[0, 0, 0]], b: [], r: 0.075 },
+    di1: { a: [[-0.15, 0, 0], [0.15, 0, 0]], b: [[0, 1, 1]], r: 0.06 },
+    di2: { a: [[-0.14, 0, 0], [0.14, 0, 0]], b: [[0, 1, 2]], r: 0.06 },
+    di3: { a: [[-0.13, 0, 0], [0.13, 0, 0]], b: [[0, 1, 3]], r: 0.06 },
+    // P₄: tứ diện đều — 3 nguyên tử làm đáy, 1 nguyên tử ở đỉnh
+    p4: { a: [[0, -0.2, -0.071], [0.173, 0.1, -0.071], [-0.173, 0.1, -0.071], [0, 0, 0.212]], b: [[0, 1, 1], [1, 2, 1], [2, 0, 1], [0, 3, 1], [1, 3, 1], [2, 3, 1]], r: 0.05 },
+    // S₈: vòng 8 nguyên tử hình vương miện — lên xuống xen kẽ
     s8: { a: [], b: [], r: 0.042 }
   };
-  for (var s8k = 0; s8k < 8; s8k++) { UNIT.s8.a.push([0.27 * Math.cos(s8k * Math.PI / 4), 0.27 * Math.sin(s8k * Math.PI / 4), s8k % 2 ? 0.88 : 1.1]); UNIT.s8.b.push([s8k, (s8k + 1) % 8, 1]); }
-  var MOLS = null, molLast = 0, MBX = 8, MBY = 8 * 0.866;
+  for (var s8k = 0; s8k < 8; s8k++) { UNIT.s8.a.push([0.27 * Math.cos(s8k * Math.PI / 4), 0.27 * Math.sin(s8k * Math.PI / 4), s8k % 2 ? -0.07 : 0.07]); UNIT.s8.b.push([s8k, (s8k + 1) % 8, 1]); }
+  // các phân tử nằm trong một hộp 3 chiều lặp lại vô tận: 8 × 8 × 3 chỗ
+  var MOLS = null, molLast = 0, MBX = 8, MBY = 8 * 0.866, MBZ = 3;
   function molInit() {
     MOLS = []; var r = mulberry32(11);
-    for (var j = 0; j < 8; j++) for (var i = 0; i < 8; i++) {
-      var sx = i + (j % 2) * 0.5 - 4 + 0.25, sy = (j - 3.5) * 0.866;
-      MOLS.push({ x: sx, y: sy, sx: sx, sy: sy, vx: 0, vy: 0, th0: r() * 0.5 + ((i + j) % 2) * 1.3, th: 0, w: 0, al: 1, ph: r() * 6.28, gas: false });
+    for (var l = 0; l < 3; l++) for (var j = 0; j < 8; j++) for (var i = 0; i < 8; i++) {
+      var sx = wrapIn(i + (j % 2) * 0.5 - 4 + 0.25 + l * 0.5, MBX), sy = wrapIn((j - 3.5) * 0.866 + l * 0.2887, MBY), sz = l - 1;
+      MOLS.push({ x: sx, y: sy, z: sz, sx: sx, sy: sy, sz: sz, vx: 0, vy: 0, vz: 0, th0: r() * 0.5 + ((i + j) % 2) * 1.3, tl0: (r() - 0.5) * 0.9, th: 0, tl: 0, w: 0, al: 1, ph: r() * 6.28, gas: false });
     }
   }
   function wrapIn(x, B) { x = (x + B / 2) % B; if (x < 0) x += B; return x - B / 2; }
@@ -2156,101 +2159,126 @@
     for (i = 0; i < MOLS.length; i++) {
       m = MOLS[i];
       if (ph === 'solid') {
-        var amp = 0.05 * T, tx = m.sx + Math.sin(now * 7.3 + m.ph) * amp, ty = m.sy + Math.cos(now * 6.1 + m.ph * 1.7) * amp;
-        m.x += wrapD(tx - m.x, MBX) * k1; m.y += wrapD(ty - m.y, MBY) * k1;
-        m.th += (m.th0 + Math.sin(now * 5 + m.ph) * 0.15 * T - m.th) * k1;
-        m.al += (1 - m.al) * Math.min(1, dt * 3); m.gas = false; m.vx = m.vy = 0;
+        var amp = 0.05 * T, tx = m.sx + Math.sin(now * 7.3 + m.ph) * amp, ty = m.sy + Math.cos(now * 6.1 + m.ph * 1.7) * amp, tz = m.sz + Math.sin(now * 5.3 + m.ph * 2.3) * amp;
+        m.x += wrapD(tx - m.x, MBX) * k1; m.y += wrapD(ty - m.y, MBY) * k1; m.z += wrapD(tz - m.z, MBZ) * k1;
+        m.th += (m.th0 + Math.sin(now * 5 + m.ph) * 0.15 * T - m.th) * k1; m.tl += (m.tl0 - m.tl) * k1;
+        m.al += (1 - m.al) * Math.min(1, dt * 3); m.gas = false; m.vx = m.vy = m.vz = 0;
       } else if (ph === 'liquid') {
-        m.vx += (Math.random() - 0.5) * dt * 14 * spd; m.vy += (Math.random() - 0.5) * dt * 14 * spd;
-        var dmp = Math.exp(-dt * 2.5); m.vx *= dmp; m.vy *= dmp;
+        m.vx += (Math.random() - 0.5) * dt * 14 * spd; m.vy += (Math.random() - 0.5) * dt * 14 * spd; m.vz += (Math.random() - 0.5) * dt * 14 * spd;
+        var dmp = Math.exp(-dt * 2.5); m.vx *= dmp; m.vy *= dmp; m.vz *= dmp;
         m.w += (Math.random() - 0.5) * dt * 10; m.w *= Math.exp(-dt);
-        m.th += m.w * dt; m.al += (1 - m.al) * Math.min(1, dt * 3); m.gas = false;
+        m.th += m.w * dt; m.tl += m.w * dt * 0.6; m.al += (1 - m.al) * Math.min(1, dt * 3); m.gas = false;
       } else {
         var vis = i % 6 === 0;
-        if (!m.gas) { var a0 = Math.random() * 6.283; m.vx = Math.cos(a0); m.vy = Math.sin(a0); m.w = (Math.random() - 0.5) * 4; m.gas = true; }
-        if (Math.random() < dt * 0.4) { var a1 = Math.random() * 6.283; m.vx = Math.cos(a1); m.vy = Math.sin(a1); }
-        var vm = Math.hypot(m.vx, m.vy) || 1, want = 1.7 * spd; m.vx *= want / vm; m.vy *= want / vm;
-        m.th += m.w * dt; m.al += ((vis ? 1 : 0) - m.al) * Math.min(1, dt * 2.5);
+        if (!m.gas) { var a0 = Math.random() * 6.283, b0 = (Math.random() - 0.5) * 2; m.vx = Math.cos(a0); m.vy = Math.sin(a0); m.vz = b0; m.w = (Math.random() - 0.5) * 4; m.gas = true; }
+        if (Math.random() < dt * 0.4) { var a1 = Math.random() * 6.283; m.vx = Math.cos(a1); m.vy = Math.sin(a1); m.vz = (Math.random() - 0.5) * 2; }
+        var vm = Math.hypot(m.vx, m.vy, m.vz) || 1, want = 1.7 * spd; m.vx *= want / vm; m.vy *= want / vm; m.vz *= want / vm;
+        m.th += m.w * dt; m.tl += m.w * dt * 0.7; m.al += ((vis ? 1 : 0) - m.al) * Math.min(1, dt * 2.5);
       }
     }
     if (ph === 'liquid') {
       for (i = 0; i < MOLS.length; i++) for (j = i + 1; j < MOLS.length; j++) {
-        var A = MOLS[i], B = MOLS[j], dx = wrapD(B.x - A.x, MBX), dy = wrapD(B.y - A.y, MBY), d2 = dx * dx + dy * dy;
+        var A = MOLS[i], B = MOLS[j], dx = wrapD(B.x - A.x, MBX), dy = wrapD(B.y - A.y, MBY), dz = wrapD(B.z - A.z, MBZ), d2 = dx * dx + dy * dy + dz * dz;
         if (d2 > 0.81 || d2 < 1e-6) continue;
         var d = Math.sqrt(d2), f = (0.9 - d) / d * 0.5 * Math.min(1, dt * 8);
-        A.x -= dx * f; A.y -= dy * f; B.x += dx * f; B.y += dy * f;
+        A.x -= dx * f; A.y -= dy * f; A.z -= dz * f; B.x += dx * f; B.y += dy * f; B.z += dz * f;
       }
     }
-    if (ph !== 'solid') for (i = 0; i < MOLS.length; i++) { m = MOLS[i]; m.x = wrapIn(m.x + m.vx * dt, MBX); m.y = wrapIn(m.y + m.vy * dt, MBY); }
+    for (i = 0; i < MOLS.length; i++) { m = MOLS[i]; if (ph !== 'solid') { m.x += m.vx * dt; m.y += m.vy * dt; m.z += m.vz * dt; } m.x = wrapIn(m.x, MBX); m.y = wrapIn(m.y, MBY); m.z = wrapIn(m.z, MBZ); }
+  }
+  // xoay khuôn phân tử theo hướng của nó (quay quanh trục z rồi nghiêng quanh trục x)
+  function orientU(q, th, tl) {
+    var c = Math.cos(th), sn = Math.sin(th), x = q[0] * c - q[1] * sn, y = q[0] * sn + q[1] * c, ct = Math.cos(tl), st = Math.sin(tl);
+    return [x, y * ct - q[2] * st, y * st + q[2] * ct];
+  }
+  // vẽ một danh sách nguyên tử 3D (đã chiếu) + các liên kết, sắp theo chiều sâu
+  function drawAtoms3D(ctx, v, D, aW, el, atoms, bonds, det) {
+    var lim = 0.6 * D, order = atoms.map(function (_, i) { return i; }).sort(function (p, q) { return atoms[p][2] - atoms[q][2]; });
+    for (var k = 0; k < order.length; k++) {
+      var p = atoms[order[k]];
+      if (p[3] < 0.02 || p[0] < -lim || p[0] > v.W + lim || p[1] < -lim || p[1] > v.H + lim) continue;
+      drawSprite(ctx, p[0], p[1], aW, p[3], clamp(1 + 0.12 * p[2] / D, 0.6, 1.3), el);
+    }
+    if (!det) return;
+    ctx.strokeStyle = 'rgba(159,232,255,0.5)'; ctx.lineWidth = Math.max(1.2, 0.016 * D); ctx.fillStyle = '#9fe8ff';
+    for (k = 0; k < bonds.length; k++) {
+      var b = bonds[k], p1 = atoms[b[0]], p2 = atoms[b[1]], al = Math.min(p1[3], p2[3]);
+      if (al < 0.02 || Math.max(p1[0], p2[0]) < -lim || Math.min(p1[0], p2[0]) > v.W + lim || Math.max(p1[1], p2[1]) < -lim || Math.min(p1[1], p2[1]) > v.H + lim) continue;
+      ctx.globalAlpha = al; ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke();
+      sharedPair(ctx, p1[0], p1[1], p2[0], p2[1], b[2] || 1, D);
+    }
+    ctx.globalAlpha = 1;
   }
   function drawMolecules(ctx, v, s, now, uk, ph, egas) {
     bg(ctx, v, '#0b0e22');
     if (!MOLS) molInit();
     stepMols(ph, now);
     var U = UNIT[uk], D = 0.2 * v.M * s, aW = U.r * D, el = curElKey, det = D > 0.06 * v.M, Dp = D * ({ mono: 0.62, s8: 1.08, p4: 0.82 }[uk] || 0.66);
-    var cX = Math.ceil(v.W / 2 / Dp / MBX) + 1, cY = Math.ceil(v.H / 2 / Dp / MBY) + 1, lim = 0.6 * D;
+    var mg = rotMag(), flat = mg < 0.004, R = flat ? idR3 : rotator(), atoms = [], bonds = [];
+    var cX = flat ? Math.ceil(v.W / 2 / Dp / MBX) + 1 : 0, cY = flat ? Math.ceil(v.H / 2 / Dp / MBY) + 1 : 0, lim = 0.6 * D;
     for (var ox = -cX; ox <= cX; ox++) for (var oy = -cY; oy <= cY; oy++) for (var i = 0; i < MOLS.length; i++) {
-      var m = MOLS[i]; if (m.al < 0.02) continue;
-      var X = v.cx + (m.x + ox * MBX) * Dp, Y = v.cy + (m.y + oy * MBY) * Dp;
-      if (X < -lim || X > v.W + lim || Y < -lim || Y > v.H + lim) continue;
-      var c = Math.cos(m.th), sn = Math.sin(m.th), P = [];
-      for (var k = 0; k < U.a.length; k++) { var q = U.a[k]; P.push([X + (q[0] * c - q[1] * sn) * D, Y + (q[0] * sn + q[1] * c) * D]); }
-      for (k = 0; k < U.a.length; k++) drawSprite(ctx, P[k][0], P[k][1], aW, m.al, U.a[k][2], el);
-      if (det && U.b.length) {
-        ctx.globalAlpha = m.al; ctx.strokeStyle = 'rgba(159,232,255,0.5)'; ctx.lineWidth = Math.max(1.2, 0.016 * D); ctx.fillStyle = '#9fe8ff';
-        for (k = 0; k < U.b.length; k++) {
-          var bb = U.b[k], p1 = P[bb[0]], p2 = P[bb[1]];
-          ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke();
-          sharedPair(ctx, p1[0], p1[1], p2[0], p2[1], bb[2], D);
-        }
-        ctx.globalAlpha = 1;
+      var m = MOLS[i], al = m.al;
+      // nhìn thẳng: chỉ thấy lớp phân tử phía trước (dày 1 lớp), lớp sau mờ dần
+      if (flat) al *= clamp((0.55 - Math.abs(m.z)) / 0.2, 0, 1);
+      // xoay: chỉ lấy một khối gọn ở giữa để nhìn rõ từng phân tử
+      else al *= clamp((3.3 - Math.abs(m.x)) / 0.4, 0, 1) * clamp((2.9 - Math.abs(m.y)) / 0.4, 0, 1);
+      if (al < 0.02) continue;
+      var cx3 = (m.x + ox * MBX) * Dp, cy3 = (m.y + oy * MBY) * Dp, cz3 = m.z * Dp;
+      if (flat && (v.cx + cx3 < -lim || v.cx + cx3 > v.W + lim || v.cy + cy3 < -lim || v.cy + cy3 > v.H + lim)) continue;
+      var base = atoms.length;
+      for (var k = 0; k < U.a.length; k++) {
+        var o = orientU(U.a[k], m.th, m.tl), P = R(cx3 + o[0] * D, cy3 + o[1] * D, cz3 + o[2] * D);
+        var dz = P[2] / Dp, alD = flat ? al : al * (0.3 + 0.7 * clamp((dz + 3) / 5.5, 0, 1));
+        atoms.push([v.cx + P[0], v.cy + P[1], P[2], alD]);
       }
+      for (k = 0; k < U.b.length; k++) bonds.push([base + U.b[k][0], base + U.b[k][1], U.b[k][2]]);
     }
-    if (egas) drawEgas(ctx, v, D, idR3, 1, now);
+    drawAtoms3D(ctx, v, D, aW, el, atoms, bonds, det);
+    if (egas) drawEgas(ctx, v, D, R, flat ? 1 : 1 - smooth(0.5, 1.1, mg), now);
   }
-  // bo: khung nguyên tử nắm tay nhau (vẽ đơn giản hóa); selen, telu: chuỗi xoắn dài nằm cạnh nhau
+  // bo: khung nguyên tử nắm tay nhau (vẽ đơn giản hóa); selen, telu: chuỗi xoắn ốc dài nằm cạnh nhau
   function drawCovNet(ctx, v, s, now, uk, ph) {
     bg(ctx, v, '#0b0e22');
-    var D = 0.2 * v.M * s, el = curElKey, T = Tm(), amp = (ph === 'liquid' ? 0.09 : 0.03) * T, det = D > 0.06 * v.M, pts = [], bonds = [], i, j, k;
-    function J(a, b, c) { var jj = jit(a, b, c, now); return [jj[0] * amp * 2.2, jj[1] * amp * 2.2]; }
+    var D = 0.2 * v.M * s, el = curElKey, T = Tm(), amp = (ph === 'liquid' ? 0.09 : 0.03) * T, det = D > 0.06 * v.M, atoms = [], bonds = [], i, j, k;
+    var mg = rotMag(), flat = mg < 0.004, R = flat ? idR3 : rotator();
+    function J(a, b, c) { var jj = jit(a, b, c, now); return [jj[0] * amp * 2.2, jj[1] * amp * 2.2, jj[2] * amp * 2.2]; }
+    function put(x, y, z) { var P = R(x, y, z), al = flat ? Math.exp(Math.min(0, z / D) * 1.2) : 0.3 + 0.7 * clamp((P[2] / D + 2.5) / 4.5, 0, 1); atoms.push([v.cx + P[0], v.cy + P[1], P[2], al]); return atoms.length - 1; }
     if (uk === 'net') {
-      var Lc = 0.62 * D, ny = Math.ceil(v.H / 2 / (0.866 * Lc)) + 2, nx = Math.ceil(v.W / 2 / Lc) + 3;
-      for (j = -ny; j <= ny; j++) for (i = -nx; i <= nx; i++) {
-        var ax = (i + 0.5 * j) * Lc, ay = j * 0.866 * Lc, ja = J(i, j, 0), jb = J(i, j, 1);
-        pts.push([v.cx + ax + ja[0] * D, v.cy + ay + ja[1] * D, 1]);
-        pts.push([v.cx + ax + 0.5 * Lc + jb[0] * D, v.cy + ay + 0.2887 * Lc + jb[1] * D, 0.92]);
-      }
-      var row = 2 * (2 * nx + 1);
-      for (k = 1; k < pts.length; k += 2) {
-        bonds.push([k, k - 1]);
-        if ((k + 1) % row !== 0 && k + 1 < pts.length) bonds.push([k, k + 1]);
-        if (k - 1 + row < pts.length) bonds.push([k, k - 1 + row]);
-      }
-    } else {
-      var sx = 0.36 * D, sy = 0.95 * D, nR = Math.ceil(v.H / 2 / sy) + 2, nK = Math.ceil(v.W / 2 / sx) + 3, wig = ph === 'liquid' ? 0.22 : 0;
-      for (j = -nR; j <= nR; j++) {
-        var start = pts.length;
-        for (i = -nK; i <= nK; i++) {
-          var jc2 = J(i, j, 2), yy = j * sy + (i % 2 ? 0.12 : -0.12) * D + Math.sin(i * 0.45 + now * 1.2 + j) * wig * D;
-          pts.push([v.cx + i * sx + (j % 2) * 0.18 * D + jc2[0] * D, v.cy + yy + jc2[1] * D, i % 2 ? 0.9 : 1.08]);
-          if (i > -nK) bonds.push([pts.length - 2, pts.length - 1]);
+      var Lc = 0.62 * D, ny = flat ? Math.ceil(v.H / 2 / (0.866 * Lc)) + 2 : 4, nx = flat ? Math.ceil(v.W / 2 / Lc) + 3 : 5, layers = flat ? [0] : [-1, 0, 1];
+      layers.forEach(function (L) {
+        var idx = {}, zz = L * 0.75 * D;
+        for (j = -ny; j <= ny; j++) for (i = -nx; i <= nx; i++) {
+          if (!flat && Math.abs(i + 0.5 * j) > nx - 0.5) continue;
+          var ax = (i + 0.5 * j + L * 0.5) * Lc, ay = (j * 0.866 + L * 0.2887) * Lc, ja = J(i, j, L * 2), jb = J(i, j, L * 2 + 1);
+          idx[i + ',' + j] = [put(ax + ja[0] * D, ay + ja[1] * D, zz + ja[2] * D), put(ax + 0.5 * Lc + jb[0] * D, ay + 0.2887 * Lc + jb[1] * D, zz + jb[2] * D)];
         }
-      }
+        for (var key in idx) {
+          var ij = key.split(',').map(Number), q = idx[key], n1 = idx[(ij[0] + 1) + ',' + ij[1]], n2 = idx[ij[0] + ',' + (ij[1] + 1)];
+          bonds.push([q[1], q[0]]); if (n1) bonds.push([q[1], n1[0]]); if (n2) bonds.push([q[1], n2[0]]);
+        }
+      });
+    } else {
+      // mỗi chuỗi là một lò xo xoắn: cứ 3 nguyên tử thì đủ một vòng
+      var sx = 0.36 * D, sy = 0.95 * D, nR = flat ? Math.ceil(v.H / 2 / sy) + 2 : 3, nK = flat ? Math.ceil(v.W / 2 / sx) + 3 : 9, wig = ph === 'liquid' ? 0.22 : 0, rH = 0.14 * D;
+      var lays = flat ? [0] : [-2, -1, 0, 1, 2];
+      lays.forEach(function (L) {
+        for (j = -nR; j <= nR; j++) {
+          var prev = -1;
+          for (i = -nK; i <= nK; i++) {
+            var jc2 = J(i, j, 2 + L), an = i * 2.0944 + (j + L) * 1.1;
+            var x = i * sx + ((j + L) % 2) * 0.18 * D + jc2[0] * D;
+            var y = j * sy + rH * Math.cos(an) + Math.sin(i * 0.45 + now * 1.2 + j) * wig * D + jc2[1] * D;
+            var zz = L * sy + rH * Math.sin(an) + jc2[2] * D;
+            var id = put(x, y, zz);
+            if (prev >= 0) bonds.push([prev, id]);
+            prev = id;
+          }
+        }
+      });
     }
-    var lim = 0.5 * D, aW = 0.055 * D;
-    for (k = 0; k < pts.length; k++) { var p = pts[k]; if (p[0] < -lim || p[0] > v.W + lim || p[1] < -lim || p[1] > v.H + lim) continue; drawSprite(ctx, p[0], p[1], aW, 1, p[2], el); }
-    if (det) {
-      ctx.strokeStyle = 'rgba(159,232,255,0.5)'; ctx.lineWidth = Math.max(1.2, 0.016 * D); ctx.fillStyle = '#9fe8ff';
-      for (k = 0; k < bonds.length; k++) {
-        var p1 = pts[bonds[k][0]], p2 = pts[bonds[k][1]];
-        if (Math.max(p1[0], p2[0]) < -lim || Math.min(p1[0], p2[0]) > v.W + lim || Math.max(p1[1], p2[1]) < -lim || Math.min(p1[1], p2[1]) > v.H + lim) continue;
-        ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke();
-        sharedPair(ctx, p1[0], p1[1], p2[0], p2[1], 1, D);
-      }
-    }
-    if (semiNow()) drawEgas(ctx, v, D, idR3, 1, now);
+    drawAtoms3D(ctx, v, D, 0.055 * D, el, atoms, bonds, det);
+    if (semiNow()) drawEgas(ctx, v, D, R, flat ? 1 : 1 - smooth(0.5, 1.1, mg), now);
   }
-
   // ---------- xếp chặt lục giác (hcp: lớp A-B-A-B; hcp kép: A-B-A-C) ----------
   // mỗi lớp: mỗi nguyên tử có 6 nguyên tử vây quanh thành hình lục giác; lớp trên nằm vào hõm của lớp dưới
   var HSH = { A: [0, 0], B: [0.5, 0.2887], C: [1, 0.5774] };
@@ -3375,8 +3403,7 @@
     if (e.bt === 'metal') fr = e.la * 1e-10 * 5;
     else if (e.u === 'dia') fr = { 6: 3.57, 14: 5.43, 32: 5.66 }[e.z] * 1e-10 * 5;
     else fr = d.frame * 12;
-    var lat = e.bt === 'metal' || e.u === 'dia';
-    return L({ id: 'lien-ket', kind: 'bond', name: 'Nguyên tử liên kết', frame: fr, draw: drawBond, temp: true, d3: lat, tilt: lat, cap: '',
+    return L({ id: 'lien-ket', kind: 'bond', name: 'Nguyên tử liên kết', frame: fr, draw: drawBond, temp: true, d3: true, tilt: true, cap: '',
       fixed: 'Tầng này luôn vẽ bằng code: kiểu liên kết, thể rắn–lỏng–khí và mức dẫn điện đều tính theo số liệu thật của ' + d.lower + '.' });
   }
   function buildLevels() {
