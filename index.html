@@ -46,7 +46,9 @@
   .picker .grp { grid-column: 1 / -1; margin-top: 6px; }
   .picker .grp:first-child { margin-top: 0; }
   .pick:hover { border-color: var(--electron); }
-  .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .top > div:first-child { flex: 1 1 180px; min-width: 0; }
+  @media (max-width: 560px) { .btn-pt, .btn-pick, .btn-book { font-size: .88rem; padding: 10px 12px; } }
   .btn-pick { flex: 0 0 auto; background: var(--electron); color: #081022; border-color: var(--electron); font-weight: 700; font-size: .95rem; padding: 12px 18px; }
   .sheet { position: fixed; inset: 0; z-index: 30; background: rgba(4,6,18,.72); display: flex; align-items: flex-end; justify-content: center; }
   .sheet-card {
@@ -77,6 +79,33 @@
   .know-btn:hover { border-color: var(--electron); background: rgba(143,212,255,.18); }
   .know-btn .dots { display: inline-flex; gap: 4px; margin-left: 8px; vertical-align: middle; }
   .know-btn .dots i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+  .cap-row { gap: 10px; flex-wrap: wrap; }
+  .quiz-btn { border-color: rgba(242,166,90,.7); background: rgba(242,166,90,.14); }
+  .quiz-btn:hover { border-color: var(--amber); background: rgba(242,166,90,.24); }
+  .btn-book { font-weight: 800; }
+  .grade-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; color: var(--ink-dim); font-size: .9rem; }
+  .grade-chip { font: inherit; font-weight: 700; font-size: .88rem; padding: 6px 14px; border-radius: 999px; cursor: pointer; color: var(--ink); background: transparent; border: 1px solid var(--rule); }
+  .grade-chip[aria-pressed="true"] { background: var(--electron); color: #081022; border-color: var(--electron); }
+  .quiz-q { font-size: 1.15rem; line-height: 1.55; margin: 4px 0; font-weight: 600; }
+  .quiz-opts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  @media (max-width: 520px) { .quiz-opts { grid-template-columns: 1fr; } }
+  .quiz-opt { font: inherit; font-weight: 800; font-size: 1.2rem; padding: 16px 10px; border-radius: 14px; cursor: pointer; color: var(--ink); background: rgba(255,255,255,.05); border: 2px solid var(--rule); }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--electron); }
+  .quiz-opt.ok { background: #2f9e5b; border-color: #2f9e5b; color: #fff; }
+  .quiz-opt.no { background: rgba(220,70,60,.25); border-color: #dc463c; }
+  .quiz-fb { min-height: 1.5em; line-height: 1.55; border-radius: 12px; padding: 10px 14px; background: rgba(255,255,255,.04); }
+  .quiz-fb:empty { display: none; }
+  .quiz-foot { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+  .parent-box { border: 1px dashed rgba(242,166,90,.6); border-radius: 12px; padding: 10px 14px; line-height: 1.55; }
+  .parent-box summary { cursor: pointer; font-weight: 700; color: #ffd6ad; }
+  .book-stars { font-size: 2rem; font-weight: 800; color: #ffd166; }
+  .mission { border-radius: 14px; padding: 12px 14px; background: rgba(143,212,255,.1); border: 1px solid rgba(143,212,255,.4); display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; line-height: 1.5; }
+  .badges { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .badge { border-radius: 14px; padding: 12px; text-align: center; border: 1px solid var(--rule); background: rgba(255,255,255,.03); opacity: .45; }
+  .badge.on { opacity: 1; border-color: #ffd166; background: rgba(255,209,102,.12); }
+  .badge .ic { font-size: 1.8rem; display: block; }
+  .badge b { display: block; font-size: .92rem; margin-top: 4px; }
+  .badge small { color: var(--ink-dim); font-size: .78rem; }
   .know-card { width: min(760px, 100%); }
   .know-sub { margin: -4px 0 0; color: var(--ink-dim); font-size: .9rem; }
   .know-list { display: flex; flex-direction: column; gap: 10px; }
@@ -186,12 +215,13 @@
 <div class="wrap">
   <header class="top">
     <div>
-      <p class="eyebrow">Game Phóng To · bản 21</p>
+      <p class="eyebrow">Game Phóng To · bản 22</p>
       <h1 id="objTitle">Cái đinh thép</h1>
     </div>
     <div class="top-btns">
       <button class="btn btn-pick" id="btnPick" type="button" aria-haspopup="dialog">Đổi vật thể</button>
       <button class="btn btn-pt" id="btnPT" type="button" aria-haspopup="dialog">Bảng tuần hoàn</button>
+      <button class="btn btn-book" id="btnBook" type="button" aria-haspopup="dialog">⭐ <span id="starN">0</span></button>
     </div>
   </header>
 
@@ -210,6 +240,37 @@
       <p class="pt-sub" id="ptLegend">Chạm vào một ô để xem nguyên tố đó.</p>
       <div class="pt-grid" id="ptGrid"></div>
       <div class="pt-detail" id="ptDetail" hidden></div>
+    </div>
+  </div>
+
+  <div class="sheet" id="quizSheet" hidden>
+    <div class="sheet-card know-card" role="dialog" aria-modal="true" aria-labelledby="quizTitle">
+      <div class="sheet-head">
+        <h2 id="quizTitle">Thử thách toán</h2>
+        <button class="btn" id="btnQuizClose" type="button">Đóng</button>
+      </div>
+      <p class="know-sub" id="quizSub"></p>
+      <div class="grade-row"><span>Con học:</span><button class="grade-chip" data-g="1" type="button">Lớp 2–3</button><button class="grade-chip" data-g="2" type="button">Lớp 4–5</button></div>
+      <p class="quiz-q" id="quizQ"></p>
+      <div class="quiz-opts" id="quizOpts"></div>
+      <div class="quiz-fb" id="quizFb" aria-live="polite"></div>
+      <div class="quiz-foot"><button class="btn" id="btnQuizNext" type="button">Câu khác →</button><span id="quizStars" style="font-weight:800;color:#ffd166"></span></div>
+      <details class="parent-box" id="parentBox"><summary>🎯 Đố bố mẹ: <span id="parentQ"></span></summary><p id="parentA" style="margin:8px 0 0"></p></details>
+    </div>
+  </div>
+
+  <div class="sheet" id="bookSheet" hidden>
+    <div class="sheet-card know-card" role="dialog" aria-modal="true" aria-labelledby="bookTitle">
+      <div class="sheet-head">
+        <h2 id="bookTitle">Sổ nhà khoa học</h2>
+        <button class="btn" id="btnBookClose" type="button">Đóng</button>
+      </div>
+      <div class="book-stars">⭐ <span id="bookStars">0</span> <span style="font-size:1rem;font-weight:600;color:var(--ink-dim)">sao đã kiếm được</span></div>
+      <div class="grade-row"><span>Con học:</span><button class="grade-chip" data-g="1" type="button">Lớp 2–3</button><button class="grade-chip" data-g="2" type="button">Lớp 4–5</button></div>
+      <div class="mission" id="mission"></div>
+      <h3 style="margin:6px 0 0;font-size:1rem">Huy hiệu</h3>
+      <div class="badges" id="badges"></div>
+      <p class="know-sub">Sao và huy hiệu được lưu ngay trên máy này.</p>
     </div>
   </div>
 
@@ -253,7 +314,7 @@
   </div>
 
   <p class="caption" id="cap"></p>
-  <div class="cap-row"><button class="know-btn" id="btnKnow" type="button">📚 Biết thêm<span class="dots" id="knowDots"></span></button></div>
+  <div class="cap-row"><button class="know-btn" id="btnKnow" type="button">📚 Biết thêm<span class="dots" id="knowDots"></span></button><button class="know-btn quiz-btn" id="btnQuiz" type="button">🧮 Thử thách toán</button></div>
 
   <div class="panel">
     <div class="track" id="elRow" hidden></div>
@@ -475,6 +536,14 @@
       ['Vi khuẩn sữa chua: những que nhỏ xíu, có con nối nhau thành chuỗi. Chính chúng biến sữa thành sữa chua.',
         'Ảnh kính hiển vi điện tử vi khuẩn sữa chua: nhiều vi khuẩn hình que nhỏ, có con nối nhau thành chuỗi ngắn, trên nền sữa đông xốp. Tô màu xanh lá nhạt.'],
       null, [lvBact(), lvDna()]),
+    manhinh: bioMat('RGB', '#9fd0ff', 'Chấm sáng đỏ, lục, lam', ['C', 'H'], 'oled', [16, 18, 26], null, null, []),
+    com: bioMat('Bột', '#f3ecd8', 'Tinh bột — chuỗi đường', ['C', 'O', 'H'], 'starch', [236, 230, 210], null, null, []),
+    sua: bioMat('Sữa', '#fff3c4', 'Giọt mỡ lơ lửng trong nước', ['C', 'H'], 'tail', [233, 238, 245], null, null, [lvFat()]),
+    xaphong: bioMat('Bọt', '#bfe6ff', 'Màng nước kẹp giữa xà phòng', ['C', 'H'], 'soap', [40, 60, 100], null, null, []),
+    caosu: bioMat('Tẩy', '#f1a7b5', 'Cao su — chuỗi cuộn rối', ['C', 'H'], 'rubber', [236, 170, 180], null, null, []),
+    bong: bioMat('Bông', '#f4f1e8', 'Sợi cellulose từ cây bông', ['C', 'O', 'H'], 'cotton', [228, 226, 216], null, null, []),
+    lacay: bioMat('Lá', '#7ccf6a', 'Tế bào có hạt diệp lục', ['C', 'O', 'H'], 'leaf', [70, 140, 70], null, null, [lvDna()]),
+    lego: bioMat('ABS', '#ff6b5e', 'Nhựa cứng ABS', ['C', 'H'], 'abs', [214, 60, 50], null, null, []),
     giay: { structure: 'paper', phase: 'solid', name: 'Giấy', lower: 'giấy', el: 'C', els: ['C', 'O', 'H'], base: [232, 228, 216], sym: 'C₆', symColor: '#efe9d8', sub: 'Gỗ nghiền ép mỏng' },
     bancau: bioMat('Bẩn', '#b9a27a', 'Vi khuẩn bám khắp nơi', ['C', 'H', 'O', 'N', 'P'], 'nucleotide', [150, 128, 96], null, null, [lvBact(), lvDna()]),
     virus: bioMat('Virus', '#b7a6ff', 'Không phải tế bào', ['C', 'H', 'O', 'N'], 'amino', [150, 140, 200],
@@ -554,6 +623,13 @@
     amino: { name: 'Một axit amin', cap: 'Mỗi hạt trong chuỗi protein là một axit amin: một nhóm nhỏ nguyên tử carbon (xanh dương), hydro (xanh lá), oxy (hồng) và nitơ (tím). Có 20 loại; xếp theo thứ tự khác nhau là ra protein khác nhau. Kéo để xoay.' },
     aminoS: { name: 'Axit amin có lưu huỳnh', cap: 'Tóc có rất nhiều axit amin chứa lưu huỳnh (vàng). Hai lưu huỳnh ở hai chuỗi nắm chặt nhau như cái khóa — vì thế tóc dai, và tóc cháy có mùi khét rất riêng. Kéo để xoay.' },
     nucleotide: { name: 'Một chữ cái ADN', cap: 'Mỗi nửa bậc thang ADN là một "chữ cái": một nhóm phốt-pho (cam), một vòng đường và một vòng chữ, làm từ carbon, oxy, nitơ, hydro. Cả ADN chỉ dùng 4 loại chữ cái: A, T, G, X. Kéo để xoay.' },
+    oled: { name: 'Phân tử phát sáng', cap: 'Mỗi chấm sáng làm từ những phân tử carbon (xanh dương) và hydro (xanh lá) nối thành chuỗi — hình vẽ đã đơn giản hóa. Khi điện chạy qua, electron trong phân tử nhảy lên bậc cao rồi rơi xuống, nhả ra ánh sáng: đúng như nút ✨ Cho năng lượng ở tầng nguyên tử! Kéo để xoay.' },
+    rubber: { name: 'Chuỗi cao su', cap: 'Cục tẩy làm từ cao su: những chuỗi carbon (xanh dương) kèm hydro (xanh lá) rất dài, cuộn rối như mì sợi (hình vẽ đơn giản hóa). Kéo thì chuỗi duỗi ra, thả thì cuộn lại — nên cao su đàn hồi. Kéo để xoay.' },
+    abs: { name: 'Chuỗi nhựa', cap: 'Viên Lego làm từ nhựa ABS: cũng là những chuỗi carbon (xanh dương) và hydro (xanh lá) rất dài như chai nhựa (hình vẽ đơn giản hóa), nhưng chuỗi có thêm các nhánh cứng nên móc chặt vào nhau — viên gạch cứng, lắp khít mà không vỡ. Kéo để xoay.' },
+    starch: { cell: true, name: 'Chuỗi đường (tinh bột)', cap: 'Tinh bột là hàng nghìn viên đường glucose nối thành chuỗi: vòng carbon (xanh dương) và oxy (hồng), hydro (xanh lá) bám quanh — hình vẽ đơn giản hóa. Nước bọt cắt chuỗi này thành từng viên đường nhỏ, nên nhai cơm thật lâu sẽ thấy ngọt! Kéo để xoay.' },
+    cotton: { cell: true, name: 'Chuỗi cellulose', cap: 'Sợi bông gần như toàn là cellulose: các viên đường glucose nối thành chuỗi rất dài — vòng carbon (xanh dương) và oxy (hồng), hydro (xanh lá) bám quanh. Cùng là chuỗi đường như tinh bột trong cơm, nhưng nối kiểu khác nên người không tiêu hóa được. Kéo để xoay.' },
+    leaf: { cell: true, name: 'Vách tế bào lá', cap: 'Vách mỗi tế bào lá dựng bằng cellulose: chuỗi đường do chính lá làm ra. Lá lấy khí CO₂ và nước, dùng năng lượng ánh nắng ghép thành đường, rồi nối đường thành chuỗi. Carbon xanh dương, oxy hồng, hydro xanh lá. Kéo để xoay.' },
+    soap: { name: 'Đuôi xà phòng', cap: 'Đuôi của phân tử xà phòng là một chuỗi carbon (xanh dương) kèm hydro (xanh lá) — y như đuôi mỡ, vì xà phòng được nấu từ dầu mỡ! Đuôi này ghét nước, thích dầu; còn cái đầu thì thích nước. Kéo để xoay.' },
     tail: { name: 'Đuôi mỡ', cap: 'Đuôi phân tử mỡ là một chuỗi carbon (xanh dương) kèm hydro (xanh lá) — rất giống chuỗi trong chai nhựa HDPE, chỉ ngắn hơn nhiều! Toàn carbon và hydro nên mỡ không tan trong nước. Kéo để xoay.' }
   };
 
@@ -670,6 +746,66 @@
       pObj: 'Ảnh chụp ngược sáng một chùm giọt nước li ti bay tung ra trong không khí, như lúc hắt hơi, lấp lánh trên nền tối xanh thẫm, không có người. Chùm giọt dày nhất nằm chính giữa khung hình. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ.',
       pSurf: 'Ảnh kính hiển vi điện tử bề mặt một giọt bắn đã khô: nền xốp có vài hạt virus tròn nhỏ nằm rải rác. Tô màu xanh tím nhẹ trên nền tối. Một hạt virus nằm chính giữa khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.',
       pHat: 'Ảnh kính hiển vi điện tử cận cảnh một hạt virus cúm: hình cầu, mặt ngoài phủ dày những gai protein ngắn nhô lên như bàn chải. Tô màu xanh tím và cam nhẹ trên nền đen. Hạt virus nằm chính giữa, chiếm phần lớn khung. Ảnh vuông 1:1, sắc nét, không có chữ.' },
+
+    // ----- MODULE ĐỒ CỦA BÉ -----
+    { id: 'man-hinh', name: 'Màn hình', title: 'Màn hình điện thoại', short: 'màn hình', mat: 'manhinh', frame: 0.16, draw: drawScreenObj, surfName: 'Điểm ảnh', sf: 6e-4, sd: drawPixels,
+      cap: 'Một chiếc điện thoại đang sáng. Hình trên màn hình trông liền mạch, đủ mọi màu — nhưng thật ra chỉ có đúng 3 màu thôi. Phóng to vào xem!',
+      surfCap: 'Bí mật đây rồi: màn hình là hàng triệu điểm ảnh, mỗi điểm gồm ba vạch đỏ, xanh lá, xanh dương. Chỉnh mỗi vạch sáng mạnh hay yếu là pha ra mọi màu; cả ba cùng sáng hết cỡ thì mắt mình thấy màu trắng.',
+      know: { 'be-mat': [['vl', 'Mắt người có ba loại tế bào nhìn màu, nhạy với đỏ, xanh lá và xanh dương. Vì thế chỉ cần ba màu ấy là đánh lừa được mắt thấy mọi màu. Đỏ + xanh lá = vàng; cả ba = trắng.'], ['vl', 'Màn hình điện thoại thường có hơn 2 triệu điểm ảnh, mỗi điểm nhỏ hơn 1/10 mm — nhỏ tới mức mắt không tách ra được, nên hình trông liền mạch.']] },
+      pObj: 'Ảnh chụp một chiếc điện thoại thông minh đang bật màn hình hiện hình hoạt hình nhiều màu tươi, nằm trên nền vải nhung xanh thẫm, nhìn thẳng từ trên xuống. Điện thoại nằm chính giữa khung hình. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ, không có tay người.',
+      pSurf: 'Ảnh macro cực gần màn hình điện thoại đang sáng: thấy rõ lưới điểm ảnh, mỗi điểm gồm ba vạch nhỏ màu đỏ, xanh lá, xanh dương trên nền đen, các vạch sáng mạnh yếu khác nhau. Kín toàn bộ khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.' },
+    { id: 'hat-com', name: 'Hạt cơm', title: 'Hạt cơm', short: 'hạt cơm', mat: 'com', frame: 0.012, draw: drawRiceObj, surfName: 'Hạt tinh bột', sf: 4e-5, sd: drawBlobs('#f6efd9', '#cfc39c', '#8d8468', 0.28, 0.44),
+      cap: 'Một hạt cơm trắng. Ăn cơm xong là có sức chạy nhảy — năng lượng ấy cất ở đâu trong hạt cơm? Phóng to vào xem.',
+      surfCap: 'Bên trong hạt gạo chật ních những hạt tinh bột nhỏ xíu, mỗi hạt chỉ vài phần nghìn milimét. Đây là "kho lương thực" cây lúa để dành cho hạt mầm — và mình ăn chính cái kho ấy.',
+      know: { 'be-mat': [['sh', 'Cây lúa dùng ánh nắng để làm ra đường, rồi nối đường thành tinh bột cất vào hạt. Ăn cơm là mình đang dùng năng lượng Mặt Trời mà cây lúa đã gói lại!'], ['hh', 'Nấu cơm: hạt tinh bột hút nước, nở phồng và mềm ra — vì thế gạo cứng thành cơm dẻo, và nồi cơm nở gấp hơn hai lần gạo.']] },
+      pObj: 'Ảnh macro một hạt cơm trắng đã nấu chín, bóng nhẹ, nằm trên nền vải nhung xanh thẫm. Hạt cơm nằm chính giữa khung hình, chiếm khoảng một nửa bề ngang. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ.',
+      pSurf: 'Ảnh kính hiển vi điện tử mặt cắt bên trong hạt gạo: rất nhiều hạt tinh bột hình đa giác nhỏ xếp khít vào nhau như sỏi. Tô màu kem ngà trên nền tối. Kín toàn bộ khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.' },
+    { id: 'giot-sua', name: 'Giọt sữa', title: 'Giọt sữa', short: 'cốc sữa', mat: 'sua', frame: 0.1, draw: drawMilkObj, surfName: 'Giọt mỡ trong sữa', sf: 6e-5, sd: drawBlobs('#fff2b8', '#e2c766', '#dfe6f0', 0.1, 0.3),
+      cap: 'Một cốc sữa. Sữa phần lớn là nước, mà nước thì trong suốt — vậy tại sao sữa lại trắng? Phóng to vào một giọt xem.',
+      surfCap: 'Trong nước sữa có vô số giọt mỡ tròn li ti trôi lơ lửng (màu vàng nhạt). Ánh sáng đập vào chúng bị hắt tán loạn ra mọi phía — nên mắt mình thấy sữa trắng đục.',
+      know: { 'be-mat': [['vl', 'Sữa trắng cùng lý do với mây trắng: vô số hạt nhỏ li ti hắt ánh sáng đủ mọi màu ra tứ phía, trộn lại thành trắng. Mây là giọt nước trong không khí, sữa là giọt mỡ trong nước.'], ['hh', 'Dầu mỡ vốn không tan trong nước. Trong sữa, mỗi giọt mỡ được bọc một lớp màng nên không dính vào nhau. Để sữa tươi lâu, mỡ vẫn nổi dần lên thành lớp kem.'], ['sh', 'Sữa có canxi giúp xương và răng chắc khỏe, có đạm để cơ thể lớn lên.']] },
+      pObj: 'Ảnh chụp một cốc thủy tinh đựng sữa trắng, có một giọt sữa đọng trên miệng cốc, đặt trên nền vải nhung xanh thẫm. Cốc sữa nằm chính giữa khung hình. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ.',
+      pSurf: 'Ảnh kính hiển vi quang học một giọt sữa: rất nhiều giọt mỡ tròn trong, to nhỏ khác nhau, trôi lơ lửng trong nước, nền sáng xanh nhạt. Kín toàn bộ khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.' },
+    { id: 'bong-bong', name: 'Bong bóng xà phòng', title: 'Bong bóng xà phòng', short: 'bong bóng', mat: 'xaphong', frame: 0.1, draw: drawBubbleObj, surfName: 'Mặt bong bóng', sf: 0.004, sd: drawBubbleSkin,
+      hatName: 'Màng bong bóng cắt ngang', hatFrame: 1.2e-8, hd: drawSoapFilm,
+      cap: 'Một quả bong bóng xà phòng. Mỏng tang, lấp lánh bảy sắc cầu vồng, chạm nhẹ là vỡ. Vỏ của nó làm bằng gì? Phóng to vào xem.',
+      surfCap: 'Mặt bong bóng loang lổ đủ màu và luôn chuyển động. Màng dày mỏng mỗi chỗ một khác, mỗi độ dày hắt lại một màu — nên màu cứ trôi theo dòng nước chảy trong màng.',
+      hatCap: 'Cắt ngang màng bong bóng: ở giữa là một lớp nước cực mỏng, hai mặt được "lợp" kín bằng phân tử xà phòng (hình vẽ làm lớp nước mỏng hơn thật nhiều để nhìn cho rõ). Đầu hồng thích nước nên cắm vào nước; đuôi xanh ghét nước nên chĩa ra ngoài không khí. Lớp áo này giữ cho nước không co lại thành giọt.',
+      know: { 'be-mat': [['vl', 'Màng bong bóng mỏng hơn sợi tóc hàng trăm lần. Ánh sáng hắt lại từ mặt ngoài và mặt trong của màng chồng lên nhau: màu thì mạnh lên, màu thì mất đi — nên có cầu vồng. Vệt dầu loang trên mặt nước cũng vậy.'], ['vl', 'Bong bóng luôn tròn vì màng nước tự co lại nhỏ nhất có thể, và hình cầu là hình bọc được nhiều không khí nhất với ít màng nhất.']],
+        'hat': [['hh', 'Phân tử xà phòng có một đầu thích nước và một đuôi thích dầu mỡ. Khi rửa tay, đuôi cắm vào vết dầu bẩn, đầu bám lấy nước — nước chảy đi kéo theo cả vết bẩn.'], ['vl', 'Nước nguyên chất không thổi thành bong bóng được vì các phân tử nước hút nhau quá mạnh, màng vỡ ngay. Xà phòng làm lực hút ấy yếu đi.']] },
+      pObj: 'Ảnh chụp một quả bong bóng xà phòng to đang bay, vỏ trong suốt loang màu cầu vồng, trên nền tối xanh thẫm mờ. Bong bóng nằm chính giữa khung hình. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ.',
+      pSurf: 'Ảnh macro bề mặt bong bóng xà phòng: những dải màu cầu vồng loang lổ uốn lượn như vân dầu, tím, xanh, vàng, hồng. Kín toàn bộ khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.' },
+    { id: 'cuc-tay', name: 'Cục tẩy', title: 'Cục tẩy và nét bút chì', short: 'cục tẩy', mat: 'caosu', frame: 0.08, draw: drawEraserObj, surfName: 'Nét chì trên giấy', sf: 6e-4, sd: drawPencilMark,
+      cap: 'Một cục tẩy. Viết sai thì tẩy đi là xong — nhưng nét chì biến đi đâu? Phóng to vào một nét chì trên giấy xem.',
+      surfCap: 'Nét bút chì là những mảnh than chì đen bám hờ trên các sợi giấy. Tẩy không làm chúng biến mất: cao su dính hơn giấy nên kéo các mảnh than chì ra, cuộn lại thành vụn tẩy.',
+      know: { 'be-mat': [['vl', 'Tẩy được là nhờ ma sát và độ dính: than chì bám vào cao su chắc hơn bám vào giấy. Vụn tẩy màu xám chính là cao su đã ôm lấy than chì.'], ['hh', 'Mực bút bi thấm sâu vào trong sợi giấy nên tẩy thường không xóa được; than chì chỉ nằm trên bề mặt nên tẩy được.']] },
+      pObj: 'Ảnh chụp một cục tẩy màu hồng nằm cạnh vài nét bút chì và ít vụn tẩy trên tờ giấy trắng, nhìn từ trên xuống. Cục tẩy nằm chính giữa khung hình. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ.',
+      pSurf: 'Ảnh kính hiển vi điện tử một nét bút chì trên giấy: những mảnh than chì dẹt màu xám đen bám trên thảm sợi giấy đan rối màu trắng ngà. Kín toàn bộ khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.' },
+    { id: 'ao-cotton', name: 'Áo cotton', title: 'Áo cotton', short: 'cái áo', mat: 'bong', frame: 0.5, draw: drawShirtObj, surfName: 'Sợi vải dệt', sf: 0.003, sd: drawWeave,
+      hatName: 'Sợi bông', hatFrame: 1.5e-4, hd: drawRibbons,
+      cap: 'Một chiếc áo phông cotton. Mặc mát, thấm mồ hôi. "Cotton" là bông — áo của con từng là một cái cây! Phóng to vào vải xem.',
+      surfCap: 'Vải không phải một tấm liền: nó dệt từ các sợi chỉ luồn lên xuống xen kẽ nhau. Giữa các sợi có khe hở nhỏ để không khí lọt qua — nên áo cotton mặc thoáng.',
+      hatCap: 'Mỗi sợi chỉ lại se từ rất nhiều sợi bông. Sợi bông dẹt như dải ruy băng và xoắn vặn, bên trong rỗng. Nhờ xoắn mà chúng móc được vào nhau khi se thành chỉ; nhờ rỗng mà hút nước rất giỏi.',
+      know: { 'be-mat': [['vl', 'Dệt là luồn sợi dọc và sợi ngang trên dưới xen kẽ, sợi này đè giữ sợi kia nên vải bền mà vẫn mềm. Áo phông thì đan vòng móc vào nhau nên co giãn được.']],
+        'hat': [['sh', 'Sợi bông mọc quanh hạt của cây bông, giúp hạt bay theo gió. Mỗi sợi là một tế bào duy nhất, dài tới 2–3 cm!'], ['hh', 'Gấu bông thường nhồi sợi polyester — một loại nhựa làm từ dầu mỏ. Sợi polyester trơn nhẵn, không hút nước nên mau khô; sợi bông thì hút nước nên thấm mồ hôi tốt.']] },
+      pObj: 'Ảnh chụp một chiếc áo phông cotton trẻ em màu trắng ngà trải phẳng trên nền vải nhung xanh thẫm, nhìn từ trên xuống. Áo nằm chính giữa khung hình. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ, không có hình in.',
+      pSurf: 'Ảnh macro cực gần vải cotton dệt: thấy rõ các sợi chỉ dọc và ngang luồn trên dưới xen kẽ, sợi hơi xù lông tơ. Màu trắng ngà. Kín toàn bộ khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.',
+      pHat: 'Ảnh kính hiển vi điện tử các sợi bông: những sợi dẹt như dải ruy băng, xoắn vặn tự nhiên, nằm chồng chéo lên nhau. Tô màu trắng ngà trên nền đen. Kín toàn bộ khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.' },
+    { id: 'la-cay', name: 'Chiếc lá', title: 'Chiếc lá xanh', short: 'chiếc lá', mat: 'lacay', frame: 0.1, draw: drawLeafObj, surfName: 'Mặt lá', sf: 0.003, hatName: 'Tế bào lá', hatFrame: 1.2e-4, hd: drawLeafCells,
+      cap: 'Một chiếc lá xanh. Lá là "nhà bếp" của cây: nó nấu ra thức ăn chỉ từ nắng, nước và không khí. Bếp nằm ở đâu? Phóng to vào xem.',
+      surfCap: 'Mặt lá có những đường gân chia nhánh nhỏ dần — đó là hệ thống ống dẫn nước từ rễ lên và chở đường đi nuôi cây.',
+      hatCap: 'Lá ghép từ các tế bào có vách cứng. Những hạt xanh bên trong là lục lạp, chứa chất diệp lục — chính chúng làm lá có màu xanh. Mỗi hạt là một cái bếp tí hon: bắt ánh nắng để ghép khí CO₂ và nước thành đường, nhả ra khí oxy.',
+      know: { 'be-mat': [['sh', 'Mặt dưới lá có hàng nghìn lỗ nhỏ xíu đóng mở được, gọi là khí khổng. Lá "thở" qua đó: hút khí CO₂ vào, nhả oxy và hơi nước ra.']],
+        'hat': [['sh', 'Quang hợp: lá dùng ánh nắng ghép khí CO₂ với nước thành đường và nhả ra oxy. Gần như toàn bộ oxy mình đang thở là do cây và tảo làm ra.'], ['vl', 'Lá xanh vì diệp lục "ăn" ánh sáng đỏ và xanh dương, còn ánh sáng xanh lá thì hắt lại vào mắt mình.'], ['hh', 'Mùa thu ở xứ lạnh, diệp lục bị phá hủy, lộ ra các chất màu vàng, cam vốn có sẵn trong lá — nên lá đổi màu.']] },
+      pObj: 'Ảnh chụp một chiếc lá cây xanh tươi, thấy rõ gân lá, nằm trên nền vải nhung xanh thẫm, ánh sáng mềm. Chiếc lá nằm chính giữa khung hình. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ.',
+      pSurf: 'Ảnh macro cực gần mặt lá xanh: mạng gân lá chia nhánh nhỏ dần như lưới, giữa các gân là những ô xanh lấm tấm. Kín toàn bộ khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.',
+      pHat: 'Ảnh kính hiển vi quang học tế bào lá cây: các tế bào hình chữ nhật bo góc xếp khít như gạch, vách tế bào rõ, bên trong mỗi tế bào có nhiều hạt lục lạp tròn màu xanh lục. Nền sáng. Kín toàn bộ khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.' },
+    { id: 'lego', name: 'Viên Lego', title: 'Viên gạch Lego', short: 'viên Lego', mat: 'lego', frame: 0.05, draw: drawLegoObj, surfName: 'Bề mặt viên Lego', sf: 0.002,
+      cap: 'Một viên gạch Lego. Cứng, bóng, lắp vào nhau khít rịt, tháo lắp cả nghìn lần vẫn chặt. Nó khác chai nhựa mềm ở đâu? Phóng to vào xem.',
+      surfCap: 'Bề mặt viên Lego rất nhẵn, chỉ có vài vết xước li ti. Khuôn đúc Lego chính xác tới 1/100 milimét — mỏng hơn sợi tóc — nên viên nào cũng lắp khít với viên nào.',
+      know: { 'be-mat': [['vl', 'Các núm Lego to hơn lỗ một chút xíu. Khi ấn vào, nhựa hơi bị ép lại và ôm chặt nhau bằng ma sát — đủ chặt để không rời, đủ lỏng để con tháo ra được.'], ['hh', 'Nhựa ABS của Lego và nhựa HDPE của chai sữa đều là chuỗi carbon – hydro rất dài. ABS có thêm các nhánh cứng nên chuỗi khó trượt qua nhau: nhựa cứng và giữ nguyên hình dạng.']] },
+      pObj: 'Ảnh chụp một viên gạch đồ chơi lắp ghép bằng nhựa màu đỏ, loại 2×4 núm, bóng nhẹ, nằm trên nền vải nhung xanh thẫm, nhìn chéo từ trên xuống. Viên gạch nằm chính giữa khung hình. Ảnh vuông 1:1, chân thực, sắc nét, không có chữ, không có logo.',
+      pSurf: 'Ảnh macro cực gần bề mặt nhựa đỏ bóng của một viên gạch đồ chơi: nhẵn mịn, có vài vết xước mảnh và hạt bụi li ti. Kín toàn bộ khung hình. Ảnh vuông 1:1, sắc nét, không có chữ.' },
     // ----- MODULE ĐỒ BẨN -----
     { id: 'mong-tay', name: 'Móng tay bẩn', title: 'Móng tay bẩn', short: 'kẽ móng', mat: 'bancau', frame: 0.05, draw: drawNailObj, surfName: 'Kẽ móng tay', sf: 0.0025, hd: drawGerms,
       surfCap: 'Phóng vào kẽ móng: vệt đen ấy là đất, vụn da, dầu — và cả một đàn vi khuẩn đang trốn trong đó. Rửa tay không kỳ móng là chúng ở lại đấy!',
@@ -724,7 +860,12 @@
     ['Đầy vi khuẩn hơn con tưởng', ['mong-tay', 'mieng-rua-bat', 'dien-thoai']],
     ['Trong miệng mình', ['chiec-rang']]
   ];
-  var TABS = [['Vật chất', GROUPS], ['Cơ thể', BIO_GROUPS], ['Sinh vật tí hon', MICRO_GROUPS], ['Đồ bẩn', DIRTY_GROUPS]];
+  var KID_GROUPS = [
+    ['Trên bàn học và góc chơi', ['man-hinh', 'cuc-tay', 'lego', 'bong-bong']],
+    ['Trong bữa ăn', ['hat-com', 'giot-sua']],
+    ['Quanh con', ['ao-cotton', 'la-cay']]
+  ];
+  var TABS = [['Vật chất', GROUPS], ['Đồ của bé', KID_GROUPS], ['Cơ thể', BIO_GROUPS], ['Sinh vật tí hon', MICRO_GROUPS], ['Đồ bẩn', DIRTY_GROUPS]];
 
   // =====================================================================
   // Kết cấu dựng bằng code (tạo một lần, lưu lại)
@@ -1287,6 +1428,161 @@
     ctx.strokeStyle = 'rgba(225,244,255,0.75)'; ctx.lineWidth = Math.max(1.5, 0.012 * M);
     ctx.beginPath(); ctx.ellipse(cx, cy - h * 0.5, w * 0.5, h * 0.07, 0, 0, 6.2832); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(cx - w * 0.5, cy - h * 0.5); ctx.lineTo(cx - w * 0.42, cy + h * 0.5); ctx.lineTo(cx + w * 0.42, cy + h * 0.5); ctx.lineTo(cx + w * 0.5, cy - h * 0.5); ctx.stroke();
+  }
+
+  // =====================================================================
+  // ĐỒ CỦA BÉ — hình vẽ bằng code (dùng khi chưa có ảnh)
+  // =====================================================================
+  function drawScreenObj(ctx, v, s) {
+    velvet(ctx, v); var M = v.M * s, cx = v.cx, cy = v.cy, w = 0.34 * M, h = 0.66 * M;
+    ctx.fillStyle = '#1b1e2c'; ctx.beginPath(); ctx.roundRect(cx - w / 2, cy - h / 2, w, h, 0.04 * M); ctx.fill();
+    var g = ctx.createLinearGradient(cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2); g.addColorStop(0, '#ffd166'); g.addColorStop(0.5, '#ef476f'); g.addColorStop(1, '#4cc9f0');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.roundRect(cx - w / 2 + 0.015 * M, cy - h / 2 + 0.03 * M, w - 0.03 * M, h - 0.06 * M, 0.025 * M); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.beginPath(); ctx.arc(cx, cy, 0.07 * M, 0, 6.2832); ctx.fill();
+  }
+  function drawPixels(ctx, v, s) {
+    bg(ctx, v, '#05060a'); var c = 0.2 * v.M * s, bw = c * 0.24, bh = c * 0.8, cols = ['#ff3b30', '#34e04a', '#2f7bff'];
+    var i0 = Math.floor(-v.cx / c) - 1, i1 = Math.ceil((v.W - v.cx) / c) + 1, j0 = Math.floor(-v.cy / c) - 1, j1 = Math.ceil((v.H - v.cy) / c) + 1;
+    for (var j = j0; j <= j1; j++) for (var i = i0; i <= i1; i++) for (var k = 0; k < 3; k++) {
+      // mỗi điểm ảnh sáng mạnh yếu khác nhau ở từng màu → mắt nhìn xa thấy một màu trộn
+      ctx.globalAlpha = 0.35 + 0.65 * cellRand(Math.floor(i / 3), Math.floor(j / 3), k + 5);
+      ctx.fillStyle = cols[k]; ctx.beginPath(); ctx.roundRect(v.cx + i * c + c * (0.1 + k * 0.29), v.cy + j * c + c * 0.1, bw, bh, bw * 0.3); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+  function drawRiceObj(ctx, v, s) {
+    velvet(ctx, v); var M = v.M * s, cx = v.cx, cy = v.cy;
+    ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(cx + 0.02 * M, cy + 0.14 * M, 0.34 * M, 0.06 * M, 0, 0, 6.2832); ctx.fill();
+    var g = ctx.createRadialGradient(cx - 0.1 * M, cy - 0.05 * M, 0, cx, cy, 0.36 * M); g.addColorStop(0, '#fffdf6'); g.addColorStop(1, '#e4dcc4');
+    ctx.fillStyle = g; ctx.save(); ctx.translate(cx, cy); ctx.rotate(-0.25); ctx.beginPath(); ctx.ellipse(0, 0, 0.34 * M, 0.13 * M, 0, 0, 6.2832); ctx.fill(); ctx.restore();
+  }
+  function drawBlobs(col, edge, back, r0, r1) {
+    return function (ctx, v, s) {
+      bg(ctx, v, back); var c = 0.22 * v.M * s;
+      var i0 = Math.floor(-v.cx / c) - 1, i1 = Math.ceil((v.W - v.cx) / c) + 1, j0 = Math.floor(-v.cy / c) - 1, j1 = Math.ceil((v.H - v.cy) / c) + 1;
+      for (var j = j0; j <= j1; j++) for (var i = i0; i <= i1; i++) {
+        var x = v.cx + (i + 0.2 + 0.6 * cellRand(i, j, 1)) * c, y = v.cy + (j + 0.2 + 0.6 * cellRand(i, j, 2)) * c, r = c * (r0 + (r1 - r0) * cellRand(i, j, 3));
+        var g = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, r * 0.1, x, y, r); g.addColorStop(0, '#ffffff'); g.addColorStop(0.5, col); g.addColorStop(1, edge);
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill();
+      }
+    };
+  }
+  function drawMilkObj(ctx, v, s) {
+    velvet(ctx, v); var M = v.M * s, cx = v.cx, cy = v.cy;
+    ctx.fillStyle = 'rgba(220,235,255,0.25)'; ctx.beginPath(); ctx.moveTo(cx - 0.2 * M, cy - 0.3 * M); ctx.lineTo(cx - 0.16 * M, cy + 0.32 * M); ctx.lineTo(cx + 0.16 * M, cy + 0.32 * M); ctx.lineTo(cx + 0.2 * M, cy - 0.3 * M); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#f7f8fb'; ctx.beginPath(); ctx.moveTo(cx - 0.185 * M, cy - 0.1 * M); ctx.lineTo(cx - 0.16 * M, cy + 0.32 * M); ctx.lineTo(cx + 0.16 * M, cy + 0.32 * M); ctx.lineTo(cx + 0.185 * M, cy - 0.1 * M); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#e3e7ee'; ctx.beginPath(); ctx.ellipse(cx, cy - 0.1 * M, 0.185 * M, 0.04 * M, 0, 0, 6.2832); ctx.fill();
+  }
+  function drawBubbleObj(ctx, v, s, now) {
+    velvet(ctx, v); var M = v.M * s, cx = v.cx, cy = v.cy, r = 0.3 * M, t = (now || 0) * 0.3;
+    var g = ctx.createRadialGradient(cx, cy, r * 0.55, cx, cy, r); g.addColorStop(0, 'rgba(255,255,255,0.03)'); g.addColorStop(0.75, 'rgba(120,220,255,0.22)'); g.addColorStop(0.9, 'rgba(255,120,220,0.4)'); g.addColorStop(1, 'rgba(255,240,140,0.55)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy + Math.sin(t) * 0.01 * M, r, 0, 6.2832); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.75)'; ctx.beginPath(); ctx.ellipse(cx - r * 0.4, cy - r * 0.45, r * 0.16, r * 0.08, -0.7, 0, 6.2832); ctx.fill();
+  }
+  function drawBubbleSkin(ctx, v, s, now) {
+    // màu cầu vồng trên bong bóng: chỗ màng dày mỏng khác nhau hắt lại màu khác nhau
+    var W = v.W, H = v.H, n = 26, t = (now || 0) * 0.25;
+    for (var k = 0; k < n; k++) {
+      var y0 = v.cy + (k - n / 2) * 0.07 * v.M * s;
+      ctx.fillStyle = 'hsl(' + ((k * 47 + t * 40) % 360) + ',75%,' + (52 + 10 * Math.sin(k * 1.7)) + '%)';
+      ctx.beginPath(); ctx.moveTo(0, y0 + Math.sin(k + t) * 12);
+      for (var x = 0; x <= W; x += 40) ctx.lineTo(x, y0 + Math.sin(x * 0.006 + k * 0.9 + t) * 0.035 * v.M * s);
+      ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath(); ctx.fill();
+    }
+  }
+  function drawSoapFilm(ctx, v, s, now) {
+    // màng bong bóng cắt ngang: một lớp nước mỏng, hai mặt là phân tử xà phòng — đầu ưa nước cắm vào nước, đuôi ghét nước chĩa ra không khí
+    bg(ctx, v, '#0b0e22'); var M = v.M * s, th = 0.2 * M, c = 0.075 * M, t = now || 0;
+    ctx.fillStyle = 'rgba(70,140,230,0.55)'; ctx.fillRect(0, v.cy - th / 2, v.W, th);
+    var i0 = Math.floor(-v.cx / c) - 1, i1 = Math.ceil((v.W - v.cx) / c) + 1;
+    for (var i = i0; i <= i1; i++) [-1, 1].forEach(function (sd) {
+      var x = v.cx + i * c + Math.sin(t * 2 + i * 1.3 + sd) * c * 0.08, y = v.cy + sd * th / 2, L = 0.2 * M;
+      ctx.strokeStyle = '#7fb6ff'; ctx.lineWidth = Math.max(1.5, c * 0.14); ctx.beginPath(); ctx.moveTo(x, y);
+      for (var k = 1; k <= 8; k++) ctx.lineTo(x + (k % 2 ? 1 : -1) * c * 0.14 + Math.sin(t * 3 + i + k) * c * 0.05, y + sd * L * k / 8);
+      ctx.stroke();
+      ctx.fillStyle = '#ff8fb8'; ctx.beginPath(); ctx.arc(x, y, c * 0.3, 0, 6.2832); ctx.fill();
+    });
+    ctx.fillStyle = 'rgba(230,236,255,0.85)'; ctx.font = '600 ' + Math.max(11, 0.03 * M) + 'px system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    if (s > 0.6 && s < 1.6) { ctx.fillText('nước', v.cx, v.cy); ctx.fillText('không khí', v.cx, v.cy - th / 2 - 0.27 * M); ctx.fillText('không khí', v.cx, v.cy + th / 2 + 0.27 * M); }
+  }
+  function drawEraserObj(ctx, v, s) {
+    velvet(ctx, v); var M = v.M * s, cx = v.cx, cy = v.cy;
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(-0.2);
+    ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fillRect(-0.27 * M, 0.02 * M, 0.56 * M, 0.2 * M);
+    ctx.fillStyle = '#f29fb0'; ctx.beginPath(); ctx.roundRect(-0.28 * M, -0.11 * M, 0.56 * M, 0.22 * M, 0.03 * M); ctx.fill();
+    ctx.fillStyle = '#4a7bd0'; ctx.beginPath(); ctx.roundRect(-0.1 * M, -0.115 * M, 0.3 * M, 0.23 * M, 0.01 * M); ctx.fill();
+    ctx.restore();
+  }
+  function drawPencilMark(ctx, v, s) {
+    drawPaperNet(ctx, v, s); var c = 0.12 * v.M * s;
+    var i0 = Math.floor(-v.cx / c) - 1, i1 = Math.ceil((v.W - v.cx) / c) + 1, j0 = -3, j1 = 3;
+    for (var j = j0; j <= j1; j++) for (var i = i0; i <= i1; i++) {
+      if (cellRand(i, j, 9) < 0.25) continue;
+      var x = v.cx + (i + cellRand(i, j, 1)) * c, y = v.cy + (j + cellRand(i, j, 2)) * c, r = c * (0.25 + 0.45 * cellRand(i, j, 3));
+      ctx.fillStyle = 'rgba(' + (40 + 40 * cellRand(i, j, 4) | 0) + ',42,50,0.88)'; ctx.beginPath();
+      for (var k = 0; k < 6; k++) { var a = k * 1.047 + cellRand(i, j, 5) * 3, rr = r * (0.6 + 0.4 * cellRand(i, j, 6 + k)); if (k) ctx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr * 0.6); else ctx.moveTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr * 0.6); }
+      ctx.closePath(); ctx.fill();
+    }
+  }
+  function drawShirtObj(ctx, v, s) {
+    velvet(ctx, v); var M = v.M * s, cx = v.cx, cy = v.cy;
+    ctx.fillStyle = '#f2efe6'; ctx.beginPath();
+    ctx.moveTo(cx - 0.12 * M, cy - 0.3 * M); ctx.lineTo(cx - 0.36 * M, cy - 0.18 * M); ctx.lineTo(cx - 0.28 * M, cy - 0.02 * M); ctx.lineTo(cx - 0.2 * M, cy - 0.07 * M); ctx.lineTo(cx - 0.2 * M, cy + 0.32 * M);
+    ctx.lineTo(cx + 0.2 * M, cy + 0.32 * M); ctx.lineTo(cx + 0.2 * M, cy - 0.07 * M); ctx.lineTo(cx + 0.28 * M, cy - 0.02 * M); ctx.lineTo(cx + 0.36 * M, cy - 0.18 * M); ctx.lineTo(cx + 0.12 * M, cy - 0.3 * M);
+    ctx.quadraticCurveTo(cx, cy - 0.2 * M, cx - 0.12 * M, cy - 0.3 * M); ctx.fill();
+  }
+  function drawWeave(ctx, v, s) {
+    bg(ctx, v, '#8f8a7c'); var c = 0.16 * v.M * s, w = c * 0.8;
+    var i0 = Math.floor(-v.cx / c) - 1, i1 = Math.ceil((v.W - v.cx) / c) + 1, j0 = Math.floor(-v.cy / c) - 1, j1 = Math.ceil((v.H - v.cy) / c) + 1;
+    for (var j = j0; j <= j1; j++) for (var i = i0; i <= i1; i++) {
+      var x = v.cx + i * c, y = v.cy + j * c, over = ((i + j) % 2 + 2) % 2;
+      // sợi dọc và sợi ngang luồn trên dưới xen kẽ
+      ctx.fillStyle = over ? '#f4f1e8' : '#d9d4c4'; ctx.beginPath(); ctx.roundRect(x + (c - w) / 2, y - c * 0.1, w, c * 1.2, w * 0.4); if (over) ctx.fill();
+      ctx.fillStyle = over ? '#d9d4c4' : '#f4f1e8'; ctx.beginPath(); ctx.roundRect(x - c * 0.1, y + (c - w) / 2, c * 1.2, w, w * 0.4); ctx.fill();
+      if (!over) { ctx.fillStyle = '#ece8dc'; ctx.beginPath(); ctx.roundRect(x + (c - w) / 2, y - c * 0.1, w, c * 1.2, w * 0.4); ctx.fill(); }
+    }
+  }
+  function drawRibbons(ctx, v, s) {
+    // sợi bông: dẹt như ruy băng và xoắn vặn
+    bg(ctx, v, '#141826'); var M = v.M * s;
+    for (var k = -4; k <= 4; k++) {
+      var y0 = v.cy + k * 0.17 * M, ph = cellRand(k, 3, 1) * 6, tw = 0.035 * M;
+      ctx.fillStyle = k % 2 ? '#efe9da' : '#f8f5ec'; ctx.beginPath();
+      var x, pts = [];
+      for (x = -0.1 * v.W; x <= v.W * 1.1; x += 12) pts.push([x, y0 + Math.sin(x * 0.004 / s + ph) * 0.05 * M, Math.abs(Math.cos((x - v.cx) * 0.012 / s + ph)) * tw + tw * 0.25]);
+      pts.forEach(function (q, i) { if (i) ctx.lineTo(q[0], q[1] - q[2]); else ctx.moveTo(q[0], q[1] - q[2]); });
+      for (var i = pts.length - 1; i >= 0; i--) ctx.lineTo(pts[i][0], pts[i][1] + pts[i][2]);
+      ctx.closePath(); ctx.fill();
+    }
+  }
+  function drawLeafObj(ctx, v, s) {
+    velvet(ctx, v); var M = v.M * s, cx = v.cx, cy = v.cy;
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(-0.5);
+    var g = ctx.createLinearGradient(-0.3 * M, 0, 0.3 * M, 0); g.addColorStop(0, '#3e9a45'); g.addColorStop(1, '#7ccf6a');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-0.36 * M, 0); ctx.quadraticCurveTo(0, -0.26 * M, 0.36 * M, 0); ctx.quadraticCurveTo(0, 0.26 * M, -0.36 * M, 0); ctx.fill();
+    ctx.strokeStyle = 'rgba(30,90,40,0.8)'; ctx.lineWidth = Math.max(1.5, 0.008 * M); ctx.beginPath(); ctx.moveTo(-0.4 * M, 0); ctx.lineTo(0.34 * M, 0);
+    for (var k = -3; k <= 3; k++) { if (!k) continue; ctx.moveTo(k * 0.08 * M - 0.04 * M, 0); ctx.lineTo(k * 0.08 * M + 0.04 * M, (k % 2 ? -1 : 1) * 0.09 * M); ctx.moveTo(k * 0.08 * M - 0.04 * M, 0); ctx.lineTo(k * 0.08 * M + 0.04 * M, (k % 2 ? 1 : -1) * 0.09 * M); }
+    ctx.stroke(); ctx.restore();
+  }
+  function drawLeafCells(ctx, v, s) {
+    // tế bào lá: vách cứng bằng cellulose, bên trong là các hạt diệp lục xanh
+    bg(ctx, v, '#2c6b34'); var cw = 0.3 * v.M * s, ch = 0.2 * v.M * s;
+    var i0 = Math.floor(-v.cx / cw) - 1, i1 = Math.ceil((v.W - v.cx) / cw) + 1, j0 = Math.floor(-v.cy / ch) - 1, j1 = Math.ceil((v.H - v.cy) / ch) + 1;
+    for (var j = j0; j <= j1; j++) for (var i = i0; i <= i1; i++) {
+      var x = v.cx + (i + (j % 2 ? 0.5 : 0)) * cw, y = v.cy + j * ch;
+      ctx.fillStyle = '#bfe8a8'; ctx.beginPath(); ctx.roundRect(x + cw * 0.04, y + ch * 0.06, cw * 0.92, ch * 0.88, ch * 0.2); ctx.fill();
+      for (var k = 0; k < 7; k++) {
+        var a = cellRand(i, j, k) * 6.283, rr = 0.36 + 0.1 * cellRand(i, j, k + 20);
+        ctx.fillStyle = '#2e9a3c'; ctx.beginPath(); ctx.ellipse(x + cw * (0.5 + Math.cos(a) * rr * 0.9), y + ch * (0.5 + Math.sin(a) * rr * 0.8), cw * 0.055, ch * 0.055, a, 0, 6.2832); ctx.fill();
+      }
+    }
+  }
+  function drawLegoObj(ctx, v, s) {
+    velvet(ctx, v); var M = v.M * s, cx = v.cx, cy = v.cy, w = 0.56 * M, h = 0.22 * M;
+    ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(cx, cy + h * 0.75, w * 0.55, h * 0.25, 0, 0, 6.2832); ctx.fill();
+    ctx.fillStyle = '#c93a30'; ctx.fillRect(cx - w / 2, cy - h * 0.2, w, h * 0.85);
+    ctx.fillStyle = '#e8483c'; ctx.beginPath(); ctx.moveTo(cx - w / 2, cy - h * 0.2); ctx.lineTo(cx - w / 2 + 0.05 * M, cy - h * 0.6); ctx.lineTo(cx + w / 2 + 0.05 * M, cy - h * 0.6); ctx.lineTo(cx + w / 2, cy - h * 0.2); ctx.closePath(); ctx.fill();
+    for (var k = 0; k < 4; k++) { var x = cx - w / 2 + 0.1 * M + k * w / 4.3; ctx.fillStyle = '#c93a30'; ctx.fillRect(x - 0.045 * M, cy - h * 0.72, 0.09 * M, h * 0.3); ctx.fillStyle = '#f0564a'; ctx.beginPath(); ctx.ellipse(x, cy - h * 0.72, 0.045 * M, 0.018 * M, 0, 0, 6.2832); ctx.fill(); }
   }
   function drawYogurt(ctx, v, s) {
     velvet(ctx, v);
@@ -2652,7 +2948,7 @@
   }
   function getStruct() {
     var key = curMat.structure === 'bio' ? curMat.unit : curMat.structure;
-    if (!cache.struct[key]) cache.struct[key] = key === 'wood' ? buildCellulose() : key === 'graphite' ? buildGraphite() : key === 'amino' ? buildAmino(false) : key === 'aminoS' ? buildAmino(true) : key === 'nucleotide' ? buildNucleotide() : buildPolymer();
+    if (!cache.struct[key]) cache.struct[key] = (key === 'wood' || (UNITS[key] && UNITS[key].cell)) ? buildCellulose() : key === 'graphite' ? buildGraphite() : key === 'amino' ? buildAmino(false) : key === 'aminoS' ? buildAmino(true) : key === 'nucleotide' ? buildNucleotide() : buildPolymer();
     return cache.struct[key];
   }
   function drawStruct(ctx, v, s, now) {
@@ -3234,7 +3530,7 @@
     if (st === 'bio') {
       var lv = [objLevel(o)];
       if (m.surf || o.surfCap) lv.push(L({ id: 'be-mat', kind: 'surface', name: o.surfName || 'Nhìn gần', frame: o.sf || 0.002, img: true, draw: o.sd || drawSurface, view: o.sv || 'micro', lod: true, cap: o.surfCap || m.surf[0], prompt: o.pSurf || (m.surf && m.surf[1]) }));
-      if (m.hat || o.hatCap) lv.push(L({ id: 'hat', kind: 'tissue', name: o.hatName || m.hat[0], frame: o.hatFrame || (m.hat ? m.hat[1] : 2e-5), img: true, draw: o.hd || drawSurface, view: 'micro', lod: true, cap: o.hatCap || m.hat[2], prompt: o.pHat || (m.hat && m.hat[3]) }));
+      if (m.hat || o.hatCap) lv.push(L({ id: 'hat', kind: 'tissue', name: o.hatName || m.hat[0], frame: o.hatFrame || (m.hat ? m.hat[1] : 2e-5), img: o.id !== 'bong-bong', draw: o.hd || drawSurface, view: 'micro', lod: true, cap: o.hatCap || m.hat[2], prompt: o.pHat || (m.hat && m.hat[3]) }));
       m.chain.forEach(function (c) { lv.push(L(c)); });
       var U = UNITS[m.unit];
       lv.push(L({ id: 'phan-tu', kind: 'chain', name: U.name, frame: 1.3e-9, draw: drawStruct, temp: true, d3: true, lod: true, cap: U.cap,
@@ -3679,6 +3975,7 @@
   var SOAP = ['hh', 'Xà phòng có một đầu thích nước, một đầu thích dầu mỡ. Nó bám vào lớp dầu có vi khuẩn trên da, rồi bị nước kéo trôi đi — vì thế rửa tay bằng xà phòng sạch hơn hẳn chỉ rửa nước.'];
   var BACT = ['sh', 'Vi khuẩn chia đôi rất nhanh: gặp chỗ ấm, ẩm, có chút thức ăn, nhiều loại cứ khoảng 20 phút lại chia đôi một lần — từ 1 con, chưa tới 7 giờ đã thành hơn 1 triệu con.'];
   function knowFor(Lv) {
+    if (cur && cur.know && cur.know[Lv.id]) return { items: cur.know[Lv.id], tryIt: '' };
     var st = curMat.structure, k = Lv.kind, A = [], tryIt = '';
     var dirty = !!(cur && cur.hatCap), water = st === 'water' || st === 'steam' || st === 'ice';
     function add(x) { A.push(x); }
@@ -3895,6 +4192,239 @@
   btnKnow.addEventListener('click', function () { stopAuto(); openKnow(); });
   document.getElementById('btnKnowClose').addEventListener('click', function () { knowSheet.hidden = true; btnKnow.focus(); });
   knowSheet.addEventListener('click', function (e) { if (e.target === knowSheet) knowSheet.hidden = true; });
+
+  // =====================================================================
+  // THỬ THÁCH TOÁN — câu hỏi lấy từ chính con số trong hình đang xem
+  // =====================================================================
+  var PROG = { stars: {}, grade: 1, day: '', dayN: 0, mis: 0 };
+  try { var pj = JSON.parse(localStorage.getItem('gpt_prog_v1') || 'null'); if (pj && pj.stars) PROG = pj; } catch (err) {}
+  function saveProg() { try { localStorage.setItem('gpt_prog_v1', JSON.stringify(PROG)); } catch (err) {} }
+  function totalStars() { var t = 0; for (var k in PROG.stars) t += PROG.stars[k]; return t; }
+  function ri(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+  function pick(A) { return A[Math.floor(Math.random() * A.length)]; }
+  function nf(n) { return typeof n === 'number' ? vnum(n >= 10000 ? n.toLocaleString('vi-VN') : n) : n; }
+  // Q(câu hỏi, đáp án, lời giải, [đáp án sai], đơn vị)
+  function Q(q, a, ex, w, u) { return { q: q, a: a, ex: ex, w: w || [], u: u ? ' ' + u : '' }; }
+  function quizPool(Lv, g) {
+    var P = [], k = Lv.kind, st = curMat.structure, e = elData(curElKey), pe = ptE(), id = cur ? cur.id : '', n, m, a;
+    // ---- theo đồ vật
+    if (id === 'man-hinh') {
+      n = ri(4, 9); P.push(Q('Mỗi điểm ảnh có 3 vạch màu: đỏ, xanh lá, xanh dương. ' + n + ' điểm ảnh có bao nhiêu vạch màu?', 3 * n, '3 × ' + n + ' = ' + 3 * n + ' vạch.', [3 + n], 'vạch'));
+      if (g === 2) P.push(Q('Một màn hình rộng 1.000 điểm ảnh và cao 2.000 điểm ảnh. Màn hình có tất cả bao nhiêu điểm ảnh?', '2 triệu', '1.000 × 2.000 = 2.000.000, tức 2 triệu điểm ảnh.', ['3.000', '200 nghìn']));
+    }
+    if (id === 'hat-com') {
+      n = ri(3, 8); P.push(Q('Một thìa cơm có khoảng 100 hạt. ' + n + ' thìa có khoảng bao nhiêu hạt cơm?', 100 * n, '100 × ' + n + ' = ' + 100 * n + ' hạt.', [100 + n, 10 * n], 'hạt'));
+      if (g === 2) { n = pick([150, 200, 250, 300]); P.push(Q('Nấu chín, cơm nặng gấp khoảng 2 lần gạo vì hút nước. ' + n + ' g gạo nấu ra khoảng bao nhiêu gam cơm?', 2 * n, n + ' × 2 = ' + 2 * n + ' g.', [n + 2, n / 2], 'g')); }
+    }
+    if (id === 'giot-sua') {
+      n = ri(2, 5); P.push(Q('Một cốc sữa 200 ml. ' + n + ' cốc là bao nhiêu ml?', 200 * n, '200 × ' + n + ' = ' + 200 * n + ' ml.', [200 + n], 'ml'));
+      if (g === 2) P.push(Q('Cứ 100 g sữa có khoảng 4 g mỡ. Một cốc 200 g sữa có khoảng bao nhiêu gam mỡ?', 8, '200 g gấp đôi 100 g, nên mỡ cũng gấp đôi: 4 × 2 = 8 g.', [4, 50], 'g'));
+    }
+    if (id === 'bong-bong') {
+      n = ri(3, 6); m = ri(4, 8); P.push(Q('Con thổi ' + n + ' lần, mỗi lần ra ' + m + ' bong bóng. Tất cả có bao nhiêu bong bóng?', n * m, n + ' × ' + m + ' = ' + n * m + '.', [n + m], 'quả'));
+      if (g === 2) P.push(Q('Màng bong bóng dày khoảng 1/1000 mm. Phải xếp chồng bao nhiêu lớp màng mới dày được 1 mm?', 1000, 'Mỗi lớp là 1 phần nghìn milimét, nên cần 1.000 lớp.', [100, 10], 'lớp'));
+    }
+    if (id === 'cuc-tay') {
+      n = ri(12, 18); m = ri(2, 6); P.push(Q('Cây bút chì dài ' + n + ' cm. Gọt mất ' + m + ' cm thì còn dài bao nhiêu?', n - m, n + ' − ' + m + ' = ' + (n - m) + ' cm.', [n + m], 'cm'));
+      if (g === 2) { n = ri(5, 15); P.push(Q('Cục tẩy dài 5 cm. Mỗi ngày mòn 1 mm. Sau ' + n + ' ngày còn dài bao nhiêu milimét?', 50 - n, '5 cm = 50 mm. 50 − ' + n + ' = ' + (50 - n) + ' mm.', [50 + n, 45 - n], 'mm')); }
+    }
+    if (id === 'ao-cotton') {
+      n = ri(2, 6); P.push(Q('Cứ 1 cm vải có 30 sợi chỉ dọc. ' + n + ' cm vải có bao nhiêu sợi chỉ dọc?', 30 * n, '30 × ' + n + ' = ' + 30 * n + ' sợi.', [30 + n], 'sợi'));
+    }
+    if (id === 'la-cay') {
+      n = ri(3, 9); P.push(Q('Trong hình, mỗi tế bào lá có 7 hạt lục lạp. ' + n + ' tế bào có bao nhiêu hạt lục lạp?', 7 * n, '7 × ' + n + ' = ' + 7 * n + ' hạt.', [7 + n], 'hạt'));
+    }
+    if (id === 'lego') {
+      n = ri(2, 6); P.push(Q('Một viên Lego có 2 hàng núm, mỗi hàng 4 núm. ' + n + ' viên như thế có bao nhiêu núm?', 8 * n, 'Mỗi viên có 2 × 4 = 8 núm. 8 × ' + n + ' = ' + 8 * n + '.', [6 * n, 8 + n], 'núm'));
+      if (g === 2) P.push(Q('Khuôn Lego chính xác tới 1/100 mm. 1 mm chia được thành bao nhiêu phần nhỏ như thế?', 100, '1/100 nghĩa là chia 1 mm thành 100 phần bằng nhau.', [10, 1000], 'phần'));
+    }
+    // ---- theo tầng
+    if (k === 'atom' || k === 'empty' || k === 'nucleus') {
+      var A = e.Z + e.N, nm = e.lower || e.name;
+      if (g === 1) {
+        P.push(Q('Hạt nhân ' + nm + ' có ' + e.Z + ' proton và ' + e.N + ' neutron. Hạt nhân có tất cả bao nhiêu hạt?', A, e.Z + ' + ' + e.N + ' = ' + A + ' hạt.', [A + 10, Math.abs(e.Z - e.N) || A + 2], 'hạt'));
+        if (e.Z > 2) P.push(Q('Nguyên tử ' + nm + ' có ' + e.Z + ' electron. Bị bứt mất 1 electron thì còn bao nhiêu?', e.Z - 1, e.Z + ' − 1 = ' + (e.Z - 1) + '. Lúc đó nó thành ion dương.', [e.Z + 1], 'electron'));
+      } else {
+        P.push(Q('Hạt nhân ' + nm + ' có tất cả ' + A + ' hạt, trong đó ' + e.Z + ' hạt là proton. Có bao nhiêu neutron?', e.N, A + ' − ' + e.Z + ' = ' + e.N + ' neutron.', [A + e.Z, e.N + 2], 'neutron'));
+        n = ri(1, 3); if (e.Z > n) P.push(Q('Mỗi proton mang điện +1, mỗi electron mang điện −1. Nguyên tử ' + nm + ' có ' + e.Z + ' proton nhưng chỉ còn ' + (e.Z - n) + ' electron. Nó mang điện bao nhiêu?', '+' + n, e.Z + ' − ' + (e.Z - n) + ' = ' + n + ' điện dương thừa ra, nên ion mang điện +' + n + '.', ['−' + n, '0']));
+      }
+    }
+    if (k === 'lattice' && isMetalNow() || (k === 'bond' && pe && pe.bt === 'metal')) {
+      var hex = pe && (pe.ln === 'hcp' || pe.ln === 'dhcp');
+      if (hex) {
+        P.push(Q('Hình lục giác có bao nhiêu cạnh?', 6, 'Lục giác là hình sáu cạnh, sáu góc.', [5, 8], 'cạnh'));
+        P.push(Q('Mỗi nguyên tử có 6 hàng xóm cùng lớp, 3 hàng xóm lớp trên và 3 hàng xóm lớp dưới. Tất cả bao nhiêu hàng xóm?', 12, '6 + 3 + 3 = 12 hàng xóm sát vai.', [9, 18], 'hàng xóm'));
+      } else {
+        P.push(Q('Khối lập phương có bao nhiêu đỉnh (góc)?', 8, 'Mặt trên 4 đỉnh, mặt dưới 4 đỉnh: 4 + 4 = 8.', [6, 12], 'đỉnh'));
+        if (curLatKey === 'bcc') P.push(Q('Mỗi ô lập phương có 8 nguyên tử ở 8 góc và 1 nguyên tử ở chính giữa. Hình vẽ một ô có bao nhiêu nguyên tử?', 9, '8 + 1 = 9.', [8, 10], 'nguyên tử'));
+        if (curLatKey === 'fcc') P.push(Q('Mỗi ô lập phương có 8 nguyên tử ở 8 góc, và 6 mặt mỗi mặt 1 nguyên tử ở giữa. Hình vẽ một ô có bao nhiêu nguyên tử?', 14, '8 + 6 = 14.', [12, 48], 'nguyên tử'));
+        if (g === 2) {
+          P.push(Q('Khối lập phương có bao nhiêu cạnh?', 12, '4 cạnh trên, 4 cạnh dưới, 4 cạnh đứng: 4 × 3 = 12.', [8, 6], 'cạnh'));
+          P.push(Q('Nguyên tử ở góc được chia đều cho 8 ô cạnh nhau, mỗi ô chỉ được 1/8. Có 8 góc. Tính ra mỗi ô được bao nhiêu nguyên tử từ các góc?', 1, '8 × 1/8 = 1 nguyên tử.', [8, '1/8'], 'nguyên tử'));
+        }
+      }
+      n = ri(4, 9); m = ri(3, 9); P.push(Q('Một lớp có ' + n + ' hàng nguyên tử, mỗi hàng ' + m + ' nguyên tử. Lớp đó có bao nhiêu nguyên tử?', n * m, n + ' × ' + m + ' = ' + n * m + '.', [n + m], 'nguyên tử'));
+    }
+    if (k === 'bond' && pe) {
+      var mp = pe.mp ? Math.round(pe.mp - 273.15) : null, bp = pe.bp ? Math.round(pe.bp - 273.15) : null, low = ptDive.lower;
+      if (pe.rho && pe.z !== 29) { var pc = Math.round(1678 / pe.rho); if (pc < 100 && pc >= 1) P.push(Q('Nếu đồng dẫn điện được 100 phần thì ' + low + ' được ' + pc + ' phần. ' + low.charAt(0).toUpperCase() + low.slice(1) + ' kém đồng bao nhiêu phần?', 100 - pc, '100 − ' + pc + ' = ' + (100 - pc) + ' phần.', [100 + pc], 'phần')); }
+      if (mp !== null && bp !== null && (g === 2 || (mp >= 0 && bp < 1000))) P.push(Q(low.charAt(0).toUpperCase() + low.slice(1) + ' nóng chảy ở ' + vnum(mp) + ' °C và sôi ở ' + vnum(bp) + ' °C. Từ lúc chảy tới lúc sôi phải nóng thêm bao nhiêu độ?', bp - mp, vnum(bp) + ' − ' + (mp < 0 ? '(' + vnum(mp) + ')' : mp) + ' = ' + (bp - mp) + ' độ.', [Math.abs(bp + mp), bp - mp + 10], 'độ'));
+      if (g === 2) P.push(Q('Nhiệt kế trong game đi từ −196 °C lên 600 °C. Khoảng đó rộng bao nhiêu độ?', 796, 'Từ −196 lên 0 là 196 độ, từ 0 lên 600 là 600 độ: 196 + 600 = 796.', [404, 600], 'độ'));
+      var per = { di1: 2, di2: 2, di3: 2, p4: 4, s8: 8 }[pe.u];
+      if (per) { n = ri(3, 9); P.push(Q('Mỗi phân tử ' + low + ' có ' + per + ' nguyên tử. ' + n + ' phân tử có bao nhiêu nguyên tử?', per * n, per + ' × ' + n + ' = ' + per * n + '.', [per + n], 'nguyên tử')); }
+      if (pe.u === 'p4') P.push(Q('Phân tử phốt-pho là hình chóp tam giác (tứ diện). Hình này có bao nhiêu mặt?', 4, '1 mặt đáy và 3 mặt bên: 1 + 3 = 4 mặt, mặt nào cũng là tam giác.', [3, 6], 'mặt'));
+      if (pe.u === 'di3' || pe.u === 'di2') { var cp = pe.u === 'di3' ? 3 : 2; P.push(Q('Hai nguyên tử ' + low + ' dùng chung ' + cp + ' cặp electron. Mỗi cặp có 2 electron. Tất cả bao nhiêu electron dùng chung?', cp * 2, cp + ' × 2 = ' + cp * 2 + ' electron.', [cp + 2, cp], 'electron')); }
+    }
+    if (st === 'water' || st === 'steam' || st === 'ice') {
+      n = ri(3, 9);
+      P.push(Q('Mỗi phân tử nước có 2 nguyên tử hydro và 1 nguyên tử oxy. ' + n + ' phân tử nước có bao nhiêu nguyên tử hydro?', 2 * n, '2 × ' + n + ' = ' + 2 * n + '.', [n, 3 * n], 'nguyên tử'));
+      P.push(Q('Mỗi phân tử nước có 3 nguyên tử (2 hydro, 1 oxy). ' + n + ' phân tử nước có tất cả bao nhiêu nguyên tử?', 3 * n, '3 × ' + n + ' = ' + 3 * n + '.', [2 * n, 3 + n], 'nguyên tử'));
+      if (g === 2) P.push(Q('Nguyên tử oxy to 152 pm, hydro to 120 pm. Oxy to hơn hydro bao nhiêu pm?', 32, '152 − 120 = 32 pm.', [272, 22], 'pm'));
+    }
+    if (st === 'air') P.push(Q('Trong 100 phần không khí có 78 phần nitơ và 21 phần oxy. Các khí khác chiếm bao nhiêu phần?', 1, '78 + 21 = 99. 100 − 99 = 1 phần.', [9, 57], 'phần'));
+    if (st === 'ionic') {
+      n = ri(3, 8); P.push(Q('Một ô muối có 4 natri và 4 clo. ' + n + ' ô có bao nhiêu hạt?', 8 * n, 'Mỗi ô có 4 + 4 = 8 hạt. 8 × ' + n + ' = ' + 8 * n + '.', [4 * n, 8 + n], 'hạt'));
+      if (g === 2) P.push(Q('Trong muối, clo to 181 pm còn natri to 102 pm. Clo to hơn natri bao nhiêu pm?', 79, '181 − 102 = 79 pm.', [283, 89], 'pm'));
+    }
+    if (k === 'bacteria' || (k === 'tissue' && cur && cur.hatCap) || id === 'vi-khuan') {
+      n = ri(3, 6); P.push(Q('Vi khuẩn sinh sôi bằng cách chia đôi: 1 con thành 2, rồi 2 thành 4… Sau ' + n + ' lần chia đôi, 1 con thành bao nhiêu con?', Math.pow(2, n), 'Nhân đôi ' + n + ' lần: ' + Array.apply(null, Array(n)).map(function (_, i) { return Math.pow(2, i + 1); }).join(' → ') + '.', [2 * n, Math.pow(2, n) + 2], 'con'));
+      if (g === 2) { m = pick([1, 2]); P.push(Q('Cứ 20 phút vi khuẩn chia đôi một lần. Sau ' + m + ' giờ, 1 con thành bao nhiêu con?', m === 1 ? 8 : 64, m + ' giờ = ' + 60 * m + ' phút = ' + 3 * m + ' lần chia đôi. Nhân đôi ' + 3 * m + ' lần được ' + (m === 1 ? 8 : 64) + '.', m === 1 ? [6, 3] : [12, 32], 'con')); }
+    }
+    if (k === 'dna') {
+      n = ri(3, 9); P.push(Q('Mỗi vòng xoắn ADN có 10 bậc thang. ' + n + ' vòng xoắn có bao nhiêu bậc thang?', 10 * n, '10 × ' + n + ' = ' + 10 * n + '.', [10 + n], 'bậc'));
+      if (g === 2) P.push(Q('Mỗi bậc thang ADN gồm 2 chữ cái ghép cặp. Một vòng xoắn có 10 bậc. ' + n + ' vòng xoắn có bao nhiêu chữ cái?', 20 * n, 'Mỗi vòng có 10 × 2 = 20 chữ cái. 20 × ' + n + ' = ' + 20 * n + '.', [10 * n, 12 * n], 'chữ cái'));
+    }
+    if (k === 'cells' || k === 'chromatin') {
+      P.push(Q('Mỗi tế bào người có 46 nhiễm sắc thể: 23 chiếc từ bố, còn lại từ mẹ. Có bao nhiêu chiếc từ mẹ?', 23, '46 − 23 = 23. Một nửa từ bố, một nửa từ mẹ.', [69, 13], 'chiếc'));
+      if (g === 2) { n = ri(3, 9); P.push(Q('ADN trong 1 tế bào kéo thẳng ra dài khoảng 2 m. ADN của ' + n + ' tế bào nối lại dài bao nhiêu mét?', 2 * n, '2 × ' + n + ' = ' + 2 * n + ' m.', [2 + n], 'm')); }
+    }
+    if (k === 'fat') {
+      n = ri(2, 9); P.push(Q('1 gam mỡ cho khoảng 9 kcal năng lượng. ' + n + ' gam mỡ cho bao nhiêu kcal?', 9 * n, '9 × ' + n + ' = ' + 9 * n + ' kcal.', [9 + n], 'kcal'));
+      if (g === 2) P.push(Q('1 g mỡ cho 9 kcal, 1 g đường cho 4 kcal. 10 g mỡ cho nhiều hơn 10 g đường bao nhiêu kcal?', 50, '90 − 40 = 50 kcal.', [5, 130], 'kcal'));
+    }
+    if (k === 'egg') P.push(Q('Lòng trắng trứng bắt đầu đông ở khoảng 62 °C. Nước sôi 100 °C nóng hơn mức đó bao nhiêu độ?', 38, '100 − 62 = 38 độ.', [48, 162], 'độ'));
+    if (k === 'chain' && (st === 'polymer')) { n = pick([10, 20, 50, 100]); P.push(Q('Mỗi mắt xích của chuỗi nhựa có 2 carbon. Chuỗi dài ' + n + ' mắt xích có bao nhiêu carbon?', 2 * n, '2 × ' + n + ' = ' + 2 * n + '.', [n + 2], 'carbon')); }
+    if (k === 'chain' && (st === 'paper' || st === 'wood' || (UNITS[curMat.unit] || {}).cell)) { n = ri(3, 9); P.push(Q('Mỗi viên đường glucose trong chuỗi có 6 carbon. ' + n + ' viên nối nhau có bao nhiêu carbon?', 6 * n, '6 × ' + n + ' = ' + 6 * n + '.', [6 + n], 'carbon')); }
+    // ---- câu chung, tầng nào cũng hỏi được
+    var G = [];
+    if (g === 1) {
+      n = pick([2, 3, 4, 5, 10]); m = ri(2, 9);
+      G.push(Q('Kính lúp phóng to ' + n + ' lần. Con kiến dài ' + m + ' mm, nhìn qua kính trông dài bao nhiêu mm?', n * m, n + ' × ' + m + ' = ' + n * m + ' mm.', [n + m], 'mm'));
+      G.push(Q('Một sợi tóc dày 1/10 mm. Xếp sát nhau bao nhiêu sợi thì rộng vừa đúng 1 mm?', 10, '1/10 nghĩa là 10 phần bằng nhau ghép lại thành 1.', [5, 100], 'sợi'));
+      var steps = LEVELS.length - 1, here = nearestLevel();
+      if (steps > 2 && here > 0 && here < steps) G.push(Q('Từ vật thể tới đây con đã phóng to ' + here + ' bậc. Xuống tới tận hạt nhân còn ' + (steps - here) + ' bậc nữa. Cả chặng đường có bao nhiêu bậc?', steps, here + ' + ' + (steps - here) + ' = ' + steps + ' bậc.', [steps + 1, steps - 1], 'bậc'));
+    } else {
+      n = ri(2, 4);
+      G.push(Q('Phóng to 10 lần, rồi lại 10 lần' + (n > 2 ? ', rồi 10 lần nữa' : '') + (n > 3 ? ', rồi 10 lần nữa' : '') + '. Tất cả là phóng to bao nhiêu lần?', Math.pow(10, n), Array(n).fill('10').join(' × ') + ' = ' + nf(Math.pow(10, n)) + ' lần.', [10 * n, Math.pow(10, n - 1) === 10 * n ? 1 : Math.pow(10, n - 1)], 'lần'));
+      m = pick([[0.1, 100], [0.5, 500], [2, 2000], [0.02, 20]]);
+      G.push(Q('1 mm bằng 1.000 micrômét. Vậy ' + vnum(m[0]) + ' mm bằng bao nhiêu micrômét?', m[1], vnum(m[0]) + ' × 1.000 = ' + nf(m[1]) + ' micrômét.', [m[1] / 10, m[1] * 10], 'micrômét'));
+      n = pick([4, 5, 8]);
+      G.push(Q('Vi khuẩn dài khoảng 2 micrômét. Tế bào người to gấp ' + n + ' lần thế. Tế bào người dài khoảng bao nhiêu micrômét?', 2 * n, '2 × ' + n + ' = ' + 2 * n + ' micrômét.', [2 + n], 'micrômét'));
+    }
+    // ưu tiên câu của riêng tầng này; thiếu thì thêm câu chung
+    return P.length >= 2 ? P.concat(G.slice(0, 1)) : P.concat(G);
+  }
+  var PARENT = {
+    0: [['Vì sao tay nắm cửa bằng kim loại sờ lạnh hơn cánh cửa gỗ, dù cả hai ở cùng một phòng?', 'Hai thứ có cùng nhiệt độ. Kim loại dẫn nhiệt tốt nên hút nhiệt khỏi bàn tay rất nhanh, làm tay thấy lạnh.'],
+      ['Kim cương và ruột bút chì giống nhau ở điểm nào?', 'Cả hai đều chỉ làm từ carbon — khác nhau ở cách các nguyên tử xếp và nắm tay nhau.'],
+      ['Vì sao cục đá lạnh nổi trên nước?', 'Khi đóng băng, phân tử nước xếp thành khung sáu cạnh có nhiều khoảng trống, nên đá nhẹ hơn nước khoảng 1/10.'],
+      ['Thủy tinh được làm ra từ thứ gì có rất nhiều ở bãi biển?', 'Từ cát. Cát nấu chảy ở nhiệt độ rất cao rồi để nguội thành thủy tinh.']],
+    1: [['Màn hình tivi dùng mấy màu để tạo ra mọi màu, đó là những màu nào?', 'Chỉ 3 màu: đỏ, xanh lá, xanh dương. Cả ba cùng sáng thì thành trắng.'],
+      ['Vì sao nhai cơm thật lâu lại thấy ngọt?', 'Nước bọt cắt chuỗi tinh bột dài thành những viên đường nhỏ, lưỡi nếm được vị ngọt.'],
+      ['Nước trong suốt, vậy vì sao sữa lại trắng?', 'Trong sữa có vô số giọt mỡ li ti hắt ánh sáng ra mọi phía — giống như mây trắng.'],
+      ['Lá cây cần những gì để tự làm ra thức ăn?', 'Ánh nắng, nước và khí CO₂ trong không khí. Lá ghép chúng thành đường và nhả ra oxy.']],
+    2: [['Sợi ADN trong một tế bào người kéo thẳng ra thì dài bao nhiêu?', 'Khoảng 2 mét — dù cái nhân chứa nó nhỏ tới mức mắt không thấy được.'],
+      ['Vì sao cắt tóc không thấy đau?', 'Phần tóc mọc ra ngoài da là tế bào đã chết, không có dây thần kinh.'],
+      ['Trứng luộc chín rồi để nguội có trong lại như trứng sống được không?', 'Không. Protein đã duỗi ra và dính chặt vào nhau — đây là biến đổi không quay lại được.'],
+      ['Cơ thể người có khoảng bao nhiêu tế bào?', 'Khoảng 30 nghìn tỉ tế bào.']],
+    3: [['Thuốc kháng sinh có diệt được virus cúm không?', 'Không. Kháng sinh chỉ diệt vi khuẩn. Virus không phải tế bào nên kháng sinh không có tác dụng.'],
+      ['Con vật tí hon nào có thể khô quắt nhiều năm rồi gặp nước lại sống dậy?', 'Gấu nước.'],
+      ['Sữa chua có vị chua nhờ đâu?', 'Nhờ vi khuẩn có ích: chúng ăn đường trong sữa và tạo ra axit lactic có vị chua.'],
+      ['Con kiến có mấy chân, thân chia mấy phần?', '6 chân, thân chia 3 phần: đầu, ngực, bụng.']],
+    4: [['Rửa tay bằng xà phòng hơn rửa bằng nước không ở chỗ nào?', 'Phân tử xà phòng bám vào lớp dầu có vi khuẩn trên da rồi bị nước kéo trôi đi; nước không thì không gỡ được dầu.'],
+      ['Một vi khuẩn cứ 20 phút chia đôi một lần. Sau 1 giờ nó thành mấy con?', '8 con: 1 → 2 → 4 → 8.'],
+      ['Vì sao phải đánh răng trước khi đi ngủ?', 'Vi khuẩn trong miệng ăn đường còn sót lại và tạo ra axit, ăn mòn men răng suốt cả đêm.'],
+      ['Làm thế nào để miếng rửa bát đỡ vi khuẩn?', 'Vắt thật khô, để chỗ thoáng cho mau khô, và thay miếng mới thường xuyên — vi khuẩn thích chỗ ẩm.']],
+    pt: [['Kim loại nào dẫn điện tốt nhất?', 'Bạc, rồi mới đến đồng và vàng.'],
+      ['Kim loại nào ở thể lỏng ngay trong phòng?', 'Thủy ngân. Nó nóng chảy ở −39 °C.'],
+      ['Nguyên tố nào nhẹ nhất và có nhiều nhất trong vũ trụ?', 'Hydro — nguyên tử chỉ có 1 proton và 1 electron.'],
+      ['Vì sao bóng bay bơm khí heli lại bay lên?', 'Heli nhẹ hơn không khí rất nhiều nên bị không khí đẩy nổi lên, như miếng xốp nổi trong nước.']]
+  };
+  function tabOf(id) {
+    if (id.indexOf('pt-') === 0) return 'pt';
+    for (var t = 0; t < TABS.length; t++) for (var gI = 0; gI < TABS[t][1].length; gI++) if (TABS[t][1][gI][1].indexOf(id) >= 0) return t;
+    return 0;
+  }
+  var quizSheet = document.getElementById('quizSheet'), bookSheet = document.getElementById('bookSheet'), quizCur = null, quizLast = '', quizTried = false;
+  function today() { var d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+  function missionIdx() { var d = new Date(); return Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 864e5) % OBJECTS.length; }
+  function syncStars() {
+    var t = totalStars();
+    document.getElementById('starN').textContent = t; document.getElementById('bookStars').textContent = t;
+    document.getElementById('quizStars').textContent = '⭐ ' + t;
+    Array.prototype.forEach.call(document.querySelectorAll('.grade-chip'), function (c) { c.setAttribute('aria-pressed', +c.dataset.g === PROG.grade ? 'true' : 'false'); });
+  }
+  function newQuestion() {
+    var Lv = LEVELS[nearestLevel()], pool = quizPool(Lv, PROG.grade), q, tries = 0;
+    do { q = pick(pool); tries++; } while (pool.length > 1 && q.q === quizLast && tries < 12);
+    quizLast = q.q; quizCur = q; quizTried = false;
+    var wr = q.w.filter(function (x, i, A) { return A.indexOf(x) === i && String(x) !== String(q.a) && !(typeof x === 'number' && (x < 0 || x !== Math.round(x * 100) / 100)); });
+    if (typeof q.a === 'number') [q.a + 1, q.a - 1, q.a + 10, q.a * 2, q.a + 2].forEach(function (x) { if (wr.length < 2 && x !== q.a && x >= 0 && wr.indexOf(x) < 0) wr.push(x); });
+    var opts = [q.a].concat(wr.slice(0, 2)).sort(function () { return Math.random() - 0.5; });
+    document.getElementById('quizQ').textContent = q.q;
+    document.getElementById('quizFb').textContent = '';
+    var box = document.getElementById('quizOpts'); box.innerHTML = '';
+    opts.forEach(function (o) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'quiz-opt'; b.textContent = nf(o) + (typeof o === 'number' ? q.u : '');
+      b.addEventListener('click', function () { answer(b, o === q.a); });
+      box.appendChild(b);
+    });
+  }
+  function answer(btn, ok) {
+    var fb = document.getElementById('quizFb');
+    if (!ok) { btn.classList.add('no'); btn.disabled = true; quizTried = true; fb.textContent = 'Chưa đúng rồi. Con thử tính lại xem nhé!'; return; }
+    btn.classList.add('ok');
+    Array.prototype.forEach.call(document.querySelectorAll('.quiz-opt'), function (b) { b.disabled = true; });
+    var gain = quizTried ? 0 : 1, id = cur.id, msg = (quizTried ? 'Đúng rồi! ' : 'Chính xác! +1 ⭐ ') + quizCur.ex;
+    if (gain) {
+      PROG.stars[id] = (PROG.stars[id] || 0) + 1;
+      if (PROG.day !== today()) { PROG.day = today(); PROG.dayN = 0; }
+      if (OBJECTS[missionIdx()].id === id && PROG.dayN < 3) { PROG.dayN++; if (PROG.dayN === 3) { PROG.stars[id] += 2; PROG.mis = (PROG.mis || 0) + 1; msg += ' 🎉 Xong nhiệm vụ hôm nay: thưởng thêm 2 ⭐!'; } }
+      saveProg(); syncStars();
+    }
+    fb.textContent = msg;
+  }
+  function openQuiz() {
+    var Lv = LEVELS[nearestLevel()];
+    document.getElementById('quizSub').textContent = (cur && cur.title ? cur.title + ' · ' : '') + Lv.name;
+    var pl = PARENT[tabOf(cur.id)], h = 0; for (var i = 0; i < cur.id.length; i++) h += cur.id.charCodeAt(i);
+    var pq = pl[h % pl.length]; document.getElementById('parentQ').textContent = pq[0]; document.getElementById('parentA').textContent = 'Đáp án: ' + pq[1];
+    document.getElementById('parentBox').open = false;
+    syncStars(); newQuestion(); quizSheet.hidden = false; document.getElementById('btnQuizClose').focus();
+  }
+  var BADGES = [[0, '🔩', 'Nhà vật liệu nhí', 'Vật chất'], [1, '🧸', 'Thám tử trong nhà', 'Đồ của bé'], [2, '🩺', 'Bác sĩ tí hon', 'Cơ thể'], [3, '🔬', 'Thợ săn vi sinh vật', 'Sinh vật tí hon'], [4, '🧼', 'Chiến binh rửa tay', 'Đồ bẩn'], ['pt', '⚗️', 'Nhà hóa học nhí', 'Bảng tuần hoàn']];
+  function openBook() {
+    if (PROG.day !== today()) { PROG.day = today(); PROG.dayN = 0; saveProg(); }
+    syncStars();
+    var by = {}; for (var id in PROG.stars) { var t = tabOf(id); by[t] = (by[t] || 0) + PROG.stars[id]; }
+    var tot = totalStars(), html = BADGES.map(function (b) { var n = by[b[0]] || 0; return '<div class="badge' + (n >= 5 ? ' on' : '') + '"><span class="ic">' + b[1] + '</span><b>' + b[2] + '</b><small>' + (n >= 5 ? 'Đã đạt!' : Math.min(n, 5) + '/5 sao ở ' + b[3]) + '</small></div>'; }).join('');
+    html += '<div class="badge' + (tot >= 30 ? ' on' : '') + '"><span class="ic">🧮</span><b>Nhà toán học nhí</b><small>' + (tot >= 30 ? 'Đã đạt!' : tot + '/30 sao') + '</small></div>';
+    html += '<div class="badge' + ((PROG.mis || 0) >= 3 ? ' on' : '') + '"><span class="ic">📅</span><b>Chăm chỉ</b><small>' + ((PROG.mis || 0) >= 3 ? 'Đã đạt!' : (PROG.mis || 0) + '/3 nhiệm vụ ngày') + '</small></div>';
+    document.getElementById('badges').innerHTML = html;
+    var mo = OBJECTS[missionIdx()], done = PROG.dayN >= 3;
+    document.getElementById('mission').innerHTML = '<div><b>Nhiệm vụ hôm nay:</b> soi <b>' + mo.title + '</b> và trả lời đúng 3 câu thử thách.<br>' + (done ? '🎉 Con đã xong nhiệm vụ hôm nay!' : 'Đã đúng ' + PROG.dayN + '/3 câu · thưởng thêm 2 ⭐') + '</div>' + (done ? '' : '<button class="btn primary" id="btnMission" type="button">Soi ngay</button>');
+    var bm = document.getElementById('btnMission'); if (bm) bm.addEventListener('click', function () { bookSheet.hidden = true; selectObject(missionIdx()); });
+    bookSheet.hidden = false; document.getElementById('btnBookClose').focus();
+  }
+  document.getElementById('btnQuiz').addEventListener('click', function () { stopAuto(); openQuiz(); });
+  document.getElementById('btnQuizNext').addEventListener('click', newQuestion);
+  document.getElementById('btnQuizClose').addEventListener('click', function () { quizSheet.hidden = true; });
+  document.getElementById('btnBook').addEventListener('click', function () { stopAuto(); openBook(); });
+  document.getElementById('btnBookClose').addEventListener('click', function () { bookSheet.hidden = true; });
+  [quizSheet, bookSheet].forEach(function (sh) { sh.addEventListener('click', function (ev) { if (ev.target === sh) sh.hidden = true; }); });
+  Array.prototype.forEach.call(document.querySelectorAll('.grade-chip'), function (c) { c.addEventListener('click', function () { PROG.grade = +c.dataset.g; saveProg(); syncStars(); if (!quizSheet.hidden) newQuestion(); }); });
+  document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') { quizSheet.hidden = true; bookSheet.hidden = true; } });
+  syncStars();
   var zr = document.getElementById('zr'), track = document.getElementById('track'), hintEl = document.getElementById('hint');
   var titleEl = document.getElementById('objTitle');
   var elRow = document.getElementById('elRow'), tempRow = document.getElementById('tempRow');
